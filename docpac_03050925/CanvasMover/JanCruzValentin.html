@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    canvas {
+        border: 3px solid;
+        border-radius: 2%;
+        width: 1000px;
+        height: 800px;
+        margin: auto;
+        display: block;
+    }
+</style>
+<body>
+<canvas>
+
+</canvas>
+</body>
+
+<script>
+    //player information such as where they are located, size, color, speed, and image
+    player = {
+        x: 50,
+        y: 50,
+        width: 20,
+        height: 15,
+        speed: 2,
+        img: new Image()
+    };
+
+    //querySelector picks the first element that matches the CSS selector i.e Canvas
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    player.img.src = 'download.jpg'
+    keys = {}
+
+    //drawing the image of the player 
+    function drawPlayer() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(player.img, player.x, player.y, player.width, player.height);
+        requestAnimationFrame(drawPlayer);
+    }
+    drawPlayer()
+
+
+    //Keyboard event listeners
+    document.addEventListener('keydown', function (e) {
+        keys[e.key] = true;
+    });
+
+    document.addEventListener('keyup', function (e) {
+        keys[e.key] = false;
+    });
+
+    //Gamepad event listeners
+    document.addEventListener("gamepadconnected", function (e) {
+        console.log('Gamepad connected')
+    });
+
+    //touch event listeners
+    document.addEventListener("touchstart", function (e) {
+        console.log('touch detected')
+    })
+
+    function playerMove() {
+        //keyboard movement
+        if (keys['ArrowUp'] || keys['w']) {
+            player.y -= player.speed;
+        } else if (keys['ArrowDown'] || keys['s']) {
+            player.y += player.speed;
+        } else if (keys['ArrowRight'] || keys['d']) {
+            player.x += player.speed;
+        } else if (keys['ArrowLeft'] || keys['a']) {
+            player.x -= player.speed;
+        }
+    
+        //gamepad movement
+        for (const gamepads of navigator.getGamepads()) {
+            if(!gamepads) continue;
+            
+            if (gamepads.axes[1] === -1){
+                player.y -= player.speed
+            } else if (gamepads.axes[1] === 1) {
+                player.y += player.speed
+            } else if (gamepads.axes[0] === 1) {
+                player.x += player.speed
+            } else if (gamepads.axes[0] === -1) {
+                player.x -= player.speed
+            }
+        }
+
+        //touch movement
+
+
+        if (player.x < 0) {
+            player.x = 0;
+        } else if (player.y < 0) {
+            player.y = 0;
+        } else if (player.x + player.width > canvas.width) {
+            player.x = canvas.width - player.width;
+        } else if (player.y + player.height > canvas.height) {
+            player.y = canvas.height - player.height;
+        }
+
+        
+        requestAnimationFrame(playerMove);  
+    }
+    playerMove()
+    
+    
+</script>
+
+</html>
