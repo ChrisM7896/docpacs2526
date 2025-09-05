@@ -17,6 +17,8 @@
     }
 </style>
 <body>
+<div>Use: Keyboard, Gamepad</div>
+<div id="coordinates">Coordinates: (X,Y)</div>
 <canvas>
 
 </canvas>
@@ -25,8 +27,8 @@
 <script>
     //player information such as where they are located, size, color, speed, and image
     player = {
-        x: 50,
-        y: 50,
+        x: 0,
+        y: 0,
         width: 20,
         height: 15,
         speed: 2,
@@ -42,6 +44,7 @@
 
     //drawing the image of the player 
     function drawPlayer() {
+        document.getElementById('coordinates').innerText = `Coordinates: (${player.x},${player.y})`
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(player.img, player.x, player.y, player.width, player.height);
         requestAnimationFrame(drawPlayer);
