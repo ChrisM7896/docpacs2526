@@ -11,18 +11,21 @@ app.use(
 
 app.set("view engine", "ejs");
 
-app.listen(3000, () => {
-    console.log("Success");
-    
-});
+app.listen(3000, () => {});
 
 app.get("/", (req, res) => {
     res.render("index");
 });
+
+
 app.get("/view", (req, res) => {
-    //dataTable
-    res.render("view");
+    const entries = dataTable.data;
+    res.render("view", {
+        entries: entries
+    });
 });
+
+
 
 app.get("/add", (req, res) => {
     res.render("add", {
@@ -41,8 +44,6 @@ app.post("/add", (req, res) => {
     }
     dataTable.data.push(fullEntry);
     fs.writeFileSync("data.json", JSON.stringify(dataTable, null, 2)); //file system converts it back to a string so the user can read it
-    console.log(dataTable);
-    
     res.redirect("/");
 });
 
