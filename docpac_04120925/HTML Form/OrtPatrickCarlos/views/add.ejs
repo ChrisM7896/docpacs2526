@@ -1,22 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Add Entry</title>
+    <style>
+        body {
+            background: #f7f9fc;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 32px;
+        }
+        form {
+            margin-top: 16px;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-bottom: 16px;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            background: #e3eefe;
+            color: #333;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: auto;
+            padding: 8px 16px;
+        }
+        button:hover {
+            background: #cbe2fc;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
-
 <body>
-    <form action="/add" name="diary" method="POST">
-        <input type="text" name="title" placeholder="Title Text" required>
-        <br>
-        <textarea name="entry" placeholder="Write your entry here..." required></textarea>
-        <br>
-        <input type="date" name="date" required>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <div class="nav-buttons">
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href='/view'">View Entries</button>
+        </div>
+        <h1>Add New Diary Entry</h1>
+        <form action="/add" name="diary" method="POST">
+            <input type="text" name="title" placeholder="Title Text" required>
+            <textarea name="entry" placeholder="Write your entry here..." required></textarea>
+            <input type="date" name="date" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 </body>
-
 </html>
