@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    <form action="/add" id="diary" method="POST">
+    <form action="/add" name="diary" method="POST">
         <input type="text" name="title" placeholder="Title Text" required>
         <br>
-        <textarea name="entry" form="diary" placeholder="Write your entry here..." required></textarea>
+        <textarea name="entry" placeholder="Write your entry here..." required></textarea>
         <br>
-        <input type="password" name="title" placeholder="Title password" required>
-        <br>
-        <textarea name="entry" form="diary" placeholder="Write your entry here..." required></textarea>
+        <input type="date" name="date" required>
         <br>
         <button type="submit">Submit</button>
     </form>
 </body>
+
 </html>
