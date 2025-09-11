@@ -8,15 +8,18 @@
 
 	<body>
 	<!-- Container for the output -->
-	
+	<div id="output"></div>
 
 	  <script>
 		// Declare two number variables
-		
-
+		let number1 = 10
+		let number2 = 5
 		// Create output string
-		
-
+		let result = `Addition: ${number1 + number2} <br>
+					Subtraction: ${number1 - number2} <br>
+					Multiplication: ${number1 * number2}
+					Division: ${number1 / number2}`
+		document.getElementById("output").innerHTML = result;
 		// Display the result in the div
 		
 	  </script>
