@@ -40,54 +40,27 @@
     <div id="right" class="rectangle" style="display: inline-block;"></div>
 </body>
 <script>
-    let speed = 0.05;
+    let speed = 2;
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const avatar = { x: 0, y: 0, w: 22, h: 23.5, img: document.createElement('img')};
     avatar.img.src = 'yippee.gif'
 
+    let moveX = 0;
+    let moveY = 0;
+
     function playerPosition() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         console.log(avatar.x, avatar.y);
 		
-		
+        avatar.x += moveX * speed;
+        avatar.y += moveY * speed;
+
 		// This adds and event listener to the page every frame (60 times a second!)
 		// It only needs to be added once to handle when a button is pressed
 		// after you know if a button is pressed, you can set a variable to be handled in the animation frame later.
 		// Did you not notice that the movement was chunky and erratic?
-        document.addEventListener('keydown', function (event) {
-            if (event.keyCode == 38) {
-                document.getElementById('up').style.backgroundColor = "red";
-                avatar.y -= 1 * speed
-            }
-            else if (event.keyCode == 40) {
-                document.getElementById('down').style.backgroundColor = "red";
-                avatar.y -= -1 * speed
-            }
-            if (event.keyCode == 37) {
-                document.getElementById('left').style.backgroundColor = "red";
-                avatar.x += -1 * speed
-            }
-            else if (event.keyCode == 39) {
-                document.getElementById('right').style.backgroundColor = "red";
-                avatar.x += 1 * speed
-            }
-        });
 
-        document.addEventListener('keyup', function (event) {
-            if (event.keyCode == 38) {
-                document.getElementById('up').style.backgroundColor = "gray";
-            }
-            else if (event.keyCode == 40) {
-                document.getElementById('down').style.backgroundColor = "gray";
-            }
-            if (event.keyCode == 37) {
-                document.getElementById('left').style.backgroundColor = "gray";
-            }
-            else if (event.keyCode == 39) {
-                document.getElementById('right').style.backgroundColor = "gray";
-            }
-        });
 
         if (avatar.x < 0) {
             avatar.x = 0;
@@ -108,7 +81,40 @@
     }
     requestAnimationFrame(playerPosition);
 	
-	// Event listener should have been here
+    document.addEventListener('keydown', function (event) {
+                
+        if (event.keyCode == 38) {
+            document.getElementById('up').style.backgroundColor = "red";
+            moveY = -1
+        } else if (event.keyCode == 40) {
+            document.getElementById('down').style.backgroundColor = "red";
+            moveY = 1;
+        }
+        if (event.keyCode == 37) {
+            document.getElementById('left').style.backgroundColor = "red";
+            moveX = -1;
+        } else if (event.keyCode == 39) {
+            document.getElementById('right').style.backgroundColor = "red";
+            moveX = 1;
+        }
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if (event.keyCode == 38) {
+            document.getElementById('up').style.backgroundColor = "gray";
+            moveY = 0;
+        } else if (event.keyCode == 40) {
+            document.getElementById('down').style.backgroundColor = "gray";
+            moveY = 0;
+        }
+        if (event.keyCode == 37) {
+            document.getElementById('left').style.backgroundColor = "gray";
+            moveX = 0;
+        } else if (event.keyCode == 39) {
+            document.getElementById('right').style.backgroundColor = "gray";
+            moveX = 0;
+        }
+    });
 	
 </script>
 
