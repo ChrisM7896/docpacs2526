@@ -5,6 +5,20 @@
         "Cookies & Cream Cake"
       ],
       "drinks": "Bottled Water"
+    },
+    {
+      "flavors": [
+        "Cookies & Cream Cake",
+        "Pumpkin Cake Cookie"
+      ],
+      "drinks": "Bottled Water"
+    },
+    {
+      "flavors": [
+        "Milk Chocolate Chip Cookie",
+        "Cookies & Cream Cake"
+      ],
+      "drinks": "Bottled Water"
     }
   ]
 }
