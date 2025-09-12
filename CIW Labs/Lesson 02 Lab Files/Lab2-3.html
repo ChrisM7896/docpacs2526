@@ -19,11 +19,11 @@
     const output = document.getElementById("output");
     // Create output
     let html = `
-      <p>Values of variables: <strong>a = new Number(5)</strong>, <strong>b = "5"</strong>, <strong>c = new Number(10)</strong>.</p>
-      <p>Value of <b>insert your code here for comparing the value of variables a and b</p>
-      <p>Value of <b>insert your code here for comparing the value and type of variables a and b </p>
-      <p>Value of <b>insert your code here for checking if the variables a and c are not of the same type and do not have the same value</p>
-      <p>Value of <b>insert your code here for concatinating the values of variables a and b </p>
+      <p>Values of variables: <b> a = 5, b = "5", c = 10</p>
+      <p>Value of <b> a == b: true</b></p>
+      <p>Value of <b> a === b: false</b></p>
+      <p>Value of <b> !== c: true</b></p>
+      <p>Value of <b> a + b: 55</b></p>
     `;
     // Updates variable a using valueOf() to avoid object-to-object addition
     a = new Number(a.valueOf() + c.valueOf());
