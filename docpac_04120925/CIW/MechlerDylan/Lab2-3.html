@@ -20,10 +20,10 @@
     // Create output
     let html = `
       <p>Values of variables: <strong>a = new Number(5)</strong>, <strong>b = "5"</strong>, <strong>c = new Number(10)</strong>.</p>
-      <p>Value of <b>a == b</b></p>
-      <p>Value of <b>a === b</b></p>
-      <p>Value of <b>a !== c</b></p>
-      <p>Value of <b>a + b</b></p>
+      <p>Value of <b>a == b:${a == b}</b></p>
+      <p>Value of <b>a === b:${a === b}</b></p>
+      <p>Value of <b>a !== c:${a !== c}</b></p>
+      <p>Value of <b>a + b:${a + b}</b></p>
     `;
     // Updates variable a using valueOf() to avoid object-to-object addition
     a = new Number(a.valueOf() + c.valueOf());

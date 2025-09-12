@@ -8,18 +8,28 @@
 
 	<body>
 	<!-- Container for the output -->
-	
+	<div id="output"></div>
 
-	  <script>
+	<script>
 		// Declare two number variables
-		
-
+		let number1 = 10;
+		let number2 = 5;
+		var result = "";
 		// Create output string
-		
-
+		result = result + "Addition: " + (number1 + number2) + "<br>";
+		result = result + "Subtraction: " + (number1 - number2) + "<br>";
+		result = result + "Multiplication: " + (number1 * number2) + "<br>";
+		result = result + "Division: " + (number1 / number2) + "<br>";
+		result = result + "Modulus (remainder): " + (number1 % number2) + "<br>";
+		result = result + "Is number1 equal to number2? " + (number1 == number2) + "<br>";
+		result = result + "Is number1 not equal to number2? " + (number1 !== number2) + "<br>";
+		result = result + "Is number1 greater than number2? " + (number1 > number2) + "<br>";
+		result = result + "Is number1 less than number2? " + (number1 < number2) + "<br>";
+		result = result + "Is number1 greater than or equal to number2? " + (number1 >= number2) + "<br>";
+		result = result + "Is number1 less than or equal to number2? " + (number1 <= number2) + "<br>";
 		// Display the result in the div
-		
-	  </script>
+		document.getElementById("output").innerHTML = result;
+	</script>
 
 	</body>
 </html>
