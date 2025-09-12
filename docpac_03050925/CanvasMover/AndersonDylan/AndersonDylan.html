@@ -46,21 +46,31 @@
     const avatar = { x: 0, y: 0, w: 22, h: 23.5, img: document.createElement('img')};
     avatar.img.src = 'yippee.gif'
 
-    let moveX = 0;
-    let moveY = 0;
+    let up = false;
+    let down = false;
+    let left = false;
+    let right = false;
 
     function playerPosition() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         console.log(avatar.x, avatar.y);
 		
-        avatar.x += moveX * speed;
-        avatar.y += moveY * speed;
+        if (left && !right) {
+            avatar.x -= speed;
+        } else if (right && !left) {
+            avatar.x += speed;
+        }
 
-		// This adds and event listener to the page every frame (60 times a second!)
-		// It only needs to be added once to handle when a button is pressed
-		// after you know if a button is pressed, you can set a variable to be handled in the animation frame later.
-		// Did you not notice that the movement was chunky and erratic?
+        if (up && !down) {
+            avatar.y -= speed;
+        } else if (down && !up) {
+            avatar.y += speed;
+        }
 
+        // I did notice that it moved terribly, but as it did move when the buttons were pressed I figured it was fine enough.
+        // I also didn't have any clue what could possibly be wrong that made it act like that and I wasn't sure how to fix it.
+        // However once you did make me aware of what was wrong with it, I was in fact able to.
+        // I now realize I should have asked for help before submitting it, thank you.
 
         if (avatar.x < 0) {
             avatar.x = 0;
@@ -82,37 +92,34 @@
     requestAnimationFrame(playerPosition);
 	
     document.addEventListener('keydown', function (event) {
-                
         if (event.keyCode == 38) {
             document.getElementById('up').style.backgroundColor = "red";
-            moveY = -1
+            up = true;
         } else if (event.keyCode == 40) {
             document.getElementById('down').style.backgroundColor = "red";
-            moveY = 1;
-        }
-        if (event.keyCode == 37) {
+            down = true;
+        } else if (event.keyCode == 37) {
             document.getElementById('left').style.backgroundColor = "red";
-            moveX = -1;
+            left = true;
         } else if (event.keyCode == 39) {
             document.getElementById('right').style.backgroundColor = "red";
-            moveX = 1;
+            right = true;
         }
     });
 
     document.addEventListener('keyup', function (event) {
         if (event.keyCode == 38) {
             document.getElementById('up').style.backgroundColor = "gray";
-            moveY = 0;
+            up = false;
         } else if (event.keyCode == 40) {
             document.getElementById('down').style.backgroundColor = "gray";
-            moveY = 0;
-        }
-        if (event.keyCode == 37) {
+            down = false;
+        } else if (event.keyCode == 37) {
             document.getElementById('left').style.backgroundColor = "gray";
-            moveX = 0;
+            left = false;
         } else if (event.keyCode == 39) {
             document.getElementById('right').style.backgroundColor = "gray";
-            moveX = 0;
+            right = false;
         }
     });
 	
