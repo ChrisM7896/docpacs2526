@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+</head>
+<body>
+   <% if (orders && orders.length > 0) { %>
+        <ol>
+            <% for (let order of orders) { %>
+                <li>
+                    Flavors: <%= order.flavors.join(", ") %> <br>
+                    Drink: <%= order.drinks %>
+                </li>
+            <% } %>
+        </ol>
+    <% } else { %>
+        <p>No orders</p>
+    <% } %>
+        <a href="/">Home</a>
+        <a href="/add">Start Order</a><br>
+</body>
+</html>
