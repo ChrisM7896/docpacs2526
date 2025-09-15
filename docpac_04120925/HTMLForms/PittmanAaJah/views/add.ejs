@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start Order</title>
+</head>
+<body>
+    <h2>Start Your Crumbl Order</h2>
+    <h3>Choose Your Flavors</h3>
+    <form id="flavor" method="POST" action="/add">
+        
+        <label>Flavors:</label><br>
+        <input type="checkbox" name="flavor" value="Milk Chocolate Chip Cookie"> Milk Chocolate Chip Cookie <br>
+        <input type="checkbox" name="flavor" value="Cookies & Cream Cake"> Cookies & Cream Cake <br>
+        <input type="checkbox" name="flavor" value="Confetti Milkshake Cookie"> Confetti Milkshake Cookie <br>
+        <input type="checkbox" name="flavor" value="Brownie Batter Cookie"> Brownie Batter Cookie <br>
+        <input type="checkbox" name="flavor" value="Pumpkin Cake Cookie"> Pumpkin Cake Cookie <br>
+        <input type="checkbox" name="flavor" value="Salted Caramel Cheesecake Cookie"> Salted Caramel Cheesecake Cookie <br><br>
+
+        <label>Drinks:</label>
+        <select name="Drinks" required>
+            <option value="">Pick Your Drink</option>
+            <option value="Bottled Water">Bottled Water</option>
+            <option value="Bottled Soda">Botted Soda</option>
+            <option value="Fountain Drink">Fountain Drink</option>
+
+        </select>
+        <br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <a href="/">Home</a>
+    <a href="/view">View Past Orders </a>
+</body>
+</html>

@@ -40,48 +40,37 @@
     <div id="right" class="rectangle" style="display: inline-block;"></div>
 </body>
 <script>
-    let speed = 0.05;
+    let speed = 2;
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const avatar = { x: 0, y: 0, w: 22, h: 23.5, img: document.createElement('img')};
     avatar.img.src = 'yippee.gif'
 
+    let up = false;
+    let down = false;
+    let left = false;
+    let right = false;
+
     function playerPosition() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         console.log(avatar.x, avatar.y);
-        document.addEventListener('keydown', function (event) {
-            if (event.keyCode == 38) {
-                document.getElementById('up').style.backgroundColor = "red";
-                avatar.y -= 1 * speed
-            }
-            else if (event.keyCode == 40) {
-                document.getElementById('down').style.backgroundColor = "red";
-                avatar.y -= -1 * speed
-            }
-            if (event.keyCode == 37) {
-                document.getElementById('left').style.backgroundColor = "red";
-                avatar.x += -1 * speed
-            }
-            else if (event.keyCode == 39) {
-                document.getElementById('right').style.backgroundColor = "red";
-                avatar.x += 1 * speed
-            }
-        });
+		
+        if (left && !right) {
+            avatar.x -= speed;
+        } else if (right && !left) {
+            avatar.x += speed;
+        }
 
-        document.addEventListener('keyup', function (event) {
-            if (event.keyCode == 38) {
-                document.getElementById('up').style.backgroundColor = "gray";
-            }
-            else if (event.keyCode == 40) {
-                document.getElementById('down').style.backgroundColor = "gray";
-            }
-            if (event.keyCode == 37) {
-                document.getElementById('left').style.backgroundColor = "gray";
-            }
-            else if (event.keyCode == 39) {
-                document.getElementById('right').style.backgroundColor = "gray";
-            }
-        });
+        if (up && !down) {
+            avatar.y -= speed;
+        } else if (down && !up) {
+            avatar.y += speed;
+        }
+
+        // I did notice that it moved terribly, but as it did move when the buttons were pressed I figured it was fine enough.
+        // I also didn't have any clue what could possibly be wrong that made it act like that and I wasn't sure how to fix it.
+        // However once you did make me aware of what was wrong with it, I was in fact able to.
+        // I now realize I should have asked for help before submitting it, thank you.
 
         if (avatar.x < 0) {
             avatar.x = 0;
@@ -101,6 +90,39 @@
         requestAnimationFrame(playerPosition);
     }
     requestAnimationFrame(playerPosition);
+	
+    document.addEventListener('keydown', function (event) {
+        if (event.keyCode == 38) {
+            document.getElementById('up').style.backgroundColor = "red";
+            up = true;
+        } else if (event.keyCode == 40) {
+            document.getElementById('down').style.backgroundColor = "red";
+            down = true;
+        } else if (event.keyCode == 37) {
+            document.getElementById('left').style.backgroundColor = "red";
+            left = true;
+        } else if (event.keyCode == 39) {
+            document.getElementById('right').style.backgroundColor = "red";
+            right = true;
+        }
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if (event.keyCode == 38) {
+            document.getElementById('up').style.backgroundColor = "gray";
+            up = false;
+        } else if (event.keyCode == 40) {
+            document.getElementById('down').style.backgroundColor = "gray";
+            down = false;
+        } else if (event.keyCode == 37) {
+            document.getElementById('left').style.backgroundColor = "gray";
+            left = false;
+        } else if (event.keyCode == 39) {
+            document.getElementById('right').style.backgroundColor = "gray";
+            right = false;
+        }
+    });
+	
 </script>
 
 </html>
