@@ -1,0 +1,34 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    display: flex-box;
+    justify-content: center;
+    background-color: #010409;
+    color: white;
+}
+#gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+#scoreBox {
+    font-size: 48px;
+}
+#timerBox {
+    font-size: 96px;
+}
+#directionBox {
+    font-size: 64px;
+}
+#JoystickImage {
+    width: 150px;
+    height: 150px;
+    margin-top: 20px;
+    image-rendering: pixelated;
+}
+#highScoreBox {
+    font-size: 36px;
+    margin-top: 10px;
+}

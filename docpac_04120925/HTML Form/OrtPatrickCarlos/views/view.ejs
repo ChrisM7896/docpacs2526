@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background: #f7f9fc;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        button {
+            background: #e3eefe;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #cbe2fc;
+        }
+        h2 {
+            margin: 16px 0 8px 0;
+        }
+        p {
+            margin: 0 0 8px 0;
+        }
+        small {
+            color: #888;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 24px 0;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="location.href='/add'">Add new Entry</button>
+    <button onclick="location.href='/'">Home</button>
+    <% orders.forEach(function(entry) { %>
+        <h2><%= entry.title %></h2>
+        <p><%= entry.entry %></p>
+        <small><%= entry.date %></small>
+        <hr>
+    <% }); %>
+        
+</body>
+</html>

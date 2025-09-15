@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+    <h1>Entries</h1>
+    <ul>
+        <% entries.forEach(entry=> { %>
+            <li>
+                Entry: <%= entry.entry %><br>
+                Secret: <%= entry.secret %><br>
+            </li>
+            <br>
+            <% }); %>
+    </ul>
+    <a href="/">Back to Home</a>
+    <br>
+    <a href="/add">Fill Out a Form</a>
+
+</body>
+
+</html>
