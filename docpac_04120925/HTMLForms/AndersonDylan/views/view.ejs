@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Data</h1>
+    <div id="formData"></div>
+    <br>
+    <a href="/">Home</a>
+    <br>
+    <a href="/add">Add Entry</a>
+
+    <script>
+        var data = `<%-data%>`;
+        data = JSON.parse(data);
+        console.log(data);
+        var formData = document.getElementById('formData');
+        data.forEach((item, index) => {
+            var div = document.createElement('div');
+            div.innerHTML = `ID: ${index + 1} | Username: ${item.userName} | Password: ${item.password}`;
+            formData.appendChild(div);
+        });
+    </script>
+</body>
+</html>
