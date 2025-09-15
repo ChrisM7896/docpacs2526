@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Lesson 1 Application Project 2</title>
+
+	</head>
+
+	<body id="document">
+	<!-- Container for the output -->
+	
+
+	
+	<div id="output"></div>
+	<script>
+		// Declare two number variables
+		let number1=10
+		let number2=5
+		
+
+		// Create output string
+		
+		let result = "addition:" + (number1 + number2) + "<br>";
+		result += "subtraction:" + (number1 - number2) + "<br>";
+		result += "multiplication:" + (number1 * number2) + "<br>";
+		result += "division:" + (number1 / number2) + "<br>";
+		result += "modulus:" + (number1 % number2) + "<br>";
+		result += "is number1 equal to number2? " + (number1 == number2) + "<br>";
+		result += "is number1 not equal to number2? " + (number1 != number2) + "<br>";
+		result += "is number1 greater than number2? " + (number1 > number2) + "<br>";
+		result += "is number1 less than number2? " + (number1 < number2) + "<br>";
+		result += "is number1 greater than or equal to number2? " + (number1 >= number2) + "<br>";
+		result += "is number1 less than or equal to number2? " + (number1 <= number2) + "<br>";
+
+		console.log(result)
+
+		// Display the result in the div
+		document.getElementById("output").innerHTML = result;
+	</script>
+
+	</body>
+</html>

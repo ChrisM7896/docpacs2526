@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover</title>
+</head>
+<body>
+    <div id="coordinates">
+        You are using Keyboard to move the image<br>
+        Your coordinates: (0,0)
+    </div>
+    <canvas id="canvas" width="800" height="600">
+        
+    </canvas>
+</body>
+<script>
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.style.border = '1px solid black';
+    let coordinatesDiv = document.getElementById('coordinates');
+    // Player setup
+    const image = new Image();
+    image.src = 'thank-you-for-my-reefer.jpg';
+    const player = {
+        x: 50,
+        y: 50,
+        w: 80,
+        h: 60,
+        img: image
+    };
+
+    // Keyboard state
+    const keys = {};
+    let speed = 1;
+
+    document.addEventListener('keydown', (event) => {
+        keys[event.key] = true;
+    });
+    document.addEventListener('keyup', (event) => {
+        keys[event.key] = false;
+    });
+
+    function update() {
+
+        // Move player based on keys pressed
+        if (keys['ArrowUp']) {
+            player.y -= speed * 2;
+        } 
+        if (keys['ArrowDown']) {
+            player.y += speed * 2;
+        } 
+        if (keys['ArrowLeft']) {
+            player.x -= speed * 2;
+        } 
+        if (keys['ArrowRight']) {
+            player.x += speed * 2;
+        } 
+
+        // Prevent the player from leaving the canvas (bad player)
+        if (player.x < 0) {
+            player.x = 0;
+        }
+        if (player.x + player.w > canvas.width) {
+            player.x = canvas.width - player.w;
+        } 
+        if (player.y < 0) {
+            player.y = 0;
+        } 
+        if (player.y + player.h > canvas.height) {
+            player.y = canvas.height - player.h;
+        }
+
+        // Draw
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (player.x === canvas.width - player.w, player.y === canvas.height - player.h) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+        coordinatesDiv.innerHTML = 'You are using Keyboard to move the image<br>Your coordinates: (' + player.x + ', ' + player.y + ')';
+        
+
+        requestAnimationFrame(update);
+    }
+
+    // Start animation when image is loaded
+    image.onload = function() {
+        update();
+    };
+</script>
+</html>

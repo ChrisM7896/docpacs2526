@@ -1,0 +1,22 @@
+Part time to full time web app developer in Lancaster, PA - JavaScript, Vue, PHP, MySQL
+
+Description:
+"We are a small business providing the following services to other small to medium sized businesses in Lancaster County, PA. Several of our clients have need for web based applications to manage their business data. This could be client lists, product lists, and inventory management. We are developing these solutions using Vue.js as a frontend and PHP/MySQL as a backend.
+
+This job is part time 1099 based with flexible hours. Some work can be done from home, but we do need to have meetings in person in Lancaster, PA."
+
+Job Requirements:
+Skills in Vue,js, Typescript, PHP, MySQL, JavaScript, and GitHub
+Be dependable
+Be adaptable/flexible
+Be detail-oriented (that means focus on the work details rather than the bigger picture)
+
+Case Study Answer:
+Some advantages include a potentially reduced server load, faster loading time with pages and interactivity, and an enhanced user experience. Some disadvantages include security concerns,  complex debugging and maintenance, and an increased resource consumption with client-side.
+Some examples include real time updates, client side rendering, and interactive content.
+
+
+
+
+
+
