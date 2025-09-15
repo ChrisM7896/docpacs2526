@@ -49,6 +49,12 @@
     function playerPosition() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         console.log(avatar.x, avatar.y);
+		
+		
+		// This adds and event listener to the page every frame (60 times a second!)
+		// It only needs to be added once to handle when a button is pressed
+		// after you know if a button is pressed, you can set a variable to be handled in the animation frame later.
+		// Did you not notice that the movement was chunky and erratic?
         document.addEventListener('keydown', function (event) {
             if (event.keyCode == 38) {
                 document.getElementById('up').style.backgroundColor = "red";
@@ -101,6 +107,9 @@
         requestAnimationFrame(playerPosition);
     }
     requestAnimationFrame(playerPosition);
+	
+	// Event listener should have been here
+	
 </script>
 
 </html>
