@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Entries</title>
+</head>
+<body>
+    <h1>Hello, <%- name%></h1>
+    <p>These are all of the entries so far.</p>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Birthday</th>
+        </tr>
+        <% data.forEach(data => { %>
+            <tr>
+                <td><%- data.name %></td>
+                <td><%- data.birthday %></td>
+            </tr>
+        <% }) %>
+    </table>
+    <ul>
+        <li><a href="/add">Add more entries</a></li>
+        <li><a href="/">Back to the main page</a></li>
+    </ul>
+</body>
+
+</html>
