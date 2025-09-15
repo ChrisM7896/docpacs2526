@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Page</title>
+</head>
+<body>
+    <h3>See Users</h3>
+  <table id="user-table">
+    <tr>
+      <th>Username</th>
+      <th>Password</th>
+    </tr>
+  </table>
+
+  <script>
+    fetch('/data.json')
+      .then(res => res.json())
+      .then(data => {
+        const users = data.data;
+        const table = document.getElementById('user-table');
+
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${user.username}</td><td>${user.password}</td>`;
+          table.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error('Failed to load users:', err);
+      });
+  </script>
+  <br>
+  <button onclick="window.location.href='/'">Home</button>
+</body>
+</html>

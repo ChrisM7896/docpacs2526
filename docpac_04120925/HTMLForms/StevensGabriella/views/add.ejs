@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+    <head>
+        <title><%= title %> </title>
+    </head>
+    <body>
+        <h1><%= title %></h1>
+        <form action="/add" method="POST">
+            <label for="entry">Add Entry: </label>
+            <input type="text" name="entry" id="entry">
+            <br>
+            <label for="secret">Add a Secret: </label>
+            <input type="password" name="secret" id="secret">
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        <a href="/">Back to Home</a>
+    </body>

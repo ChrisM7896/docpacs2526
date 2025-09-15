@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order</title>
+
+    <style>
+        body {
+            background-color: #080808;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/add" method="POST">
+        <select name="clothing">
+            <option value="Hat">Hat</option>
+            <option value="Shirt">Shirt</option>
+            <option value="Pants">Pants</option>
+            <option value="Socks">Socks</option>
+        </select>
+        <input type="number" min="1" name="quantity">
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+
+</html>

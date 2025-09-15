@@ -52,6 +52,15 @@
             const key = event.key.toUpperCase();
             highlightButton(key);
 
+			// The instructions say to handle the player movement in the update loop,
+			// not in the key press handler.
+			// Did you not notice that the image only moved once per keypress?
+			// all of these if's needed to be in update()
+			
+			// It looks like you relied quite heavily on AI. Please make sure
+			// you read and understand the instructions, and never use any AI
+			// code that you don't completely understand.
+
             if (key === "ARROWUP" || key === "W") {
                 guy.y -= guy.speed;
             } else if (key === "ARROWDOWN" || key === "S") {   
