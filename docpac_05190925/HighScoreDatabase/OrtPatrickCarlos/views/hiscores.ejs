@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Scores</title>
+</head>
+<body>
+    <h1>High Scores</h1>
+    <ul>
+        <% if (scores > 0) { %>
+            <% scores.forEach(function(score) { %>
+                <li><strong><%= score.name %></strong>: <%= score.score %></li>
+            <% }); %>
+        <% } else { %>
+            <li>No high scores available.</li>
+        <% } %>
+    </ul>
+</body>
+</html>

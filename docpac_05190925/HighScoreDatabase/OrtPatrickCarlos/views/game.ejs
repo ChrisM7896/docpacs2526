@@ -134,16 +134,14 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
     }
     else {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/hiscores');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                console.log('Score submitted successfully');
-            }
-        };
-        const data = JSON.stringify({ name: name, score: score });
-        xhr.send(data);
+        fetch('/game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: name, score: score })
+        })
+
     }
 }
 
