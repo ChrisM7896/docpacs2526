@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+</head>
+<body>
+    <h1>Birthday List</h1>
+    <div>Arranged by year, month, day</div>
+    <% if(bdayList) { %>
+        <ul>
+            <% for (birthday of bdayList) { %>
+                <li> <%= birthday.person %>, <%= birthday.birthday %> </li>
+            <% } %>
+            </ul>
+    <% } %>
+
+    <a href="/">Here to go back</a>
+</body>
+</html>

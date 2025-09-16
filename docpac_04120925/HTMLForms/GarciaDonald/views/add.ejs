@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Entries</title>
+</head>
+<body>
+    <h1>Hello, <%- name %> </h1>
+    <p>This is the page where you can add entries.</p>
+    <form id="addentry" method="POST" action="/add" >
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="birthday">Birthday:</label>
+        <input type="date" id="birthday" name="birthday" required><br><br>
+        <label for="confirm">I confirm this is the right information</label><input type="checkbox"><br>
+        <input type="submit" value="Add Entry">
+    </form>
+</body>
+<script>
+    
+</script>
+</html>
