@@ -16,7 +16,7 @@
             overflow: hidden;
         }
 
-        div {
+        #scoreBox, #timerBox, #directionBox {
             border: 2px solid white;
             width: 200px;
             height: 200px;
@@ -31,14 +31,29 @@
         button {
             position: absolute;
             top: 20%;
-            left: 45%;
+            left: 50%;
+            transform: translateX(-50%);
             padding: 10px 20px;
+            font-size: 16px;
+        }
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border: 2px solid white;
+            padding: 10px;
+            color: white;
             font-size: 16px;
         }
     </style>
 </head>
 
 <body>
+    <div id="links">
+        <a href="/">Home</a>
+        <a href="highscores">High Scores</a>
+    </div>
+
     <button onclick="window.location.reload()">RESTART or press +</button>
 
     <div id="scoreBox">0</div>
@@ -54,29 +69,28 @@
     var timer = 20
     var direction = 0
     var buttonheld = false
-    var gameover = false
 
     //initial display
     document.getElementById("timerBox").innerHTML = "20"
     document.getElementById("directionBox").innerHTML = "UP"
 
     //THE TIMER
-    setInterval(function () {
+    let TIMER = setInterval(function () {
         if (timer > 0) {
             timer -= 1
             document.getElementById("timerBox").innerHTML = timer
         }
         else if (timer == 0) {
             document.getElementById("timerBox").innerHTML = "TIME'S UP!"
+            document.getElementById("directionBox").innerHTML = "GAME OVER"
             buttonheld = false
-            gameover = true
-            clearInterval(timer)
             clearInterval(DIRECTION)
+            clearInterval(TIMER)
         }
     }, 1000);
 
     //THE DIRECTION
-    setInterval(function (DIRECTION) {
+    let DIRECTION = setInterval(function () {
         direction = Math.floor(Math.random() * 4)
         console.log(direction)
         if (direction == 0) {
@@ -90,9 +104,6 @@
         }
         else if (direction == 3) {
             document.getElementById("directionBox").innerHTML = "LEFT"
-        }
-        else if (timerBox == "TIME'S UP!") {
-            document.getElementById("directionBox").innerHTML = "GAME OVER"
         }
     }, 2000);
 
@@ -124,10 +135,12 @@
                     document.getElementById("scoreBox").innerHTML = score
                     buttonheld = false
                 }
+                else {
+                    buttonheld = true
+                }
             }
         }
     }
-
 
     //gamepad
     function update() {
@@ -139,7 +152,6 @@
         } requestAnimationFrame(update);
     }
 
-    //gamepad 
     window.addEventListener("gamepadconnected", (e) => {
         console.log(`Gamepad connected at index ${e.gamepad.index}.`);
         requestAnimationFrame(update);
