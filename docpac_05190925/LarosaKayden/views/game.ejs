@@ -16,7 +16,7 @@
             overflow: hidden;
         }
 
-        div{
+        div {
             border: 2px solid white;
             width: 200px;
             height: 200px;
@@ -54,6 +54,11 @@
     var timer = 20
     var direction = 0
     var buttonheld = false
+    var gameover = false
+
+    //initial display
+    document.getElementById("timerBox").innerHTML = "20"
+    document.getElementById("directionBox").innerHTML = "UP"
 
     //THE TIMER
     setInterval(function () {
@@ -61,10 +66,17 @@
             timer -= 1
             document.getElementById("timerBox").innerHTML = timer
         }
+        else if (timer == 0) {
+            document.getElementById("timerBox").innerHTML = "TIME'S UP!"
+            buttonheld = false
+            gameover = true
+            clearInterval(timer)
+            clearInterval(DIRECTION)
+        }
     }, 1000);
 
     //THE DIRECTION
-    setInterval(function () {
+    setInterval(function (DIRECTION) {
         direction = Math.floor(Math.random() * 4)
         console.log(direction)
         if (direction == 0) {
@@ -96,7 +108,6 @@
                     score += 1
                     document.getElementById("scoreBox").innerHTML = score
                     buttonheld = false
-
                 }
                 else if (direction == 1 && gamepad.axes[0] > 0.5 && buttonheld == true) {
                     score += 1
@@ -117,6 +128,7 @@
         }
     }
 
+
     //gamepad
     function update() {
         const gamepads = navigator.getGamepads();
@@ -124,8 +136,7 @@
             if (pad) {
                 handleGamepadInput(pad);
             }
-        }
-        requestAnimationFrame(update);
+        } requestAnimationFrame(update);
     }
 
     //gamepad 
