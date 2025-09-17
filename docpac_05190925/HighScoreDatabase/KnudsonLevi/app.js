@@ -1,5 +1,4 @@
 const fs = require('fs');
-const bodyParser = require('body-parser');
 const path = require('path');
 const express = require('express');
 const { get } = require('http');
@@ -20,11 +19,14 @@ const db = new sqlite3.Database(dbFile, (err) => {
 });
 //Retrieve highscore from database
 function getHighscore(name, ip) {
-    db.get('SELECT score FROM scores WHERE name = ? AND ip = ? ORDER BY score DESC LIMIT 1', [name, ip], (err, row) => {
-        if (err) {
-            return console.error(err.message);
-        }
-        return row
+    return new Promise((resolve, reject) => {
+        db.get('SELECT score FROM scores WHERE name = ? AND ip = ? ORDER BY score DESC LIMIT 1', [name, ip], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row ? row.score : 0); // Return the score or 0 if no row is found
+            }
+        });
     });
 }
 //Save highscores to database
@@ -48,15 +50,22 @@ app.get("/game", function (req, res) {
     res.render('buttonMasher.ejs');
 });
 //Get score data from client and respond with high score
-app.use(bodyParser.json());
-app.post('/hiscores', (req, res) => {
-    console.log(req.body);
-    const score = req.body.score;
-    const name = req.body.name;
-    const ip = req.ip;
-    console.log("Retrieved highscore: " + getHighscore(name, ip));
-    saveScore(score, name, ip);
-    res.json({highscore: getHighscore(name, ip)});
+app.post('/hiscores', async (req, res) => {
+    console.log("Recieved", req.body, "from client", req.ip);
+    let score = req.body.score;
+    let name = req.body.name;
+    let ip = req.ip;
+    try {
+        let highscore = await getHighscore(name, ip);
+        if (score > highscore) {
+            saveScore(score, name, ip);
+            highscore = score;
+        }
+        res.json({highscore: highscore});
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Failed to retrieve highscore" });
+    }
 });
 //Start the server
 app.listen(3000, function () {
