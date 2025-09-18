@@ -1,7 +1,5 @@
-const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const { get } = require('http');
 const app = express();
 const sqlite3 = require('sqlite3').verbose();
 app.set('view engine', 'ejs');
@@ -24,7 +22,7 @@ function getHighscore(name, ip) {
             if (err) {
                 reject(err);
             } else {
-                resolve(row ? row.score : 0); // Return the score or 0 if no row is found
+                resolve(row ? row.score : 0);
             }
         });
     });
@@ -45,9 +43,18 @@ app.get("/", function (req, res) {
     // Sending index.html to the browser
     res.render('index.ejs');
 });
-// Get request for the game
+//Get request for the game
 app.get("/game", function (req, res) {
     res.render('buttonMasher.ejs');
+});
+//Get request for leaderboard
+app.get("/hiscores", function (req, res) {
+    db.all('SELECT name, score FROM scores ORDER BY score DESC LIMIT 10', [], (err, rows) => {
+        if (err) {
+            throw err;
+        }
+        res.render('hiscores.ejs', {data: rows});
+    });
 });
 //Get score data from client and respond with high score
 app.post('/hiscores', async (req, res) => {
@@ -55,11 +62,16 @@ app.post('/hiscores', async (req, res) => {
     let score = req.body.score;
     let name = req.body.name;
     let ip = req.ip;
+    if (name.length > 20 || name.length == 0 || name == null) {
+        name = "Cheater!";
+    }
     try {
         let highscore = await getHighscore(name, ip);
-        if (score > highscore) {
+        if (score > 600) {
+            highscore = "Cheater!";
+        } else if (score > highscore) {
             saveScore(score, name, ip);
-            highscore = score;
+            highscore = score; 
         }
         res.json({highscore: highscore});
     } catch (err) {

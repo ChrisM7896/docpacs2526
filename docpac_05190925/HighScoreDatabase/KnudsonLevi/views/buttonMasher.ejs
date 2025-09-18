@@ -40,6 +40,19 @@
             font-size: 36px;
             margin-top: 10px;
         }
+        button{
+            color: white;
+            font-size: 48px;
+            padding: 15px 30px;
+            margin:20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2c344c;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +62,9 @@
         <div id="timerBox">20</div>
         <div id="directionBox"></div>
         <img id="JoystickImage">
+        <a href="/">
+            <button>Back</button>
+        </a>
     </div>
     <script>
         //global variables
@@ -63,8 +79,9 @@
         var highScore;
         var name = "Guest";
         name = prompt("Enter a name to be displayed on the leaderboard (max 20 characters):");
-        if (name.length > 20) {
-            name = name.slice(0, 20);
+        name = name.trim();
+        if (name.length > 20 || name.length == 0) {
+            name = "Guest"; 
         }
         setDirection();
         HighScore();
@@ -135,9 +152,13 @@
                 //reset wasHeld when A button is released
                 wasHeld = false;
             }
-            //check if Plus button is pressed
+            //check if start button is pressed
             if (gamepad.buttons[9].pressed) {
                 OnPlusPress();
+            }
+            //check if select button is pressed
+            if (gamepad.buttons[8].pressed) {
+                OnMinusPress();
             }
             requestAnimationFrame(gamepadListener);
         }
@@ -188,28 +209,32 @@
             //reload the page to reset the game
             location.reload();
         }
+        function OnMinusPress() {
+            window.location.href = "/";
+        }
         function HighScore() {
             const data = {score: score, name: name};
-            fetch('/hiscores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Recieved High Score:', result);
-                document.getElementById("highScoreBox").innerHTML = "High Score: " + result['highscore'];
-                highScore = result['highscore'];
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        // var xhr = new XMLHttpRequest();
-        // xhr.open("POST", "/hiscores", true);
-        // xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        // xhr.send(JSON.stringify(data));
+            const xhr = new XMLHttpRequest();
+            //open POST request to the server
+            xhr.open("POST", "/hiscores", true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            //define what happens when the server responds
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const result = JSON.parse(xhr.responseText);
+                    console.log('Received High Score:', result);
+                    document.getElementById("highScoreBox").innerHTML = "High Score: " + result['highscore'];
+                    highScore = result['highscore'];
+                } else {
+                    console.error('Error:', xhr.statusText);
+                }
+            };
+            //handle network errors
+            xhr.onerror = function () {
+                console.error('Request failed');
+            };
+            //send the data to the server
+            xhr.send(JSON.stringify(data));
         }
         </script>
 </body>
