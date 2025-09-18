@@ -45,7 +45,6 @@
     <div id="ScoreBox"></div>
     <div id="TimerBox"></div>
     <div id="DirectionBox"></div>
-
 </body>
 <script>
    let name = prompt("What is your name?") 
@@ -91,28 +90,28 @@
 });
 
 function gameLoop() {
-       const gamepads = navigator.getGamepads();
-       for (let gamepad of gamepads) {
-           if (gamepad) {
-               if (gamepad.buttons[0].pressed && timer > 0 && buttonPressed) {
-                   if (gamepad.axes[1] <= -1 && direction == 0) {
-                       score++;
-                       document.getElementById("ScoreBox").innerHTML = score;
-                   } else if (gamepad.axes[1] >= 1 && direction == 1) {
-                       score++;
-                       document.getElementById("ScoreBox").innerHTML = score;
-                   } else if (gamepad.axes[0] <= -1 && direction == 2) {
-                       score++;
-                       document.getElementById("ScoreBox").innerHTML = score;
-                   } else if (gamepad.axes[0] >= 1 && direction == 3) {
-                       score++;
-                       document.getElementById("ScoreBox").innerHTML = score;
-                   }
-                   buttonPressed = false;
-               }
-               if (!gamepad.buttons[0].pressed) {
-                   buttonPressed = true;
-               }
+    const gamepads = navigator.getGamepads();
+    for (let gamepad of gamepads) {
+        if (gamepad) {
+            if (gamepad.buttons[0].pressed && timer > 0 && buttonPressed) {
+                if (gamepad.axes[1] <= -1 && direction == 0) {
+                    score++;
+                    document.getElementById("ScoreBox").innerHTML = score;
+                } else if (gamepad.axes[1] >= 1 && direction == 1) {
+                    score++;
+                    document.getElementById("ScoreBox").innerHTML = score;
+                } else if (gamepad.axes[0] <= -1 && direction == 2) {
+                    score++;
+                    document.getElementById("ScoreBox").innerHTML = score;
+                } else if (gamepad.axes[0] >= 1 && direction == 3) {
+                    score++;
+                    document.getElementById("ScoreBox").innerHTML = score;
+                }
+                buttonPressed = false;
+            }
+            if (!gamepad.buttons[0].pressed) {
+                buttonPressed = true;
+            }
             gamepad.buttons.forEach((button, index) => {
                 if (button.pressed) {
                     console.log(`Button ${index} is pressed`);
@@ -123,17 +122,15 @@ function gameLoop() {
             gamepad.axes.forEach((axis, index) => {
                 console.log(`Axis ${index}: ${axis.toFixed(2)}`);
             });
-                if (gamepad.buttons[9].pressed) {
+            if (gamepad.buttons[9].pressed) {
                 location.reload();
-                }   
+            }
         }
-        
     }
 
     if (timer > 0) {
-    requestAnimationFrame(gameLoop);
-    }
-    else {
+        requestAnimationFrame(gameLoop);
+    } else {
         fetch('/game', {
             method: 'POST',
             headers: {
@@ -141,7 +138,17 @@ function gameLoop() {
             },
             body: JSON.stringify({ name: name, score: score })
         })
-
+        .then(response => {
+            if (response.ok) {
+                // Redirect to the hiscores page after the POST request is successful
+                window.location.href = '/hiscores';
+            } else {
+                console.error('Failed to submit score');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 }
 
