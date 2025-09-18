@@ -77,14 +77,6 @@
     document.getElementById("timerBox").innerHTML = "20"
     document.getElementById("directionBox").innerHTML = "UP"
 
-    //fastcheck
-    setInterval(() => {
-        if (timer = 0 ) {
-            clearInterval(TIMER)
-            clearInterval(DIRECTION)
-        }
-    }, 100);
-
     //THE TIMER
     let TIMER = setInterval(function () {
         if (timer > 0) {
@@ -95,18 +87,29 @@
             document.getElementById("timerBox").innerHTML = "TIME'S UP!"
             document.getElementById("directionBox").innerHTML = "GAME OVER"
             buttonheld = false
-            clearInterval(DIRECTION)
 
             //submit score to server
-            username = prompt("ENTER you name?")
-            if (username != null) {}
-               
-            else {
-                alert("Score not submitted")
-            }
-            //submit score to server
-        }
-        else if (timer > 0) {
+            setTimeout(() => {
+                let username = prompt("ENTER you name form the leader of boards?")
+                if (!username) { username = "Anonymous" }
+
+                fetch("/submitScore", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: username, score: score })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Score submitted!", data);
+                        alert("Score submitted! Current highscore: " + data.highscores[0].score);
+                    })
+                    .catch(err => {
+                        console.error("Error submitting score:", err);
+                        alert("Failed to submit score.");
+                    });
+            }, 100);
+
+            clearInterval(DIRECTION)
             clearInterval(TIMER)
         }
     }, 1000);
