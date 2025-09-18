@@ -16,7 +16,9 @@
             overflow: hidden;
         }
 
-        #scoreBox, #timerBox, #directionBox {
+        #scoreBox,
+        #timerBox,
+        #directionBox {
             border: 2px solid white;
             width: 200px;
             height: 200px;
@@ -36,14 +38,15 @@
             padding: 10px 20px;
             font-size: 16px;
         }
+
         #links {
             position: absolute;
             top: 10px;
             left: 10px;
-            border: 2px solid white;
             padding: 10px;
             color: white;
             font-size: 16px;
+            background-color: white;
         }
     </style>
 </head>
@@ -74,6 +77,14 @@
     document.getElementById("timerBox").innerHTML = "20"
     document.getElementById("directionBox").innerHTML = "UP"
 
+    //fastcheck
+    setInterval(() => {
+        if (timer = 0 ) {
+            clearInterval(TIMER)
+            clearInterval(DIRECTION)
+        }
+    }, 100);
+
     //THE TIMER
     let TIMER = setInterval(function () {
         if (timer > 0) {
@@ -85,6 +96,17 @@
             document.getElementById("directionBox").innerHTML = "GAME OVER"
             buttonheld = false
             clearInterval(DIRECTION)
+
+            //submit score to server
+            username = prompt("ENTER you name?")
+            if (username != null) {}
+               
+            else {
+                alert("Score not submitted")
+            }
+            //submit score to server
+        }
+        else if (timer > 0) {
             clearInterval(TIMER)
         }
     }, 1000);
@@ -113,33 +135,27 @@
             window.location.reload()
         }
 
-        if (gamepad.buttons[0].pressed) {
-            if (timer > 0) {
-                if (direction == 0 && gamepad.axes[1] < -0.5 && buttonheld == true) {
-                    score += 1
-                    document.getElementById("scoreBox").innerHTML = score
-                    buttonheld = false
-                }
-                else if (direction == 1 && gamepad.axes[0] > 0.5 && buttonheld == true) {
-                    score += 1
-                    document.getElementById("scoreBox").innerHTML = score
-                    buttonheld = false
-                }
-                else if (direction == 2 && gamepad.axes[1] > 0.5 && buttonheld == true) {
-                    score += 1
-                    document.getElementById("scoreBox").innerHTML = score
-                    buttonheld = false
-                }
-                else if (direction == 3 && gamepad.axes[0] < -0.5 && buttonheld == true) {
-                    score += 1
-                    document.getElementById("scoreBox").innerHTML = score
-                    buttonheld = false
-                }
-                else {
-                    buttonheld = true
-                }
+        if (gamepad.buttons[0].pressed && timer > 0 && !buttonheld) {
+            buttonheld = true
+            if (direction == 0 && gamepad.axes[1] < -0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
             }
+            else if (direction == 1 && gamepad.axes[0] > 0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+            else if (direction == 2 && gamepad.axes[1] > 0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+            else if (direction == 3 && gamepad.axes[0] < -0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+
         }
+        buttonheld = gamepad.buttons[0].pressed
     }
 
     //gamepad

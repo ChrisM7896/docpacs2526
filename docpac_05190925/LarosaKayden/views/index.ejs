@@ -6,15 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hame Page</title>
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+        }
+
         #links {
             position: absolute;
             top: 10px;
             left: 10px;
-            border: 2px solid white;
             padding: 10px;
             color: white;
             font-size: 16px;
+            background-color: white;
         }
+
+        #home {
+            color: white;
+            font-size: 30px;
+        }
+
     </style>
 </head>
 
@@ -23,6 +39,7 @@
         <a href="game">Game</a>
         <a href="highscores">High Scores</a>
     </div>
+    <div id="home">This is home page</div>
 </body>
 
 </html>

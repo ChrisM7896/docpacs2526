@@ -1,3 +1,4 @@
+//setup
 const express = require("express");
 const app = express()
 const port = 3000
@@ -5,12 +6,15 @@ const port = 3000
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
+let highscores = []
+
+//app.gets
 app.get('/', (req, res) => {
   res.render('index'), { title: 'Hame page' };
 });
 
 app.get('/highscores', (req, res) => {
-    res.render('highscores', { title: 'High Scores'});
+  res.render('highscores', { title: 'High Scores' });
 });
 
 app.get('/game', (req, res) => {
@@ -19,6 +23,11 @@ app.get('/game', (req, res) => {
 
 app.get('/error', (req, res) => {
   res.render('error', { title: 'uh-oh' });
+});
+
+//other
+app.post('/highscores', (req, res) => {
+  req.body
 });
 
 app.listen(port)
