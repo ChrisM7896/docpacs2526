@@ -68,6 +68,8 @@ li strong {
     <button onclick="location.href='/game'">Game</button>
 
     <ul>
+        <% // six seven %>
+        <% scores = scores.slice(0, 10); %>
         <% if (scores && scores.length > 0) { %>
             <% scores.forEach(function(score) { %>
                 <li><strong>Name:</strong> <%= score.name %>, <strong>Score:</strong> <%= score.score %>, <strong>IP:</strong> <%= score.ip %></li>

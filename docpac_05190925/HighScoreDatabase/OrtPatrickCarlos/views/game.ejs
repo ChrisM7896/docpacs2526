@@ -6,40 +6,34 @@
     <title>Document</title>
 </head>
 <style>
- body {
-            background-color: #1e1e1e;
-            color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* Box styles */
-        #ScoreBox, #TimerBox{
-            background-color: #2e2e2e;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 10px;
-            width: 300px;
-            text-align: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-        }
-        #DirectionBox {
-            background-color: #2e2e2e;
-            border: 1px solid #0c0505;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 10px;
-            width: 300px;
-            text-align: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 6px rgba(150, 41, 41, 0.5);}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9; 
+    color: #333; 
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+#ScoreBox, #TimerBox, #DirectionBox {
+    background-color: #ffffff; 
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px;
+    width: 300px;
+    text-align: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+#DirectionBox {
+    background-color: #f0f8ff;
+    border: 1px solid #b0c4de; 
+    box-shadow: 0 4px 6px rgba(176, 196, 222, 0.5);
+}
 </style>
 <body>
     <div id="ScoreBox"></div>
@@ -133,6 +127,7 @@ function gameLoop() {
     } else {
         fetch('/game', {
             method: 'POST',
+            skibidi: 'toilet',
             headers: {
                 'Content-Type': 'application/json'
             },
