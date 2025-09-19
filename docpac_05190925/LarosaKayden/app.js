@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 //database
-const db = new sqlite3.Database("./scores.db");
+const db = new sqlite3.Database("./data/database.db");
 
 //app.gets
 app.get('/', (req, res) => {
@@ -20,7 +20,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/highscores', (req, res) => {
-  res.render('highscores', { title: 'High Scores' });
+  // After inserting, fetch top 10 highscores
+  db.all("SELECT name, score FROM scores ORDER BY score DESC LIMIT 10", (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).render("error", { title: "uh-oh" });
+    }
+    res.render('highscores', { title: 'Highscores', highscores: JSON.stringify(rows) });
+  });
 });
 
 app.get('/game', (req, res) => {
@@ -38,23 +45,13 @@ app.post('/submitScore', (req, res) => {
 
   // Insert the new score
   db.run(
-    "INSERT INTO scores (username, score, ip) VALUES (?, ?, ?)",
+    "INSERT INTO scores (name, score, ip) VALUES (?, ?, ?)",
     [username, score, ip],
     function (err) {
       if (err) {
         console.error(err.message);
         return res.status(500).render("error", { title: "uh-oh" });
       }
-
-      // After inserting, fetch top 10 highscores
-      db.all("SELECT username, score FROM scores ORDER BY score DESC LIMIT 10", (err, rows) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).render("error", { title: "uh-oh" });
-        }
-
-        res.json({ success: true, highscores: rows });
-      });
     }
   );
 });

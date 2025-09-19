@@ -25,6 +25,11 @@
             font-size: 16px;
             background-color: white;
         }
+
+        .score-item {
+            margin: 10px;
+            padding: 5px;
+        }
     </style>
 </head>
 
@@ -33,15 +38,19 @@
         <a href="/">Home</a>
         <a href="game">Game</a>
     </div>
-    <h1 style="color: white;">The boards of leaders High Scorcerer's</h1>
-    <ol style="color: white; font-size: 20px; border: 10px solid white;">
-        <% highscores.forEach(score=> { %>
-            <li style="border: 1px solid white;">
-                <%= score.username %> — <%= score.score %>
-            </li>
-            <% }) %>
-    </ol>
-
+    <h1 style="color: white; position: absolute; height: 100%; font-size: 90px;">The Board of Leaders High Scorecerer's
+    </h1>
+    <ol style="color: white; font-size: 20px; border: 10px solid white; width: 900px;"></ol>
+    <script>
+        var highscores = JSON.parse(`<%- highscores %>`);
+        console.log(highscores);
+        highscores.forEach(score => {
+            var li = document.createElement("li");
+            li.textContent = score.name + ": " + score.score;
+            li.className = "score-item";
+            document.querySelector("ol").appendChild(li);
+        });
+    </script>
 </body>
 
 </html>
