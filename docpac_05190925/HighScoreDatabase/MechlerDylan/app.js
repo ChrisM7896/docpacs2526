@@ -32,9 +32,6 @@ app.post('/hiscores', (req, res) => {
     console.log(`Username: ${username}, Score: ${score}`);
     ipaddress = req.ip;
     console.log(ipaddress);
-    if (!username || username == '') {
-        username = 'Anonymous';
-    }
     db.run(`INSERT INTO scores(name, score, ip) VALUES(?, ?, ?)`, [username, score, ipaddress], function(err) {
         if (err) {
             return console.log(err.message);
