@@ -33,7 +33,30 @@ app.get('/error', (req, res) => {
 
 //other
 app.post('/submitScore', (req, res) => {
-  req.body
-  });
+  const { username, score } = req.body;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  // Insert the new score
+  db.run(
+    "INSERT INTO scores (username, score, ip) VALUES (?, ?, ?)",
+    [username, score, ip],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).render("error", { title: "uh-oh" });
+      }
+
+      // After inserting, fetch top 10 highscores
+      db.all("SELECT username, score FROM scores ORDER BY score DESC LIMIT 10", (err, rows) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).render("error", { title: "uh-oh" });
+        }
+
+        res.json({ success: true, highscores: rows });
+      });
+    }
+  );
+});
 
 app.listen(port)
