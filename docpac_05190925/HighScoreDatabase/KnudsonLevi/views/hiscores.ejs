@@ -66,6 +66,7 @@
         <button>Back</button>
     </a>
     <script>
+        //Gamepad menu navigation
         var controllerConected = false;
         window.addEventListener('gamepadconnected', (event) => {
             const gamepad = event.gamepad;
@@ -81,12 +82,16 @@
         function gamepadListener() {
             //shortcut to access p1 Gamepad
             const gamepad = navigator.getGamepads()[gamepadIndex];
-            //check if select is pressed
+            //Go to home page if select is pressed
             if (gamepad.buttons[8].pressed) {
                 window.location.href = "/";
             }
             requestAnimationFrame(gamepadListener);
         }
+        window.onbeforeunload = () => {
+            gamepadListenerAdded = false; // Reset the flag when leaving the page
+            cancelAnimationFrame(gamepadListener); // Stop the gamepad listener loop
+        };
     </script>
 </body>
 </html>

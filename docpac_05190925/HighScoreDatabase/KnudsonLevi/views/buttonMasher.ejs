@@ -80,8 +80,10 @@
         var name = "Guest";
         name = prompt("Enter a name to be displayed on the leaderboard (max 20 characters):");
         name = name.trim();
-        if (name.length > 20 || name.length == 0) {
-            name = "Guest"; 
+        if (name.length > 20) {
+            name = name.slice(0, 20);
+        } else if (name.length == 0 || name == 'null') {
+            name = "Guest";
         }
         setDirection();
         HighScore();
