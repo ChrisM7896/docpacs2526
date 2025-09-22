@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Score</th>
+        </tr>
+
+    </table>
+    <script>
+        var highscores = JSON.parse(`<%- highscores %>`);
+        console.log(highscores);
+        highscores.forEach(function(highscore) {
+            var row = document.createElement('tr');
+            var nameCell = document.createElement('td');
+            var scoreCell = document.createElement('td');
+
+            nameCell.textContent = highscore.name;
+            scoreCell.textContent = highscore.score;
+
+            row.appendChild(nameCell);
+            row.appendChild(scoreCell);
+
+            document.querySelector('table').appendChild(row);
+        });
+    </script>
+    <a href="/">Back To Home Page</a>
+</body>
+</html>
