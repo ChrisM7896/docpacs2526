@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher - Home</title>
+    <link rel="icon" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            display: flex-box;
+            justify-content: center;
+            background-color: #010409;
+            color: white;
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        #playButton{
+            color: white;
+            font-size: 72px;
+            padding: 20px 40px;
+            margin-top: 125px;
+            margin-bottom:20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        #scoresButton{
+            color: white;
+            font-size: 32px;
+            padding: 20px 20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        h1{
+            font-size: 72px;
+            margin: 0px;
+        }
+        #scoresButton:hover, #playButton:hover {
+            background-color: #2c344c;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <h1>Button Masher</h1>
+        <a href="/game">
+            <button id="playButton">Play</button>
+        </a>
+        <a href="/hiscores">
+            <button id="scoresButton">Leaderboard</button>
+        </a>
+    </div>
+    <script>
+        //Gamepad menu navigation
+        var controllerConected = false;
+        window.addEventListener('gamepadconnected', (event) => {
+            const gamepad = event.gamepad;
+            if ((gamepad.id.toLowerCase().includes("xinput") || gamepad.id.toLowerCase().includes("playstation")) && !controllerConected) {
+                console.log(`Supported Gamepad connected: ${gamepad.id} (index ${gamepad.index})`);
+                gamepadIndex = gamepad.index;
+                controllerConected = true;
+                gamepadListener();
+            } else {
+                alert("Gamepad Unsupported!")
+            }
+        });
+        function gamepadListener() {
+            //shortcut to access p1 Gamepad
+            const gamepad = navigator.getGamepads()[gamepadIndex];
+            //Go to game page if start button is pressed
+            if (gamepad.buttons[9].pressed) {
+                window.location.href = "/game";
+            }
+            //Go to leaderboard if select is pressed
+            if (gamepad.buttons[8].pressed) {
+                window.location.href = "/hiscores";
+            }
+            requestAnimationFrame(gamepadListener);
+        }
+        window.onbeforeunload = () => {
+            gamepadListenerAdded = false; // Reset the flag when leaving the page
+            cancelAnimationFrame(gamepadListener); // Stop the gamepad listener loop
+        };
+    </script>
+</body>
+</html>
