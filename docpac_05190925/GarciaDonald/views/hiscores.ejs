@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+    }
+</style>
+<body>
+    <h1>Hello, Guest</h1>
+    <p>This has the table of all the high scores on the game.</p>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Score</th>
+        </tr>
+        <% for(let i=0; i < scores.length; i++) { %>
+            <tr>
+                <td><%= scores[i].name %></td>
+                <td><%= scores[i].score %></td>
+            </tr>
+        <% } %>
+    </table>
+    <p><a href="/game">Play the game</a></p>
+    <p><a href="/">Home</a></p>
+</body>
+</html>
