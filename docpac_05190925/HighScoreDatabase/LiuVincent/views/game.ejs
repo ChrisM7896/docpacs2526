@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>butotuotjn j masher</title>
+
+<style>
+    body {
+        background-color: #000;          
+        color: #ff0000;                  
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 50px;
+    }
+    #score, #timer, #directionBox {
+        font-size: 2rem;
+        margin: 20px auto;
+        padding: 10px 20px;
+        border: 2px solid #ff0000;
+        border-radius: 10px;
+        display: inline-block;
+    }
+    #startBtn {
+        background: #ff0000;
+        color: #000;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.5rem;
+        margin-top: 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    #startBtn:hover {
+        background: #cc0000;
+    }
+</style>
+</head>
+<body>
+    <div id="score">0</div>
+    <div id="timer">Time: 20</div>
+    <div id="directionBox"></div>
+    <br>
+    <button id="startBtn">Start Game</button>
+
+<script>
+    let name = prompt("Enter your name:");
+    const scoreEl = document.getElementById("score");
+    const timerEl = document.getElementById("timer");
+    const directionBox = document.getElementById("directionBox");
+    const startBtn = document.getElementById("startBtn");
+
+    let score = 0;
+    let direction = 0;
+    let timer = 20;
+    let buttonPressed = false;
+    let gameOver = false;
+    let timerInterval, directionInterval;
+
+    function timerDec () {
+        if (timer > 0) {
+            timer--;
+            timerEl.innerHTML = "Time: " + timer;
+        } else {
+            timerEl.innerHTML = "TIME'S UP!";
+            gameOver = true;
+            clearInterval(timerInterval);
+            clearInterval(directionInterval);
+        }
+    }
+
+    function directionChange () {
+        if (gameOver) return;
+        direction = Math.floor(Math.random()*4);
+        directionBox.innerHTML = ["UP","DOWN","LEFT","RIGHT"][direction];
+    }
+
+    function gameLoop() {
+    const gamepads = navigator.getGamepads(); 
+    for (let gp of gamepads) {
+        if (gp && !gameOver) {
+            const aButton = gp.buttons[0];
+            if (aButton.pressed && !buttonPressed) {
+                buttonPressed = true;
+                if ((direction === 0 && gp.axes[1] <= -1) ||
+                    (direction === 1 && gp.axes[1] >= 1) ||
+                    (direction === 2 && gp.axes[0] <= -1) ||
+                    (direction === 3 && gp.axes[0] >= 1)) {
+                    score++;
+                    scoreEl.innerHTML = score;
+                }
+            }
+            if (!aButton.pressed) buttonPressed = false;
+        }
+    }
+    if (!gameOver) {
+        requestAnimationFrame(gameLoop);
+    } else {
+        // Send score to server
+        fetch('/game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: name, score: score })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to submit score');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Score submitted successfully:', data);
+            window.location.href = '/hiscores';
+        })
+        .catch(error => {
+            console.error('Error submitting score:', error);
+        });
+    }
+}
+
+    // Start button action
+    startBtn.addEventListener("click", () => {
+        // reset values for a fresh game
+        score = 0;
+        timer = 20;
+        gameOver = false;
+        scoreEl.innerHTML = score;
+        timerEl.innerHTML = "Time: " + timer;
+        directionChange();
+
+        // start intervals and loop
+        timerInterval = setInterval(timerDec, 1000);
+        directionInterval = setInterval(directionChange, 2000);
+    });
+
+    // always run the loop to read input, but scoring is blocked when gameOver is true
+    requestAnimationFrame(gameLoop);
+</script>
+<br>
+<a href="/">home</a>
+</body>
+</html>

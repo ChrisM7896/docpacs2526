@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher - Leaderboard</title>
+    <link rel="icon" href="favicon.png">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 20px auto;
+        }
+        td, th {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            background-color: #141c2c;
+            color: white;
+        }
+        th {
+            background: #2c344c;
+        }
+        body {
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #010409;
+        }
+        #index {
+            text-align: center;
+            width: 30px;
+        }
+        button{
+            color: white;
+            font-size: 48px;
+            padding: 15px 30px;
+            margin:20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2c344c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table>
+        <tr>
+            <th id="index">#</th>
+            <th>Player</th>
+            <th>Score</th>
+        </tr>
+            <% data.forEach((row, index) => { %>
+                <tr>
+                    <td id="index"><%=index + 1%></td>
+                    <td><%=row.name%></td>
+                    <td><%=row.score%></td>
+                </tr>
+            <% }); %>
+    </table>
+    <a href="/">
+        <button>Back</button>
+    </a>
+    <script>
+        //Gamepad menu navigation
+        var controllerConected = false;
+        window.addEventListener('gamepadconnected', (event) => {
+            const gamepad = event.gamepad;
+            if ((gamepad.id.toLowerCase().includes("xinput") || gamepad.id.toLowerCase().includes("playstation")) && !controllerConected) {
+                console.log(`Supported Gamepad connected: ${gamepad.id} (index ${gamepad.index})`);
+                gamepadIndex = gamepad.index;
+                controllerConected = true;
+                gamepadListener();
+            } else {
+                alert("Gamepad Unsupported!")
+            }
+        });
+        function gamepadListener() {
+            //shortcut to access p1 Gamepad
+            const gamepad = navigator.getGamepads()[gamepadIndex];
+            //Go to home page if select is pressed
+            if (gamepad.buttons[8].pressed) {
+                window.location.href = "/";
+            }
+            requestAnimationFrame(gamepadListener);
+        }
+        window.onbeforeunload = () => {
+            gamepadListenerAdded = false; // Reset the flag when leaving the page
+            cancelAnimationFrame(gamepadListener); // Stop the gamepad listener loop
+        };
+    </script>
+</body>
+</html>
