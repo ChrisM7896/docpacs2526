@@ -1,0 +1,19 @@
+<table id="scoreTable" style="border: 1px solid black;">
+    <thead>
+        <tr>
+            <th style="background-color: lightgray; border-bottom: 2px solid black;">Name</th>
+            <th style="background-color: lightgray; border-bottom: 2px solid black;">Score</th>
+            <th style="background-color: lightgray; border-bottom: 2px solid black;">IP Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% scores.forEach(row => { %>
+            <tr style="padding: 10px">
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; border-right: 1px solid black;"><%= row.name %></td>
+                <td style="border-bottom: 1px solid #ddd; border-right: 1px solid black;"><%= row.score %></td>
+                <td style="border-bottom: 1px solid #ddd; "><%= row.ip %></td>
+            </tr>
+        <% }); %>
+    </tbody>
+    <a href="/">Back to Home</a>
+</table>
