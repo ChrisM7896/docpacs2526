@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <h3>Welcome to the Home Page</h3>
+    <button onclick="addUser()">Create Account</button><br><br>
+    <button onclick="viewUser()">View all user passwords</button>
+
+</head>
+<body>
+    <script>
+        function addUser() {
+             window.location.href = '/add';
+        }
+        function viewUser() {
+             window.location.href = '/view';
+        }
+    </script>
+</body>
+</html>
