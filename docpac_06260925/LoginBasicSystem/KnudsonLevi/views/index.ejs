@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formpub</title>
+    <link rel="icon" href="favicon.png">
+    <style>
+        @font-face {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 100 900;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqQ4E.woff2) format('woff2');
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        /* latin */
+        @font-face {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 100 900;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            display: flex-box;
+            justify-content: center;
+            background-color: #010409;
+            color: white;
+        }
+        #mainContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        #loginButton{
+            color: white;
+            font-size: 72px;
+            padding: 20px 40px;
+            margin-top: 125px;
+            margin-bottom:20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        #signupButton{
+            color: white;
+            font-size: 32px;
+            padding: 20px 20px;
+            background-color: #141c2c;
+            border: white 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        #formpubHeader {
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 15px;
+            right: 15px;
+            background: linear-gradient(to right, #6f00ff, #0040bf);
+            height: 60px;
+            box-shadow: 0px 3px 10px black;
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            font-size: 20px;
+            border-radius: 0 0 10px 10px;
+            box-sizing: border-box;
+        }
+        #version {
+            font-size: 14px;
+            color: #fffa;
+            margin: 0;
+            margin-left: 10px;
+        }
+        #headerLogo {
+            text-align: left;
+            white-space: nowrap;
+            display: inline-block;
+            margin: 0;
+            color: white;
+            font-family: Outfit, Arial, Helvetica, sans-serif;
+            font-size: 20px;
+        }
+        #headerLogo h1 {
+            display: inline-block;
+	        margin: 0;
+        }
+        #headerLogo p {
+            display: inline-block;
+            font-size: 14px;
+            color: #fffa;
+            margin: 0;
+            margin-left: 10px;
+        }
+        #scoresButton:hover, #playButton:hover {
+            background-color: #2c344c;
+        }
+    </style>
+</head>
+<body>
+    <header id="formpubHeader">
+        <a href="/" id="headerLogo">
+            <h1>Formpub</h1>
+            <p>v 1.0.0</p>
+        </a>
+    </header>
+    <div id="mainContainer">
+        <a href="/game">
+            <button id="loginButton">Login</button>
+        </a>
+        <a href="/hiscores">
+            <button id="signupButton">Sign Up</button>
+        </a>
+    </div>
+</body>
+</html>
