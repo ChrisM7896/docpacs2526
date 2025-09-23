@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<style>
+    body {
+        font-family: comic sans ms, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+</style>
+<body>
+    <h1>Welcome home, <%= user %></h1>
+    <h2>Your email: <%= email %></h2>
+    <h2>What do you want to do?</h2>
+    <ul>
+        <li><a href="https://donaldg2027.github.io/">Go to this cool thing!</a></li>
+        <li><a href="/login">Log into another account you made!</a></li>
+        <li><a href="/signup">Make another account (weirdo)</a></li>
+        <li><a href="/">Logout</a></li>
+    </ul>
+</body>
+</html>
