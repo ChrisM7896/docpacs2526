@@ -13,33 +13,57 @@
             padding: 10px;
             color: white;
             font-size: 16px;
-            background-color: white;
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
+        }
+
+        #page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
         }
 
         #title {
             color: white;
             font-size: 100px;
+            top: 10%;
+            position: absolute;
+            text-align: center;
         }
 
-        #page {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: row;
-            height: 100vh;
-            background-color: black;
-            overflow: hidden;
+        #pic {
+            margin: 0 auto;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #pic img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
-
 
 <body id="page">
     <div id="links">
         <a href="/login">Login</a>
         <a href="/signup">Sign Up</a>
     </div>
-    <div id="title">This is a home Page</div>
+    <div id="title">This is The Portal</div>
+    <div id="pic">
+        <img src="/portal3.png" alt="Portal Image">
+    </div>
 
 </body>
 

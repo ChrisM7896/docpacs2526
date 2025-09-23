@@ -4,8 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up</title>
     <style>
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            width: 100px;
+            /* Fixed width for alignment */
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
         #links {
             position: absolute;
             top: 10px;
@@ -13,13 +36,22 @@
             padding: 10px;
             color: white;
             font-size: 16px;
-            background-color: white;
+
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
         }
 
         #title {
+            position: absolute;
             color: white;
             font-size: 100px;
-            position: absolute;
+            margin-bottom: 20px;
             top: 20%;
         }
 
@@ -27,15 +59,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: row;
+            flex-direction: column;
             height: 100vh;
             background-color: black;
-            overflow: hidden;
+            color: white;
         }
 
         #form {
-            color: white;
-            font-size: 20px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -45,26 +75,24 @@
         .form-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 15px;
         }
 
         label {
             width: 100px;
             text-align: right;
+            margin-right: 10px;
+            font-size: 20px;
         }
 
         input {
             flex: 1;
+            padding: 5px;
+            box-sizing: border-box;
         }
 
-        #formblock1 {
-            display: inline-block;
-            flex-direction: row;
-        }
-
-        #formblock2 {
-            display: inline-block;
-            flex-direction: row;
+        button {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -78,17 +106,16 @@
     <div id="title">This is a Login Page</div>
     <div id="form">
         <form action="/login" method="POST">
-            <div id="formblock1">
+            <div class="form-group">
                 <label for="username">Username:</label>
-                <label for="email">Email:</label>
-                <label for="password">Password:</label>
+                <input type="text" id="username" name="username" required>
             </div>
-            <div id="formblock2">
-                <input type="text" id="username" name="username" required><br><br>
-                <input type="email" id="email" name="email" required><br><br>
-                <input type="password" id="password" name="password" required><br><br>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
+        </form>
     </div>
 </body>
 

@@ -13,9 +13,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'ejs');
 
+
 //app gets
 app.get('/', (req, res) => {
   res.render('index', { title: 'Home page' });
+});
+
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login Page' });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  db.all
 });
 
 app.get('/home', (req, res) => {
@@ -26,13 +37,15 @@ app.get('/signup', (req, res) => {
   res.render('signup', { title: 'Sign Up page' });
 });
 
-app.get('/login', (req, res) => {
-  res.render('login', { title: 'Login Page' });
-});
 
-app.post('/login', (req, res) => {
 
-});
+
+
+
+
+
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
