@@ -8,76 +8,95 @@ const fs = require("fs");
 const app = express()
 const port = 3000
 const MasterPassword = "ethan likes big black men source trust"
-var db = new sqlite3.Database("./data/database.db");
+let db = new sqlite3.Database("./data/database.db", (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Connected to the database.');
+});
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-//encryption functions
-
-const Key = crypto.createHash('sha256').update(MasterPassword).digest();
-function encrypt(password, key) {
-  const iv = crypto.randomBytes(16); 
-  const cipher = crypto.createCipheriv('aes-256-cbc', Key, iv);
-  let encrypted = cipher.update(password, 'utf8', 'hex') + cipher.final('hex');
-  // Return IV and encrypted data 
-  //need fix
-  return { iv: iv.toString('hex'), encrypted: encrypted };
-}
-
-function decrypt(password, key) {
-  const iv = Buffer.from(crypto.randomBytes(16));
-  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-  let decrypted = decipher.update(password, 'utf8', 'hex') + decipher.final('hex');
-  //need fix
-  return decrypted + decipher.final('hex');
-}
 
 //app gets
 app.get('/', (req, res) => {
   res.render('index', { title: 'Home page' });
 });
 
+//login
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login Page' });
 });
 
 app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  db.get("SELECT * FROM users WHERE username = ? AND password = ?", [username, password], (err, user) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Internal Server Error");
-    }
-    if (!user) {
-      res.redirect('/error', { title: 'Error', message: 'Invalid username or password' });
-    }
-    if (!user.password) {
-      res.redirect('/error', { title: 'Error', message: 'Invalid username or password' });
-    }
-    const hash = crypto.createHmac('sha256', MasterPassword)
-      .update(password)
-      .digest('hex');
-    if (hash === user.password) {
-      res.redirect('/home');
-    } else {
-      res.status(401).send("Invalid username or password");
-    }
-  });
+  try {
+    let username = req.body.username
+    let password = req.body.password
+
+    crypto.pbkdf2(password, MasterPassword, 1000, 64, 'sha512', (err, derivedKey) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).render("error", { title: "Error", message: "Critical Server Error" });
+      }
+       password = derivedKey.toString('hex');
+      db.get("SELECT * FROM database WHERE username = ? AND password = ?", [username, password], (err, row) => {
+        if (!row) {
+          return res.render("error", { title: "Error", message: "Invalid username or password" });
+        }
+        if (err) {
+          console.error(err);
+          res.render('error', { title: 'Error', message: 'Critical Server Error' });
+        }
+        else {
+          res.redirect(`/home?user=${row.username}&email=${row.email}`);
+        }
+      });
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).render("error", { title: "Error", message: "An unexpected error occurred" });
+  }
 });
 
+//signup
 app.get('/signup', (req, res) => {
   res.render('signup', { title: 'Sign Up page' });
 });
 
 app.post('/signup', (req, res) => {
-  let username = req.body.username;
-  let email = req.body.email;
-  let password = req.body.password;
+  try {
+    let username = req.body.username
+    let email = req.body.email
+    let password = req.body.password
 
-  if (!username || !email || !password) {
-    res.render('error', { title: 'Error', message: 'you didn\'t fill out all fields' });
+    // Hash password with crypto.pbkdf2
+    crypto.pbkdf2(password, MasterPassword, 1000, 64, 'sha512', (err, derivedKey) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).render("error", { title: "Error", message: "Critical Server Error" });
+      }
+      password = derivedKey.toString('hex');
+
+      // Insert the user into the database
+      db.run("INSERT INTO database (username, email, password) VALUES (?, ?, ?)", [username, email, password],
+        function (err) {
+          if (err) {
+            console.error(err.message + " with query: INSERT INTO database (username, email, password) VALUES (" + username + ", " + email + ", ? )");
+            if (err.message.includes("UNIQUE constraint failed")) {
+              return res.status(400).render("error", { title: "Error", message: "Username or email already exists. Please try a different one." });
+            }
+            else {
+              return res.status(500).render("error", { title: "Error", message: "Could not create user" });
+            }
+          }
+          res.redirect('/login');
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).render("error", { title: "Error", message: "An unexpected error occurred" });
   }
 });
 
@@ -86,7 +105,7 @@ app.get('/error', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-  res.render('home');
+  res.render('home', { title: 'Home', user: req.query.user, email: req.query.email });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

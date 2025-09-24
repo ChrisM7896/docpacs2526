@@ -5,10 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        
+        #page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
+        }
+
     </style>
 </head>
-<body>
+<body id="page">
     
+    <script>
+        var username = "<%= user %>";
+        var email = "<%= email %>";
+        console.log("Username: " + username, "Email: " + email);
+    </script>
 </body>
 </html>
