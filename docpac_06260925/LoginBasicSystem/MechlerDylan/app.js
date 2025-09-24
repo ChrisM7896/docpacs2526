@@ -56,14 +56,15 @@ app.get('/signup', (req, res) => {
 
 app.post('/signup', (req, res) => {
     try {
+        var username = req.body.username;
+        var password = req.body.password;
+        var email = req.body.email;
+        if (!username || !password || username === "" || password === "" || !email || email === "") {
+            throw new Error("Username or password missing");
+        }
         crypto.pbkdf2(req.body.password, key, 1000, 64, `sha512`, (err, derivedKey) => {
             if (err) throw err;
-            const username = req.body.username;
-            const password = derivedKey.toString(`hex`);
-            const email = req.body.email;
-            if (!username || !password || username === "" || password === "" || !email || email === "") {
-                throw new Error("Username or password missing");
-            }
+            password = derivedKey.toString(`hex`);
             db.run(`INSERT INTO users(username, password, email) VALUES(?, ?, ?)`, [username, password, email], function(err) {
                 try {
                     if (err) {
