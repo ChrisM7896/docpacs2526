@@ -1,28 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>
+        <%= user %>'s Home Page
+    </title>
     <style>
-        #page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: black;
+        html, body {
             margin: 0;
+            height: 100%;
         }
 
+        #page {
+            background-color: black;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            height: 100vh;
+            background-image: url();
+            background-size: auto 100vh;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #title {
+            font-size: 50px;
+            top: 10%;
+            text-align: center;
+        }
+
+        #minibox {
+            font-size: 20px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        #otherbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
+
 <body id="page">
-    
+    <div id="title">This is Your Home Page, <%= user %>
+    </div>
+    <div id="otherbox">
+        <div id="minibox">email: <%= email %>
+        </div>
+        <div id="minibox">username:<%= user %>
+        </div>
+    </div>
+
+    <select id="dropdown">
+        <option value="">No Background</option>
+        <option value="/backdrop1">Background 1</option>
+        <option value="/backdrop2">Background 2</option>
+        <option value="/backdrop3">Background 3</option>
+        <option value="/backdrop4">Background 4</option>
+        <option value="/backdrop5">Background 5</option>
+        <option value="/backdrop6">Background 6</option>
+    </select>
+
     <script>
+        document.getElementById('dropdown').addEventListener('change', function() {
+            var selectedValue = this.value;
+            document.getElementById('page').style.backgroundImage = 'url(' + selectedValue + '.png)';
+        });
+
         var username = "<%= user %>";
         var email = "<%= email %>";
         console.log("Username: " + username, "Email: " + email);
     </script>
 </body>
+
 </html>

@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const path = require("path");
 const ejs = require("ejs");
 const fs = require("fs");
+const session = require('express-session');
 const app = express()
 const port = 3000
 const MasterPassword = "ethan likes big black men source trust"
@@ -18,6 +19,14 @@ let db = new sqlite3.Database("./data/database.db", (err) => {
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+//extra stuff
+app.use(session({
+  secret: MasterPassword,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
 
 //app gets
 app.get('/', (req, res) => {
@@ -39,7 +48,7 @@ app.post('/login', (req, res) => {
         console.error(err.message);
         return res.status(500).render("error", { title: "Error", message: "Critical Server Error" });
       }
-       password = derivedKey.toString('hex');
+      password = derivedKey.toString('hex');
       db.get("SELECT * FROM database WHERE username = ? AND password = ?", [username, password], (err, row) => {
         if (!row) {
           return res.render("error", { title: "Error", message: "Invalid username or password" });
@@ -49,7 +58,9 @@ app.post('/login', (req, res) => {
           res.render('error', { title: 'Error', message: 'Critical Server Error' });
         }
         else {
-          res.redirect(`/home?user=${row.username}&email=${row.email}`);
+          req.session.user = row.username;
+          req.session.email = row.email;
+          res.redirect("/home");
         }
       });
     });
@@ -105,10 +116,17 @@ app.get('/error', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-  res.render('home', { title: 'Home', user: req.query.user, email: req.query.email });
+  if (!req.session.user || !req.session.email) {
+    return res.redirect('/login');
+  }
+  res.render('home', { title: 'Home', user: req.session.user, email: req.session.email });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get(/^\/.*$/, (req, res) => {
+  res.redirect('/');
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
