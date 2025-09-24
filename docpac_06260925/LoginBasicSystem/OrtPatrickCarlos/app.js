@@ -73,8 +73,7 @@ app.post('/signup', (req, res) => {
                 const hashedPassword = derivedKey.toString('hex');
                 db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword], function(err) {
                     if (err) throw err;
-                    // Redirect to /home with username and email as query parameters
-                    res.redirect(`/home?user=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`);
+                    res.redirect(`/login`);
                 });
             });
         });
