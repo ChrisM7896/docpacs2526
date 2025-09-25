@@ -28,15 +28,6 @@
         setInterval(directionChange, 2000);
         const username = prompt('Whats you username?');
 
-if (timer <= 0) {
-    fetch('/highscores', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({username: username, score: score})
-        })};
-
         window.addEventListener('gamepadconnected', (event) => {
             const update = () => {
 
@@ -77,13 +68,26 @@ if (timer <= 0) {
         });
 
         function timerCount() {
-            let timerBox = document.getElementById('timerBox');
+    let timerBox = document.getElementById('timerBox');
 
-            if (timer > 0) {
-                timer -= 1
-                timerBox.innerHTML = timer
-            }
-        }
+    if (timer > 0) {
+        timer -= 1;
+        timerBox.innerHTML = timer;
+    } else if (timer === 0) {
+        fetch('/highscores', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({username: username, score: score})
+        }).then(() => {
+            alert('Game over! Your score has been submitted.');
+        }).catch((err) => {
+            console.error('Error submitting score:', err);
+        });
+        timer = -1; 
+    }
+}
 
         function directionChange() {
             let directionBox = document.getElementById('directionBox');

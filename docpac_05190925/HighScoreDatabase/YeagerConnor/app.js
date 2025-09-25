@@ -44,7 +44,7 @@ app.post('/highscores', (req, res) => {
             console.error('You dont exist, play the game first');
         };
         db.run(
-            'INSERT INTO users (ip, username, score) VALUES (?, ?, ?)',
+            'INSERT INTO users (ip, name, score) VALUES (?, ?, ?)',
             [req.ip, req.body.username, req.body.score],
             (err) => {
                 if (err) {
@@ -54,9 +54,7 @@ app.post('/highscores', (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err);
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+        res.render('error', {error: err.message});
     }
 });
 
