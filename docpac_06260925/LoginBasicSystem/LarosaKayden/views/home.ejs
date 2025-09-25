@@ -8,7 +8,8 @@
         <%= user %>'s Home Page
     </title>
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             height: 100%;
         }
@@ -24,9 +25,11 @@
             background-size: auto 100vh;
             background-repeat: no-repeat;
             background-position: center;
+            overflow: hidden;
         }
 
         #title {
+            margin-top: 10px;
             font-size: 50px;
             top: 10%;
             text-align: center;
@@ -43,6 +46,42 @@
             align-items: center;
             justify-content: center;
         }
+
+        #dropdown {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 5px 5px 5px;
+            border: none;
+        }
+
+        #logout {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            margin: 10px 5px 5px 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            margin: 10px 5px 5px 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -52,7 +91,7 @@
     <div id="otherbox">
         <div id="minibox">email: <%= email %>
         </div>
-        <div id="minibox">username:<%= user %>
+        <div id="minibox">username: <%= user %>
         </div>
     </div>
 
@@ -66,8 +105,15 @@
         <option value="/backdrop6">Background 6</option>
     </select>
 
+    <form action="/logout" method="GET">
+        <button id="logout" type="submit">LOGOUT</button>
+    </form>
+
+    <!--
+    <button id="games">PLAY GAMES</button>
+    -->
     <script>
-        document.getElementById('dropdown').addEventListener('change', function() {
+        document.getElementById('dropdown').addEventListener('change', function () {
             var selectedValue = this.value;
             document.getElementById('page').style.backgroundImage = 'url(' + selectedValue + '.png)';
         });

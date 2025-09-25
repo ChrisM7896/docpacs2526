@@ -25,7 +25,7 @@ app.use(session({
   secret: MasterPassword,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }
+  cookie: { secure: true, maxAge: 1000 * 15}
 }));
 
 //app gets
@@ -120,6 +120,16 @@ app.get('/home', (req, res) => {
     return res.redirect('/login');
   }
   res.render('home', { title: 'Home', user: req.session.user, email: req.session.email });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).render("error", { title: "Error", message: "Could not log out. Please try again." });
+    }
+    res.redirect('/login');
+  });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
