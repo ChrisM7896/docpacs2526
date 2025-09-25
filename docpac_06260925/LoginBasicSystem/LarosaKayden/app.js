@@ -25,7 +25,7 @@ app.use(session({
   secret: MasterPassword,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true, maxAge: 1000 * 15}
+  cookie: { secure: false }
 }));
 
 //app gets
@@ -43,6 +43,9 @@ app.post('/login', (req, res) => {
     let username = req.body.username
     let password = req.body.password
 
+    if (!username || !password) {
+      return res.status(400).render("error", { title: "Error", message: "All fields are required" });
+    }
     crypto.pbkdf2(password, MasterPassword, 1000, 64, 'sha512', (err, derivedKey) => {
       if (err) {
         console.error(err.message);
@@ -51,6 +54,7 @@ app.post('/login', (req, res) => {
       password = derivedKey.toString('hex');
       db.get("SELECT * FROM database WHERE username = ? AND password = ?", [username, password], (err, row) => {
         if (!row) {
+          console.log(err);
           return res.render("error", { title: "Error", message: "Invalid username or password" });
         }
         if (err) {
@@ -81,6 +85,9 @@ app.post('/signup', (req, res) => {
     let email = req.body.email
     let password = req.body.password
 
+    if (!username || !email || !password) {
+      return res.status(400).render("error", { title: "Error", message: "All fields are required" });
+    }
     // Hash password with crypto.pbkdf2
     crypto.pbkdf2(password, MasterPassword, 1000, 64, 'sha512', (err, derivedKey) => {
       if (err) {
@@ -129,6 +136,21 @@ app.get('/logout', (req, res) => {
       return res.status(500).render("error", { title: "Error", message: "Could not log out. Please try again." });
     }
     res.redirect('/login');
+  });
+});
+
+app.post('/delete', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  db.run("DELETE FROM database WHERE username = ?", [req.session.user], function (err) {
+    if (err) {
+      console.error(err.message);
+      return res.status(500).render("error", { title: "Error", message: "Could not delete account" });
+    }
+    req.session.destroy();
+    res.redirect('/signup');
   });
 });
 

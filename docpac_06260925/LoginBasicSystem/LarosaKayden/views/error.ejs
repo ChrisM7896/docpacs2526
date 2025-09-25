@@ -22,15 +22,36 @@
             background-color: black;
             margin: 0;
         }
+
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
+        }
     </style>
 </head>
 
 <body id="page">
+
+    <!-- How does this code work and how did I not see it before??? -->
     <div id="title">This is an Error Page</h1>
         <p>
             <%= title %>: <%= message %>
         </p>
-        <div></div>
+        <div id="links">
+            <a href="/">Back to Home</a>
+        </div>
 </body>
 
 </html>
