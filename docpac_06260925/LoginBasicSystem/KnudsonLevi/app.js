@@ -28,8 +28,7 @@ function createUser(username, email, password) {
 function encrypt(text) {
     cryto.scrypt(text, SECRET_KEY, 24, (err, derivedKey) => {
         if (err) throw err;
-        console.log(derivedKey);
-        //return cryto.createCipheriv('aes-192-cbc', derivedKey, Buffer.alloc(16, 0));
+        return cryto.createCipheriv('aes-192-cbc', derivedKey, Buffer.alloc(16, 0));
     });
 }
 app.use(express.static(path.join(__dirname, 'public')));
@@ -67,12 +66,13 @@ app.post('/signup', express.urlencoded({extended: true}), (req, res) => {
     } else {
         console.log(`Received: Username - ${username} Email - ${email} from ${req.ip}`);
         encrypt(password);
-        //const encryptedPassword = encrypt(password);
+        const encryptedPassword = encrypt(password);
+        console.log(`Encrypted Password: ${encryptedPassword}`);
     }
     if (error) {
         res.render('error', {error: error})
     } else {
-        res.render('home', {username: username}, {email:email});
+        res.render('home', {username: username, email: email});
     }
 });
 //start the server

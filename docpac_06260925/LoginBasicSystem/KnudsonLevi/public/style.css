@@ -25,6 +25,7 @@ body {
     text-align: center;
     transition: background-color 0.5s, color 0.5s;
     background: linear-gradient(-135deg, #072438 30%, #000c15 100%);
+    color: white;
 }
 #mainContainer {
     background: #00000077;
