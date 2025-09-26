@@ -16,8 +16,22 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
     console.log('Connected to the database.');
 });
-function CreateUser(username, email, password) {
-
+function createUser(username, email, password) {
+    const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+    db.run(sql, [username, email, password], function(err) {
+        if (err) {
+            return console.error(err.message);
+        }
+        console.log(`A row has been inserted with rowid ${this.lastID}`);
+    });
+}
+function encrypt(text) {
+    cryto.scrypt(text, SECRET_KEY, 24, (err, derivedKey) => {
+        if (err) throw err;
+        console.log(derivedKey);
+        //return cryto.createCipheriv('aes-192-cbc', derivedKey, Buffer.alloc(16, 0));
+    });
+}
 app.use(express.static(path.join(__dirname, 'public')));
 //GET endpoint for the root of the app
 app.get('/', (req, res) => {
@@ -34,16 +48,16 @@ app.get('/signup', (req, res) => {
 app.post('/login', (req, res) => {
 
 });
-app.post('/signup', (req, res) => {
+app.post('/signup', express.urlencoded({extended: true}), (req, res) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordPattern = /^[a-zA-Z0-9!@#$%^&*()\-_+=\{\}\[\]<>,.:;]{5,20}$/;
-    const usernamePattern = /^[a-zA-Z0-9]{3,20}$/;
+    const usernamePattern = /^[a-zA-Z0-9 ]{3,20}$/;
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
     let error = null;
     if (!email || !password || !username) {
-        error = "Username and Password are required.";
+        error = "Username, Email, and Password are required.";
     } else if (!usernamePattern.test(username)) {
         error = "Invalid username.";
     } else if (!emailPattern.test(email)) {
@@ -51,13 +65,14 @@ app.post('/signup', (req, res) => {
     } else if (!passwordPattern.test(password)) {
         error = "Password must be 5-20 characters and can include letters, numbers, and special characters.";
     } else {
-        console.log(`Received: Usernam - ${username} Email - ${email} Password - ${password} from ${req.ip}`);
-        createUser();
+        console.log(`Received: Username - ${username} Email - ${email} from ${req.ip}`);
+        encrypt(password);
+        //const encryptedPassword = encrypt(password);
     }
     if (error) {
         res.render('error', {error: error})
     } else {
-        res.redirect('/');
+        res.render('home', {username: username}, {email:email});
     }
 });
 //start the server

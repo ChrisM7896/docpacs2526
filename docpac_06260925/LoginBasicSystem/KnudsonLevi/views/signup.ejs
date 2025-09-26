@@ -11,15 +11,15 @@
     <header id="formpubHeader">
         <a href="/" id="headerLogo">
             <h1>Formpub</h1>
-            <p>v 1.0.0</p>
+            <p>v 4.2.0</p>
         </a>
     </header>
     <h1 id="loginHeader">Register</h1>
     <div id="mainContainer">
-        <form action="login" method="method">
-            <input type="text" name="username" placeholder="Username" required pattern="[a-zA-Z0-9]{3,20}">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" pattern="[a-zA-Z0-9!@#$%^&*()\-_+=\{\}\[\]<>,.:;\" minlength="5" maxlength="20" required>
+        <form action="/signup" method="POST">
+            <input type="text" name="username" placeholder="Display Name" pattern="[a-zA-Z0-9. ]{3,20}" title="Name to be displayed on your profile." required>
+            <input type="email" name="email" placeholder="Email" title="Please enter a valid email adress." required>
+            <input type="password" name="password" placeholder="Password" pattern="[a-zA-Z0-9!@#$%^&*()\-_+=\{\}\[\]<>,.:;\" minlength="5" maxlength="20" title="Password must be 5-20 characters and can include letters, numbers, and special characters." required>
             <button id="submitButton" type="submit">Create Account</button>
         </form>
     </div>
