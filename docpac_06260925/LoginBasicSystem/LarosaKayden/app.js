@@ -8,7 +8,7 @@ const fs = require("fs");
 const session = require('express-session');
 const app = express()
 const port = 3000
-const MasterPassword = "ethan likes big black men source trust"
+const MasterPassword = "secretpassword"
 let db = new sqlite3.Database("./data/database.db", (err) => {
   if (err) {
     console.error(err.message);
