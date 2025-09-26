@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Formpub</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header id="formpubHeader">
+        <a href="/" id="headerLogo">
+            <h1>Formpub</h1>
+            <p>v 1.0.0</p>
+        </a>
+    </header>
+    <h1 id="loginHeader">Register</h1>
+    <div id="mainContainer">
+        <form action="login" method="method">
+            <input type="text" name="username" placeholder="Username" required pattern="[a-zA-Z0-9]{3,20}">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" pattern="[a-zA-Z0-9!@#$%^&*()\-_+=\{\}\[\]<>,.:;\" minlength="5" maxlength="20" required>
+            <button id="submitButton" type="submit">Create Account</button>
+        </form>
+    </div>
+</body>
+</html>
