@@ -20,7 +20,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     margin: 0;
-    font: 16px "Outfit", Arial, sans-serif;
+    font: 24px "Outfit", Arial, sans-serif;
     padding: 8px;
     text-align: center;
     transition: background-color 0.5s, color 0.5s;
@@ -45,27 +45,30 @@ body {
     display: block;
     unicode-bidi: isolate;
 }
-#loginButton{
+button {
+    font-family: "Outfit", Arial, sans-serif;
     color: white;
-    padding: 20px 40px;
     margin: auto;
     background-color: #d5e5ff33;
     border: #fff4 2px solid;
     border-radius: 10px;
     cursor: pointer;
-    font: 72px "Outfit", Arial, sans-serif;
     outline: 2px solid #0004;
 }
-#signupButton{
-    color: white;
-    font: 48px "Outfit", Arial, sans-serif;
+#loginButton {
+    padding: 20px 40px;
+    font-size: 72px;
+}
+#signupButton {
     padding: 20px 40px;
     margin: 20px auto 0 auto;
-    background-color: #d5e5ff33;
-    border: #fff4 2px solid;
-    outline: 2px solid #0004;
-    border-radius: 10px;
-    cursor: pointer;
+    font-size: 48px;
+}
+#loginButton:hover, #signupButton:hover, #submitButton:hover {
+    background-color: #83868c33;
+    transform: scale(1.025);
+    transform-origin: center;
+    transition: 0.2s background-color ease-in-out, 0.2s transform ease-in-out;
 }
 #formpubHeader {
     overflow: hidden;
@@ -108,12 +111,6 @@ body {
     color: #fffa;
     margin: 0;
     margin-left: 10px;
-}
-#loginButton:hover, #signupButton:hover, #submitButton:hover {
-    background-color: #83868c33;
-    transform: scale(1.025);
-    transform-origin: center;
-    transition: 0.2s background-color ease-in-out, 0.2s transform ease-in-out;
 }
 a {
     text-decoration: none;
