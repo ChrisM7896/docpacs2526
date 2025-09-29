@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        #scoreBox,
+        #timerBox,
+        #directionBox {
+            border: 2px solid white;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            margin: 10px;
+            color: white;
+        }
+
+        button {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="links">
+        <a href="/">Home</a>
+        <a href="highscores">High Scores</a>
+    </div>
+
+    <button onclick="window.location.reload()">RESTART or press +</button>
+
+    <div id="scoreBox">0</div>
+
+    <div id="timerBox"></div>
+
+    <div id="directionBox">UP</div>
+</body>
+
+<script>
+    //varibles
+    var score = 0
+    var timer = 20
+    var direction = 0
+    var buttonheld = false
+
+    //initial display
+    document.getElementById("timerBox").innerHTML = "20"
+    document.getElementById("directionBox").innerHTML = "UP"
+
+    //THE TIMER
+    let TIMER = setInterval(function () {
+        if (timer > 0) {
+            timer -= 1
+            document.getElementById("timerBox").innerHTML = timer
+        }
+        else if (timer == 0) {
+            document.getElementById("timerBox").innerHTML = "TIME'S UP!"
+            document.getElementById("directionBox").innerHTML = "GAME OVER"
+            buttonheld = false
+
+            //submit score to server
+            setTimeout(() => {
+                let username = prompt("ENTER you name form the leader of boards?")
+                if (!username) { username = "Anonymous" }
+
+                fetch("/submitScore", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: username, score: score })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Score submitted!", data);
+                        alert("Score submitted! Current highscore: " + data.highscores[0].score);
+                    })
+                    .catch(err => {
+                        console.error("Error submitting score:", err);
+                        alert("Failed to submit score.");
+                    });
+            }, 100);
+
+            clearInterval(DIRECTION)
+            clearInterval(TIMER)
+        }
+    }, 1000);
+
+    //THE DIRECTION
+    let DIRECTION = setInterval(function () {
+        direction = Math.floor(Math.random() * 4)
+        console.log(direction)
+        if (direction == 0) {
+            document.getElementById("directionBox").innerHTML = "UP"
+        }
+        else if (direction == 1) {
+            document.getElementById("directionBox").innerHTML = "RIGHT"
+        }
+        else if (direction == 2) {
+            document.getElementById("directionBox").innerHTML = "DOWN"
+        }
+        else if (direction == 3) {
+            document.getElementById("directionBox").innerHTML = "LEFT"
+        }
+    }, 2000);
+
+    //score counter
+    function handleGamepadInput(gamepad) {
+        if (gamepad.buttons[9].pressed) {
+            window.location.reload()
+        }
+
+        if (gamepad.buttons[0].pressed && timer > 0 && !buttonheld) {
+            buttonheld = true
+            if (direction == 0 && gamepad.axes[1] < -0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+            else if (direction == 1 && gamepad.axes[0] > 0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+            else if (direction == 2 && gamepad.axes[1] > 0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+            else if (direction == 3 && gamepad.axes[0] < -0.5) {
+                score += 1
+                document.getElementById("scoreBox").innerHTML = score
+            }
+
+        }
+        buttonheld = gamepad.buttons[0].pressed
+    }
+
+    //gamepad
+    function update() {
+        const gamepads = navigator.getGamepads();
+        for (let pad of gamepads) {
+            if (pad) {
+                handleGamepadInput(pad);
+            }
+        } requestAnimationFrame(update);
+    }
+
+    window.addEventListener("gamepadconnected", (e) => {
+        console.log(`Gamepad connected at index ${e.gamepad.index}.`);
+        requestAnimationFrame(update);
+    });
+
+</script>
+
+</html>

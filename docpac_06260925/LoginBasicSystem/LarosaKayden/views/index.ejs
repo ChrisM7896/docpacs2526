@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
+        }
+
+        #page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #title {
+            color: white;
+            font-size: 100px;
+            top: 10%;
+            text-align: center;
+        }
+
+        #pic {
+            margin: 0 auto;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #pic img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body id="page">
+    <div id="links">
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+    </div>
+    <div id="title">This is The Portal</div>
+    <div id="pic">
+        <img src="/portal.png" alt="Portal Image">
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            width: 100px;
+            /* Fixed width for alignment */
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
+        }
+
+        #title {
+            position: absolute;
+            color: white;
+            font-size: 100px;
+            top: 20%;
+        }
+
+        #page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+        }
+
+        #form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            width: 100px;
+            text-align: right;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<div id="links">
+    <a href="/">Back to Home</a>
+    <a href="/signup">Sign Up</a>
+</div>
+
+<body id="page">
+    <div id="title">This is a Login Page</div>
+    <div id="form">
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        body {
+            background-color: #000000;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: rgb(0, 255, 0);
+        }
+
+        #signupform {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 100px auto;
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px solid rgb(0, 125, 0);
+            border-radius: 5px;
+            border-width: 2px;
+            background-color: #000000;
+        }
+
+        #header {
+            display: flex;
+            justify-content: center;
+            margin-top: 100px;
+            text-align: center;
+            font-size: 40px;
+            color: rgb(0, 255, 0);
+            cursor: default;
+        }
+
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: rgb(0, 255, 0);
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid rgb(0, 255, 0);
+            border-radius: 3px;
+            background-color: #000000;
+            color: rgb(0, 255, 0);
+            font-size: 16px;
+            outline-color:rgb(0, 255, 0);
+            outline-width:2px;
+        }
+
+        input[type="submit"] {
+            background-color: #000000;
+            color: rgb(0, 255, 0);
+            border: 1px solid rgb(0, 255, 0);
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: rgb(25, 25, 25);
+            border: rgb(0, 200, 0) 2px solid;
+            transform: scale(1.05);
+        }
+
+        @keyframes backgroundPulse {
+            0% {
+                background-color: rgb(0, 0, 0);
+            }
+            50% {
+                background-color: rgb(0, 50, 0);
+            }
+            100% {
+                background-color: rgb(0, 100, 0);
+            }
+
+            50% {
+                background-color: rgb(0, 50, 0);
+            }
+
+            100% {
+                background-color: rgb(0, 0, 0);
+            }
+        }
+
+        body {
+            animation: backgroundPulse 5s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="header">Signup</h1>
+    <form id="signupform" method="POST" action="/signup">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="email">Email:</label><br>
+        <input type="text" id="email" name="email"><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
