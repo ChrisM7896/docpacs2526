@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Lab 3-2</title>
+</head>
+
+<body>
+	<h3>CIW JavaScript Specialist</h3>
+	<hr>
+	<form id="myForm">
+		<button type="button" id="argButton">Call Function with Arguments</button><br>
+		<button type="button" id="returnButton">Call Function with Return</button>
+	</form>
+
+	<script>
+		// Function that takes an argument 
+		function myFunction(arg) {
+			alert("The function has been called with the argumented: " + arg);
+		}
+
+		// Function that returns a value 
+		function myFunctionWithReturn() {
+			return "Hi, this value is returned from a function.";
+		}
+		document.getElementById("argButton").addEventListener("click", function() {
+		myFunction("Hello World");
+		});
+		
+		document.getElementById("returnButton").addEventListener("click", function() {
+		var result = myFunctionWithReturn("Hello World");
+		alert(result);
+		});
+
+	</script>
+</body>
+
+</html>
+
+// Add event listeners to buttons
+
+
+
+</script>
+</body>
+
+</html>

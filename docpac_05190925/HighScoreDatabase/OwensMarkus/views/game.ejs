@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>videojugemos</title>
+</head>
+
+<body>
+    <button id="masher">click me for more score</button>
+    <h1 id="curscore">Current score</h1>
+    <h1 id="timerun">timer</h1>
+    <h1 id="usernamen">Name</h1>
+    <script>
+        let mrscore = 0;
+        var timer = 10;
+        const interval = setInterval(updateTimer, 1000);
+        function updateScore() {
+            document.getElementById("curscore").innerHTML = mrscore;
+        };
+        function updateTimer() {
+            if (timer >= 0) {
+                document.getElementById("timerun").innerHTML = timer;
+                timer -= 1;
+            } else {
+                clearInterval(interval);
+            }
+        }
+        document.getElementById("masher").onclick = function () {
+            if (timer <= 0) {
+                alert("Time's up! Your final score is: " + mrscore);
+                document.getElementById("masher").disabled = true;
+                sender();
+                return;
+            }
+            else {
+                mrscore += 1;
+                console.log(mrscore);
+                updateScore();
+            }
+        };
+        let nomen = prompt("Enter your name");
+        document.getElementById("usernamen").innerHTML = nomen;
+        var xhttp = new XMLHttpRequest()
+        function sender () {
+            console.log("time up")
+            xhttp.open("post", "/game", true)
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            let infoToSend = JSON.stringify({ name: nomen, score: mrscore })
+            console.log(infoToSend)
+            xhttp.send(infoToSend);
+        };
+    </script>
+</body>
+
+</html>
