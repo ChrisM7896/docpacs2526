@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            background-color: blue;
+        }
+
+        #errorText {
+            color: red;
+            font-size: 100px;
+            font-weight: bold;
+            text-align: center;
+            animation: shake 0.1s infinite;
+            margin-top: 20%;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(2px, 2px); }
+            25% { transform: translate(-2px, -4px); }
+            50% { transform: translate(-6px, 0px); }
+            75% { transform: translate(6px, 4px); }
+            100% { transform: translate(2px, -2px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="errorText">There is an errawr OwO</div>
+</body>
+</html>

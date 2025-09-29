@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="theusernamed">
+    </h1>
+    <br>
+    <h2 id="theuseremaild">
+
+    </h2>
+    <script>
+        const username = "<%= usernamefinal %>";
+        const email = "<%= emailfinal %>";
+        console.log(username)  
+        console.log(email) 
+        document.getElementById('theusernamed').innerHTML = `Your user name is ${username}!`;
+        document.getElementById('theuseremaild').innerHTML = `Your email is ${email}!`;
+    </script>
+</body>
+</html>
