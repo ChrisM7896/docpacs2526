@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= user %>'s Home Page
+    </title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #page {
+            background-color: black;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            height: 100vh;
+            background-image: url();
+            background-size: auto 100vh;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        #title {
+            margin-top: 10px;
+            font-size: 50px;
+            top: 10%;
+            text-align: center;
+        }
+
+        #minibox {
+            font-size: 20px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        #otherbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #dropdown,
+        #music {
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            font-size: 14px;
+            margin: 5px 5px 5px 5px;
+            border: none;
+        }
+
+        #delete,
+        #logout {
+            top: 10px;
+            right: 10px;
+            margin: 5px 5px 5px 5px;
+            padding: 12px 20px;
+            font-size: 14px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #leftSidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 190px;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #rightSidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 190px;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+    </style>
+</head>
+
+<body id="page">
+    <div id="title">This is Your Home Page, <%= user %>
+    </div>
+    <div id="otherbox">
+        <div id="minibox">email: <%= email %>
+        </div>
+        <div id="minibox">username: <%= user %>
+        </div>
+    </div>
+
+    <div id="leftSidebar">
+        <select id="dropdown">
+            <option value="">No Background</option>
+            <option value="/backdrop1">Background 1</option>
+            <option value="/backdrop2">Background 2</option>
+            <option value="/backdrop3">Background 3</option>
+            <option value="/backdrop4">Background 4</option>
+            <option value="/backdrop5">Background 5</option>
+        </select>
+
+        <select id="music">
+            <option value="off">Music Off</option>
+            <option value="on">Music On</option>
+        </select>
+
+        <audio id="bgMusic" src="/PleasentMusic.wav" type="audio/wav" loop></audio>
+
+        <form action="/logout" method="GET">
+            <button id="logout" type="submit">LOGOUT</button>
+        </form>
+        <form action="/delete" method="POST">
+            <button id="delete" type="submit">DELETE <br>ACCOUNT</button>
+        </form>
+    </div>
+
+
+    <div id="rightSidebar">
+        <!-- i do later maybe
+    <button id="games">PLAY GAMES</button>
+    -->
+    </div>
+
+    <script>
+        document.getElementById('dropdown').addEventListener('change', function () {
+            var selectedValue = this.value;
+            document.getElementById('page').style.backgroundImage = 'url(' + selectedValue + '.png)';
+        });
+
+        const musicSelect = document.getElementById('music');
+        const bgMusic = document.getElementById('bgMusic');
+
+        musicSelect.addEventListener('change', function () {
+            if (this.value === 'on') {
+                bgMusic.play();
+            } else {
+                bgMusic.pause();
+                bgMusic.currentTime = 0;
+            }
+        });
+
+            document.getElementById('delete').addEventListener('click', function (event) {
+            const confirmed = confirm("Are you sure about. Are you sure about. Are you sure about. This action cannot be undone...");
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+
+        var username = "<%= user %>";
+        var email = "<%= email %>";
+        console.log("Username: " + username, "Email: " + email);
+    </script>
+</body>
+
+</html>
