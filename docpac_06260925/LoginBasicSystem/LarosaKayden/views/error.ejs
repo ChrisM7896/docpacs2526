@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uh-Oh</title>
+    <style>
+        #title {
+            color: white;
+            font-size: 100px;
+            top: 10%;
+            text-align: center;
+        }
+
+        #page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
+        }
+
+        #links {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        #links a:visited {
+            color: white;
+        }
+
+        #links a {
+            color: white;
+        }
+    </style>
+</head>
+
+<body id="page">
+
+    <!-- How does this code work and how did I not see it before??? -->
+    <div id="title">This is an Error Page</h1>
+        <p>
+            <%= title %>: <%= message %>
+        </p>
+        <div id="links">
+            <a href="/">Back to Home</a>
+        </div>
+</body>
+
+</html>

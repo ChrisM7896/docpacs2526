@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+</head>
+<body>
+    <div>
+        <p id="time">Time left: <span id="timeLeft"></span></p>
+    </div>
+    <button id="start" onclick="start()">Start</button>
+    <button id="scorer" onclick="addScore()" style="display: none;">Add Score</button>
+    <form id="scoreForm" method="POST" action="/hiscores">
+        <input type="hidden" name="name" id="hiddenName">
+        <input type="hidden" name="score" id="hiddenScore">
+    <button id="submit" style="display: none;">Submit Score</button>
+    </form>
+    <script>
+        score = 0;
+        name = prompt("Enter your name:");
+        let timeLeft = 10;
+        let xmlData = "";
+        document.getElementById("timeLeft").innerText = timeLeft + "s";
+        function addScore() {
+           score++; 
+        }
+        function start() {
+            document.getElementById("start").style.display = "none";
+            document.getElementById("scorer").style.display = "inline";
+            let timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timeLeft").innerText = timeLeft + "s";
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById("submit").style.display = "inline";
+                    document.getElementById("scorer").style.display = "none";
+                    alert("Time's up! Your score is " + score);
+                    document.getElementById("hiddenName").value = name;
+                    document.getElementById("hiddenScore").value = score;
+                    document.getElementById("scoreForm").submit();
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
