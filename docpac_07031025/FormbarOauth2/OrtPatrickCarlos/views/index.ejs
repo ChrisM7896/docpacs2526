@@ -4,10 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove default margin */
+            background-color: #f9f9f9; /* Light background for better aesthetics */
+        }
+    
+        button {
+            background-color: #f0f0f0; /* Light gray background */
+            color: #333; /* Dark gray text */
+            border: 1px solid #ccc; /* Subtle border */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px 20px; /* Padding for a comfortable size */
+            font-size: 16px; /* Readable font size */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth hover effect */
+            margin: 10px; /* Add spacing between buttons */
+        }
+    
+        button:hover {
+            background-color: #e0e0e0; /* Slightly darker gray on hover */
+            color: #000; /* Darker text on hover */
+        }
+    
+        button:active {
+            background-color: #d0d0d0; /* Even darker gray when clicked */
+            color: #000; /* Darker text when clicked */
+        }
+    </style>
 </head>
 <body>
-    <button onclick="location.href='/login'"></button>
-    <button onclick="location.href='/profile'"></button>
-
+    <button onclick="location.href='/login'">LOGIN</button>
+    <button onclick="location.href='/profile'">Profile</button>
 </body>
 </html>

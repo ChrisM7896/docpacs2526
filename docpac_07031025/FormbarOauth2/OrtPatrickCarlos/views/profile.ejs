@@ -3,11 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Profile</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+            color: #000;
+        }
+
+        button:active {
+            background-color: #d0d0d0;
+            color: #000;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
-    <form action="">
-        <input type="checkbox">
+    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+        <button onclick="location.href='/'">HOME</button>
+    </div>
+
+    <h1>Profile Page</h1>
+    <h1>Hello <%= user.user %></h1>
+
+    <form action="/profile" method="POST">
+        <input type="checkbox" name="profile_checked" value="on" <%= profile_checked ? 'checked' : '' %>>
+        <button type="submit">Save</button>
     </form>
 </body>
 </html>
