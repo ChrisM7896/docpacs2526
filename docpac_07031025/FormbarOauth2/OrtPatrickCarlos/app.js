@@ -3,11 +3,11 @@ const session = require('express-session');
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
-const e = require('express');
 const app = express();
 const PORT = 3000;
 const AUTH_URL = 'https://formbeta.yorktechapps.com';
 const THIS_URL = 'http://localhost:3000/login';
+const API_KEY = 'b36e1d08c24b6d14486cc949a96ef3d005747ff688c279dc4e0e313d0c602db5';
 
 const db = new sqlite3.Database('./db.db', (err) => {
     if (err) {
