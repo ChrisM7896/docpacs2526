@@ -35,20 +35,26 @@ function isAuthenticated(req, res, next) {
 }
 
 app.get('/', isAuthenticated, (req, res) => {
-    res.render('index')
+    try {
+        res.render('index', { user: req.session.user })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
-app.get('/login', isAuthenticated, (req, res) => {
-    console.log(req.query.token)
+app.get('/login', (req, res) => {
+    if (req.session.user) return res.redirect('/')
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token)
         req.session.token = tokenData
         req.session.user = tokenData.displayName
         req.session.userid = tokenData.id
-        res.redirect('/')
+
         db.get('SELECT * FROM users WHERE fb_id = ?', [tokenData.id], (err, row) => {
             if (err) {
                 console.error(err.message);
+
             }
             if (!row) {
                 db.run('INSERT INTO users (fb_id, name, profile_checked) VALUES (?, ?, ?)', [tokenData.id, tokenData.displayName, 0], (err) => {
@@ -56,9 +62,11 @@ app.get('/login', isAuthenticated, (req, res) => {
                         console.error(err.message);
                     }
                     console.log(`A row has been inserted with fb_id ${tokenData.id}`);
+                    return res.redirect('/')
                 });
             } else {
                 console.log("User already exists")
+                return res.redirect('/')
             }
         });
 
@@ -76,15 +84,14 @@ app.get('/profile', isAuthenticated, (req, res) => {
 })
 
 app.post('/profile', (req, res) => {
-    if (req.session.user) {
-        db.run('UPDATE users SET profile_checked=? WHERE fb_id=?', [req.body.profile_checked, req.session.userid], (err) => {
-            if (err) {
-                console.error(err.message);
-                res.status(500).send("Internal Server Error");
-            }
-            res.status(200).send("Profile updated.");
-        });
-    }
+    db.run('UPDATE users SET profile_checked=? WHERE fb_id=?', [req.body.profile_checked, req.session.userid], (err) => {
+        if (err) {
+            console.log(err)
+            res.send("Database error:\n" + err)
+        }
+    });
 })
 
-app.listen(3000)
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
