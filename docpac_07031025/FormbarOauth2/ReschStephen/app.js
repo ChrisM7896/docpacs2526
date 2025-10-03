@@ -45,29 +45,6 @@ app.get('/', isAuthenticated, (req, res) => {
     }
 });
 
-// app.get('/login', (req, res) => {
-//     if (req.query.token) {
-//         let tokenData = jwt.decode(req.query.token);
-//         req.session.token = tokenData;
-//         req.session.user = tokenData.displayName;
-//         const { displayName, password } = req.body;
-//         if (!displayName || !password) {
-//             throw new Error('Username and password are required');
-//         }
-//         try {
-//             db.get('SELECT * FROM users WHERE username = ? AND password = ?', [displayName, password], (err, row) => {
-//                 if (err) {
-//                     throw err;
-//                 }
-//                 res.redirect('/profile');
-//             });
-//         } catch (error) {
-//             res.send(error.message);
-//         }
-//     } else {
-//         res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
-//     };
-// });
 app.get('/login', (req, res) => {
     console.log(req.query.token)
     if (req.query.token) {
