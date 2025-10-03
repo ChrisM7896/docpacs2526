@@ -1,0 +1,123 @@
+{
+  "data": [
+    {
+      "name": "Hollow Knight",
+      "completion": "on",
+      "gameplay": "92",
+      "graphics": "73",
+      "story": "91",
+      "torture": "12",
+      "rating": "97"
+    },
+    {
+      "name": "Cuphead",
+      "completion": "on",
+      "gameplay": "85",
+      "graphics": "70",
+      "story": "50",
+      "torture": "33",
+      "rating": "86"
+    },
+    {
+      "name": "Ghost of Tsushima",
+      "gameplay": "100",
+      "graphics": "100",
+      "story": "100",
+      "torture": "38",
+      "rating": "98"
+    },
+    {
+      "name": "Elden Ring",
+      "gameplay": "85",
+      "graphics": "89",
+      "story": "100",
+      "torture": "63",
+      "rating": "98"
+    },
+    {
+      "name": "Black Myth: Wukong",
+      "completion": "on",
+      "gameplay": "100",
+      "graphics": "100",
+      "story": "100",
+      "torture": "62",
+      "rating": "95"
+    },
+    {
+      "name": "Overwatch 2",
+      "gameplay": "100",
+      "graphics": "71",
+      "story": "76",
+      "torture": "100",
+      "rating": "85"
+    },
+    {
+      "name": "Stellar Blade",
+      "completion": "on",
+      "gameplay": "100",
+      "graphics": "100",
+      "story": "79",
+      "torture": "44",
+      "rating": "97"
+    },
+    {
+      "name": "Jedi: Survivor",
+      "gameplay": "91",
+      "graphics": "76",
+      "story": "100",
+      "torture": "73",
+      "rating": "93"
+    },
+    {
+      "name": "Batman: Arkham Knight",
+      "completion": "on",
+      "gameplay": "100",
+      "graphics": "100",
+      "story": "87",
+      "torture": "90",
+      "rating": "95"
+    },
+    {
+      "name": "Bioshock: Infinite",
+      "completion": "on",
+      "gameplay": "91",
+      "graphics": "84",
+      "story": "31",
+      "torture": "83",
+      "rating": "89"
+    },
+    {
+      "name": "The Legend of Zelda: Tears of the Kingdom",
+      "completion": "on",
+      "gameplay": "67",
+      "graphics": "88",
+      "story": "75",
+      "torture": "100",
+      "rating": "92"
+    },
+    {
+      "name": "Hollow Knight: Silksong",
+      "gameplay": "100",
+      "graphics": "100",
+      "story": "81",
+      "torture": "40",
+      "rating": "95"
+    },
+    {
+      "name": "Civilization VII",
+      "gameplay": "50",
+      "graphics": "100",
+      "story": "27",
+      "torture": "100",
+      "rating": "84"
+    },
+    {
+      "name": "Resident Evil 7",
+      "gameplay": "71",
+      "graphics": "100",
+      "story": "100",
+      "torture": "35",
+      "rating": "85"
+    }
+  ]
+}

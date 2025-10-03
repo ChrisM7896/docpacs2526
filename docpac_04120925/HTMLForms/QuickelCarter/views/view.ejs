@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms - View Entries</title>
+</head>
+<body>
+    <a href="/">Back</a>
+    <h1>Games</h1>
+        <ul>
+            <% entries.forEach(entry => { %>
+                <li>
+                    <strong><%= entry.name %></strong><br> 
+                    100% Completed: <%= entry.completion ? 'Yes' : 'No' %><br>
+                    Gameplay: <%= entry.gameplay %><br>
+                    Graphics: <%= entry.graphics %><br> 
+                    Story: <%= entry.story %><br>
+                    Torture: <%= entry.torture %><br> 
+                    Rating: <%= entry.rating %>
+                </li>
+            <% }) %>
+        </ul>
+</body>
+<style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #f0f2f5;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    ul {
+        max-width: 300px;
+        margin: 15px auto;
+    }
+
+    li strong {
+        color: #4CAF50;
+    }
+
+    li {
+        display: block;
+        background-color: white;
+        margin: 20px;
+        padding: 15px;
+        border-radius: 3px;
+        border-color:#4CAF50;
+    }
+
+    a {
+        display: inline-block;
+        margin-bottom: 20px;
+        text-decoration: none;
+        color: #4CAF50;
+        font-weight: bold;
+    }
+</style>
+</html>
