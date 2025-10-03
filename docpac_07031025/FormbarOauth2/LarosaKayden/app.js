@@ -6,6 +6,7 @@ const session = require("express-session");
 const jwt = require('jsonwebtoken');
 const ejs = require("ejs");
 const fs = require("fs");
+const { profile } = require("console");
 const app = express()
 const PORT = 3000;
 
@@ -54,7 +55,6 @@ app.get('/login', (req, res) => {
         db.get('SELECT * FROM users WHERE fb_id = ?', [tokenData.id], (err, row) => {
             if (err) {
                 console.error(err.message);
-
             }
             if (!row) {
                 db.run('INSERT INTO users (fb_id, name, profile_checked) VALUES (?, ?, ?)', [tokenData.id, tokenData.displayName, 0], (err) => {
@@ -75,19 +75,49 @@ app.get('/login', (req, res) => {
     }
 })
 app.get('/profile', isAuthenticated, (req, res) => {
-    try {
-        res.render('profile', { user: req.session.user })
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Internal Server Error");
-    }
+    db.get('SELECT * FROM users WHERE fb_id = ?', [req.session.userid], (err, row) => {
+        if (err) {
+            console.error(err.message);
+        }
+        else {
+            try {
+                res.render('profile', {
+                    user: req.session.user,
+                    profile_checked: row.profile_checked
+                })
+            } catch (err) {
+                console.error(err.message);
+                res.status(500).send("Internal Server Error");
+            }
+        }
+    })
 })
 
-app.post('/profile', (req, res) => {
-    db.run('UPDATE users SET profile_checked=? WHERE fb_id=?', [req.body.profile_checked, req.session.userid], (err) => {
+app.post('/profile', isAuthenticated, (req, res) => {
+    const profileChecked = req.body.profile_checked;
+
+    db.run('UPDATE users SET profile_checked=? WHERE fb_id=?', [profileChecked, req.session.userid], (err) => {
         if (err) {
             console.log(err)
-            res.send("Database error:\n" + err)
+            res.status(500).send("Internal Server Error");
+        } else {
+            console.log(`User ${req.session.userid} updated profile_checked to ${profileChecked}`);
+            db.get('SELECT * FROM users WHERE fb_id = ?', [req.session.userid], (err, row) => {
+                if (err) {
+                    console.error(err.message);
+                }
+                else {
+                    try {
+                        res.render('profile', {
+                            user: req.session.user,
+                            profile_checked: row.profile_checked
+                        })
+                    } catch (err) {
+                        console.error(err.message);
+                        res.status(500).send("Internal Server Error");
+                    }
+                }
+            })
         }
     });
 })

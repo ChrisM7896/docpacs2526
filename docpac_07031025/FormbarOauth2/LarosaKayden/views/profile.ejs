@@ -73,12 +73,18 @@
     <div id="form">
         <form action="/profile" method="POST">
             <div class="form-group">
+                <label>Profile Checked?</label>
                 <input type="checkbox" id="profile_checked" name="profile_checked">
-                <label for="team_name">Profile Checked?</label>
-                <input type="submit">
+                <button type="submit">Save</button>
             </div>
         </form>
     </div>
+    <script>
+        var profile_checked = `<%= profile_checked %>`;
+        console.log(profile_checked);
+        var checkbox = document.getElementById('profile_checked');
+        checkbox.checked = profile_checked;
+    </script>
 </body>
 
 </html>
