@@ -17,6 +17,14 @@
             <input type="submit" value="Submit">
         </form>
     </div>
+
+    <script>
+        var check = JSON.parse(`<%- check%>`)
+        console.log(check)
+        checkBox = document.getElementById('userCheck')
+        checkBox.checked = check
+        console.log(checkBox.checked)
+    </script>
 </body>
 
 </html>
