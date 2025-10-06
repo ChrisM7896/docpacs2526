@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASH!</title>
+    <link href="https://fonts.cdnfonts.com/css/digital-7" rel="stylesheet">
+</head>
+<body>
+    <a href="/" style="position: absolute; top: 10px; left: 10px; text-decoration: none; color: white; font-size: 20px;">&#8592; Back</a>
+    <h5 id="user"></h5>
+    <div id="axes" style="display: flex; flex-direction: column;"></div>
+    <div id="info" style="text-align: center;">
+        <div id="timerbox">PLAY!</div>
+        <div id="scorebox"></div>
+        <b id="mashA" style="display: none;">Mash A!</b>
+    </div>
+    <center>
+        <div id="directionbox"></div>
+        <button id="restartBtn" style="display: none;">Start</button>
+        <form method="POST" action="/game">
+            <input type="hidden" name="username" value="" id="usernameInput">
+            <input type="hidden" name="score" value="" id="scoreInput">
+            <button id="upload" style="display: none;">UPLOAD SCORE</button>
+        </form>
+    </center>
+</body>
+<style>
+    #timerbox, #scorebox {
+        font-size: 40px;
+        color: red;
+        border: 2px solid red;
+        border-radius: 3px;
+        padding: 10px;
+        margin: 10px;
+        margin-top: 100px;
+        width: 150px;
+        text-align: center;
+        display: inline-block;
+        background-color: black;
+    }
+    #directionbox {
+        font-size: 40px;
+        color: red;
+        border: 2px solid red;
+        border-radius: 3px;
+        padding: 10px;
+        margin: 10px;
+        width: 150px;
+        text-align: center;
+        background-color: black;
+    }
+    body {
+        background-color: #332e2e;
+        margin-top: 50px;
+        padding: 20px;
+    }
+    h1 {
+        color: white;
+        margin: 0;
+    }
+    #mashA {
+        font-size: 50px;
+        color: red;
+    }
+    #directionbox {
+        font-size: 30px;
+        color: red;
+    }
+    button {
+        font-size: 20px;
+        padding: 10px 20px;
+        background-color: rgb(44, 43, 40);
+        border: 2px solid black;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: #332e2e 2px 2px 5px;
+        margin: 10px;
+    }
+    button:hover {
+        background-color: rgb(68, 66, 62);
+        color: white;
+    }
+    h5 {
+        color: white;
+        margin: 0;
+        text-align: center;
+    }
+</style>
+<script>
+
+// prompt for username
+let username = prompt("Username:")
+if (username == null || username == "") {
+    username = "guest"
+}
+
+// variables
+document.getElementById("user").innerHTML = `User: ${username}`
+let score = 0
+let timer = 20
+let direction = 0
+let gameStatus = false
+let restartBtn = document.getElementById("restartBtn")
+let mashA = document.getElementById("mashA")
+let buttonpressed = true
+
+//countdown function
+function count(){
+    if (timer >= 0 && gameStatus == true){
+        document.getElementById("timerbox").innerHTML = `${timer}`
+        timer -= 1
+        document.getElementById("restartBtn").innerHTML = "Restart"
+    }
+}
+
+// change direction function
+function directChange(){
+    if (gameStatus == true){
+        direction = Math.floor(Math.random() * 4)
+    }
+}
+
+// display
+function display(){
+    if (gameStatus == true){
+        document.getElementById("scorebox").innerHTML = `${score}`
+        mashA.style.display = "block"
+        upload.style.display = "none"
+    } else {
+        restartBtn.style.display = "block"
+    }
+}
+
+// display update
+setInterval(display, 10)
+
+// end game
+setInterval(function() {
+    if (timer == 0){
+        gameStatus = false
+        document.getElementById("timerbox").innerHTML = `FIN`
+        document.getElementById("scorebox").innerHTML = `${score}`
+        mashA.style.display = "none"
+        document.getElementById("directionbox").innerHTML = `---`
+        upload.style.display = "inline-block"
+
+        //score and username input
+        document.getElementById("usernameInput").value = username
+        document.getElementById("scoreInput").value = score
+    }
+}, 1000)
+
+// timer
+setInterval(count, 1000)
+
+// direction
+setInterval(directChange, 2000)
+
+// restart button
+document.getElementById("restartBtn").addEventListener("click", function(){
+    if(gameStatus == true){
+        location.reload()
+    } else {
+        score = 0
+        timer = 20
+        direction = 0
+        gameStatus = true
+    }
+    
+})
+
+checkStat()
+handleGamepadInput()
+
+// Gamepad input handling
+function handleGamepadInput() {
+    const gamepads = navigator.getGamepads();
+    if (gamepads[0]) {
+        const gamepad = gamepads[0];
+        if (gamepad.buttons[0].pressed) { // A button
+            console.log("A button pressed");
+            if (gameStatus && timer > 0 && buttonpressed) {
+                // Check if button is pressed, not held
+                switch (direction) {
+                    case 0: // up
+                        score += (gamepad.axes[1] < -0.5) ? 1 : 0;
+                        break;
+                    case 1: // right
+                        score += (gamepad.axes[0] > 0.5) ? 1 : 0;
+                        break;
+                    case 2: // down
+                        score += (gamepad.axes[1] > 0.5) ? 1 : 0;
+                        break;
+                    case 3: // left
+                        score += (gamepad.axes[0] < -0.5) ? 1 : 0;
+                        break;
+                }
+                buttonpressed = false;
+            }
+            
+        }
+    }
+    
+    requestAnimationFrame(handleGamepadInput);
+}
+
+function checkStat(){
+    const gamepads = navigator.getGamepads();
+    if (gamepads[0]) {
+        const gamepad = gamepads[0];
+        if (!gamepad.buttons[0].pressed) {
+            buttonpressed = true; // Reset when button is released
+        }
+    }
+    requestAnimationFrame(checkStat);
+};
+
+// image orientation function
+function directOri(){
+    const gamepads = navigator.getGamepads();
+    if (gameStatus == true) {
+        if (direction == 0) { // up
+            document.getElementById("directionbox").innerHTML = `Up!`
+        } else if (direction == 1) { // right
+            document.getElementById("directionbox").innerHTML = `Right!`
+        } else if (direction == 2) { // down
+            document.getElementById("directionbox").innerHTML = `Down!`
+        } else if (direction == 3) { // left
+            document.getElementById("directionbox").innerHTML = `Left!`
+        }
+    }
+}
+// image direction
+setInterval(directOri, 100)
+
+</script>
+</html>
