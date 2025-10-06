@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formbox</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header id="formboxHeader">
+        <a href="/" id="headerLogo">
+            <h1>Formbox</h1>
+            <p>v 8.0.x</p>
+        </a>
+    </header>
+    <div id="mainContainer">
+        <form action="/profile" method="POST">
+            <h2>User:</h2>
+            <p><%=user%></p>
+            <h2>Check box?</h2>
+            <div class="checkbox-box">
+                <input type="checkbox" id="checkbox" name="checkbox" value="boxChecked" <%= boxChecked ? "checked" : "" %>>
+                <label for="checkbox">Yes/No</label>
+            </div>
+            <button type="submit" id="submitButton">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
