@@ -2,11 +2,12 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const jwt = require('jsonwebtoken');
 const session = require('express-session')
+const socket = require("socket.io")
+const join = require("node:path")
 //add encryption if necessary
 const app = express();
 const AUTH_URL = 'https://formbeta.yorktechapps.com'
 const THIS_URL = 'http://localhost:3000/login'
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,7 +33,7 @@ function isAuthenticated(req, res, next) {
 
 app.get('/', isAuthenticated, (req, res) => {
     try {
-        res.render('index.ejs', {user : req.session.user})
+        res.render('chat.ejs', {user : req.session.user})
     }
     catch (error) {
         res.send(error.message)
@@ -51,7 +52,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/chat', isAuthenticated, (req, res) => {
-    res.render('chat.ejs', {user : req.session.user, id : req.session.id})
+    res.render('chat.ejs', {user : req.session.user})
 });
 
 app.listen(3000, () => {
