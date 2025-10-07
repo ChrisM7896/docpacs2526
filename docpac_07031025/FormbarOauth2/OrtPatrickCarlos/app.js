@@ -34,7 +34,7 @@ function isAuthenticated(req, res, next) {
     } else {
         res.redirect('/login');
     }
-}
+} 
 
 app.get('/', (req, res) => {
     res.render('index');
