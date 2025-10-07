@@ -1,3 +1,4 @@
+//High Score Database
 const express = require("express");
 const sqlite3 = require("sqlite3");
 const app = express();
@@ -41,7 +42,8 @@ app.post("/game", (req, res) => {
         return
     }
     db.run(
-        `INSERT INTO scores (ip, name, score) VALUES (?, ?, ?)`,
+        `INSERT INTO scores (
+        ip, name, score) VALUES (?, ?, ?)`,
         [ip, name, score],
         res.redirect("/hiscores")
     );
