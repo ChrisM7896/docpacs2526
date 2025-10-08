@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRO</title>
+    <style>
+        body {
+            margin: 0;
+            font: 16px "Outfit", Arial, sans-serif;
+            text-align: center;
+            transition: background-color 0.5s, color 0.5s;
+            background: linear-gradient(135deg, #072438 30%, #000c15 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* === HEADER === */
+        #formbarHeader {
+            /* position and size */
+            position: absolute;
+            top: 0;
+            left: 15px;
+            right: 15px;
+            height: 60px;
+            border-radius: 0 0 12px 12px;
+
+            /* layout inside */
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            padding: 0 20px;
+
+            /* style */
+            font-size: 20px;
+            color: white;
+            background: linear-gradient(to right, #002a7a, #4b00a5);
+            box-shadow: 0 3px 10px black;
+            z-index: 5;
+        }
+
+        /* overlay for depth */
+        #formbarHeader::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* === HEADER TEXT === */
+        #headerLogo {
+            position: relative;
+            z-index: 1;
+            /* keeps text above overlay */
+            display: flex;
+            align-items: baseline;
+        }
+
+        #headerLogo h1,
+        #headerLogo p {
+            font-family: "Outfit", sans-serif;
+            margin: 0;
+        }
+
+        #headerLogo p {
+            font-size: 14px;
+            color: #fffa;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="formbarHeader">
+        <div id="headerLogo">
+            <h1>Formchat</h1>
+            <p>v 0.0.1</p>
+        </div>
+    </div>
+</body>
+
+</html>

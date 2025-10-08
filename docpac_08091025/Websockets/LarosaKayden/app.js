@@ -7,8 +7,8 @@ const ejs = require("ejs");
 const app = express()
 const PORT = 3000;
 
-//const AUTH_URL = "https://formbeta.yorktechapps.com/";
-//const THIS_URL = "http://localhost:3000/login";
+const AUTH_URL = "https://formbeta.yorktechapps.com/";
+const THIS_URL = "http://localhost:3000/login";
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +32,19 @@ function isAuthenticated(req, res, next) {
     else res.redirect(`/login`)
 }
 
+
+
+
+
+//test page ignore
+app.get('/bro', (req, res) => {
+    res.render('bro')
+})
+
+
+
+
+
 app.get('/', isAuthenticated, (req, res) => {
     try {
         res.render('index', { user: req.session.user })
@@ -40,6 +53,10 @@ app.get('/', isAuthenticated, (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 })
+
+
+
+
 
 app.get('/chat', (req, res) => {
     if (req.session.user) return res.redirect('/')
@@ -71,16 +88,6 @@ app.get('/chat', (req, res) => {
         res.redirect(`${AUTH_URL}oauth?redirectURL=${THIS_URL}`)
     }
 })
-
-//handle formbar login
-app.get('/', (req, res) => {
-
-});
-
-//chat
-app.get('/chat', (req, res) => {
-
-});
 
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
