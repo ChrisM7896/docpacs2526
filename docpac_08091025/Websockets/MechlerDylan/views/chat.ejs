@@ -79,6 +79,7 @@
             border-bottom: 1px solid rgb(0, 0, 0);
             border-top: 1px solid rgb(0, 0, 0);
             font-size: 15px;
+            margin-top: -1px;
         }
     </style>
 </head>
@@ -90,26 +91,44 @@
     <div id="main">
         <div id="message">
             <div id="display">
-                <div id="displayedMessage">
-                    <div id="sender">
-                        User
-                    </div>
-                    <div id="sentMessage">
-                        This is a message
-                    </div>
-                </div>
             </div>
             <div id="send">
-                <form method="POST" action="/chat">
+                <form action="" id="form">
                     <input type="text" id="text" name="text" autocomplete="off" placeholder="Type Message Here">
                     <input type="submit" id="sendMessage" value="Send">
                 </form>
             </div>
         </div>
         <div id="users">
-            <div id="name">User</div>
+            <div id="name">Users</div>
         </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const userDisplay = document.getElementById('users');
+        const form = document.getElementById('form')
+        const sendChatMessage = document.getElementById('text')
+        const Messages = document.getElementById('display')
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (sendChatMessage.value) {
+                socket.emit('chat message', sendChatMessage.value);
+                sendChatMessage.value = ''
+            }
+        });
+        socket.on('user connected', (user) => {
+            const item1 = document.createElement('li')
+            item1.innerHTML = user
+            userDisplay.append(item1)
+        });
+        socket.on('chat message', (msg, user) => {
+            const item = document.createElement('li')
+            item.innerHTML = user + ': ' + msg
+            console.log(msg);
+            Messages.append(item)
+        })
+    </script>
 </body>
 
 </html>
