@@ -31,32 +31,30 @@ const onlineUsers = new Map();
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
 
-    // When a client joins
+    // When a client joins: client will emit 'connection' with displayName
     socket.on('connection', (displayName) => {
-        // store on the socket and in the global map
         socket.data.displayName = displayName || 'Guest';
         onlineUsers.set(socket.id, socket.data.displayName);
         console.log(`Socket ${socket.id} joined as:`, socket.data.displayName);
 
-        // broadcast updated user list to all clients
-        io.emit('users', Array.from(onlineUsers.values()));
+        // broadcast updated user list to all clients under 'userList'
+        io.emit('userList', Array.from(onlineUsers.values()));
     });
 
-    socket.on('chat message', (msg) => {
-        // Normalize message shape: ensure we include a sender
+    // chat message (client emits 'chatMessage')
+    socket.on('chatMessage', (msg) => {
         const from = socket.data.displayName || msg?.from || 'Guest';
         const payload = (typeof msg === 'string') ? { from, text: msg } : { from, ...msg };
-        console.log('chat message received:', payload);
-        // broadcast to all connected clients
-        io.emit('chat message', payload);
+        console.log('chatMessage received:', payload);
+        io.emit('chatMessage', payload);
     });
-
+    // disconnect
     socket.on('disconnect', (reason) => {
         console.log('Client disconnected:', socket.id, 'reason:', reason);
         // remove from online users and notify clients
         if (onlineUsers.has(socket.id)) {
             onlineUsers.delete(socket.id);
-            io.emit('users', Array.from(onlineUsers.values()));
+            io.emit('userList', Array.from(onlineUsers.values()));
         }
     });
 });

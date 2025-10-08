@@ -9,25 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		return;
 	}
 
-	// Create a connection to the same origin
-	const socket = io();
+	// Create a connection but don't auto-connect so we can register listeners first
+	const name = window.CURRENT_USER && window.CURRENT_USER.displayName;
+	const socket = io({ autoConnect: false });
 
-	socket.on('connect', () => {
-		console.log('Connected to socket server, id=', socket.id);
-
-		// Tell the server who this user is (if available)
-		const name = window.CURRENT_USER && window.CURRENT_USER.displayName;
-		if (name) {
-			socket.emit('join', name);
-		} else {
-			// still emit a join so server can track anonymous users
-			socket.emit('join', 'Guest');
-		}
-	});
-
-	// Handle incoming chat messages
+	// Handle incoming chat messages (register before connecting)
 	const messagesEl = document.getElementById('messages');
-	socket.on('chat message', (msg) => {
+	socket.on('chatMessage', (msg) => {
 		const li = document.createElement('li');
 		// msg expected to be { from, text }
 		if (msg && typeof msg === 'object') {
@@ -35,14 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else {
 			li.textContent = String(msg);
 		}
-		messagesEl.appendChild(li);
-		// scroll to bottom
-		messagesEl.scrollTop = messagesEl.scrollHeight;
+		if (messagesEl) {
+			messagesEl.appendChild(li);
+			// scroll to bottom
+			messagesEl.scrollTop = messagesEl.scrollHeight;
+		}
 	});
 
-	// Update online users list
+	// Update online users list (register before connecting)
 	const usersListEl = document.getElementById('users-list');
-	socket.on('users', (usersArray) => {
+	socket.on('userList', (usersArray) => {
+		console.log('userList event received', usersArray);
+		if (!usersListEl) return;
 		usersListEl.innerHTML = '';
 		usersArray.forEach((u) => {
 			const li = document.createElement('li');
@@ -50,6 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			usersListEl.appendChild(li);
 		});
 	});
+
+	// Now register connect handler and connect
+	socket.on('connect', () => {
+		console.log('Connected to socket server, id=', socket.id);
+		// Tell the server who this user is using the requested 'connection' event
+		if (name) socket.emit('connection', name);
+		else socket.emit('connection', 'Guest');
+	});
+
+	// start the connection after all handlers are registered
+	socket.connect();
 
 	// Send message when the form is submitted
 	const form = document.getElementById('chat-form');
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			? { from: window.CURRENT_USER.displayName, text }
 			: text;
 
-		socket.emit('chat message', payload);
+		socket.emit('chatMessage', payload);
 		input.value = '';
 	});
 });
