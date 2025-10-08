@@ -8,7 +8,7 @@ const app = express()
 const PORT = 3000;
 
 const AUTH_URL = "https://formbeta.yorktechapps.com/";
-const THIS_URL = "http://localhost:3000/login";
+const THIS_URL = "http://localhost:3000/chat";
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -29,21 +29,8 @@ app.use(session({
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
-    else res.redirect(`/login`)
+    else res.redirect(`/`)
 }
-
-
-
-
-
-//test page ignore
-app.get('/bro', (req, res) => {
-    res.render('bro')
-})
-
-
-
-
 
 app.get('/', isAuthenticated, (req, res) => {
     try {
@@ -53,10 +40,6 @@ app.get('/', isAuthenticated, (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 })
-
-
-
-
 
 app.get('/chat', (req, res) => {
     if (req.session.user) return res.redirect('/')
@@ -89,6 +72,6 @@ app.get('/chat', (req, res) => {
     }
 })
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log('Server is running on http://localhost:3000');
 });
