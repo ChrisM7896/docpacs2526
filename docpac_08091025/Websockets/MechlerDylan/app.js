@@ -67,14 +67,21 @@ app.get('/chat', isAuthenticated, (req, res) => {
 io.on('connection', (socket) => {
     var data = socket.request.session;
     const user = data.user
+    var disconnect = true
     console.log("User Connected: ", user);
     io.emit('user connected', user)
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg, user) //add previous messages to new user
     })
+    socket.on('chat refresh', (msg, userList) => {
+        io.emit('chat refresh', msg, userList)
+    })
     socket.on('disconnect', () => {
         console.log("User Disconnected: ", user)
-        //remove user from list
+        io.emit('clear user list', disconnect)
+    })
+    socket.on('user connected', () => {
+        io.emit('user connected', user)
     })
 })
 
