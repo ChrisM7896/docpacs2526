@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRO</title>
+    <title>Formchat</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -80,6 +80,93 @@
         }
 
         /* === Chat stuff === */
+        main {
+            display: flex;
+            flex: 1;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        #chat-sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.07);
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #chat-sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Chat area */
+        #chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .message {
+            margin: 6px 0;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .message.you {
+            background: linear-gradient(135deg, #4b00a5, #002a7a);
+            align-self: flex-end;
+        }
+
+        /* Message input area */
+        #inputBar {
+            display: flex;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #msg {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #send {
+            background: linear-gradient(to right, #4b00a5, #002a7a);
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #send:hover {
+            background: linear-gradient(to right, #5e00ca, #00388f);
+        }
     </style>
 </head>
 
@@ -96,9 +183,63 @@
     <main id="chat-container">
         <aside id="chat-sidebar">
             <h2>Chat Rooms</h2>
+            <p style="font-size:14px;opacity:0.8;">(coming soon)</p>
         </aside>
+
+        <section id="chat-main">
+            <div id="messages">
+                <div class="message">Hello there 👋</div>
+                <div class="message you">Hey! Welcome to Formchat.</div>
+            </div>
+            <div id="inputBar">
+                <input id="msg" type="text" placeholder="Type a message..." />
+                <button id="send">Send</button>
+            </div>
+        </section>
     </main>
 
+    <script src="/app.js"></script>
+    <script>
+        const socket = io(); // Connects automatically
+
+        const msgInput = document.getElementById("msg");
+        const sendBtn = document.getElementById("send");
+        const messages = document.getElementById("messages");
+        const sidebar = document.getElementById("chat-sidebar");
+
+        // Prompt for username (temporary method)
+        const username = prompt("Enter your Formbar name:") || "Guest";
+        socket.emit("setName", username);
+
+        // Send message
+        sendBtn.addEventListener("click", () => {
+            const text = msgInput.value.trim();
+            if (text !== "") {
+                socket.emit("chatMessage", text);
+                msgInput.value = "";
+            }
+        });
+
+        // Listen for new chat messages
+        socket.on("chatMessage", ({ name, message }) => {
+            const div = document.createElement("div");
+            div.classList.add("message");
+            if (name === username) div.classList.add("you");
+            div.textContent = `${name}: ${message}`;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        // Listen for updated user list
+        socket.on("userList", (users) => {
+            sidebar.innerHTML = "<h2>Users</h2>";
+            users.forEach(u => {
+                const p = document.createElement("p");
+                p.textContent = u;
+                sidebar.appendChild(p);
+            });
+        });
+    </script>
 </body>
 
 </html>

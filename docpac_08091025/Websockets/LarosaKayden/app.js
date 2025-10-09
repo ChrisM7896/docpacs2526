@@ -8,7 +8,7 @@ const app = express()
 const PORT = 3000;
 
 const AUTH_URL = "https://formbeta.yorktechapps.com/";
-const THIS_URL = "http://localhost:3000/chat";
+const THIS_URL = "http://localhost:3000/";
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -32,17 +32,8 @@ function isAuthenticated(req, res, next) {
     else res.redirect(`/`)
 }
 
-app.get('/', isAuthenticated, (req, res) => {
-    try {
-        res.render('index', { user: req.session.user })
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Internal Server Error");
-    }
-})
-
-app.get('/chat', (req, res) => {
-    if (req.session.user) return res.redirect('/')
+app.get('/', (req, res) => {
+    if (req.session.user) return res.redirect('/chat')
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token)
         req.session.token = tokenData
@@ -59,11 +50,11 @@ app.get('/chat', (req, res) => {
                         console.error(err.message);
                     }
                     console.log(`A row has been inserted with fb_id ${tokenData.id}`);
-                    return res.redirect('/')
+                    return res.redirect('/chat')
                 });
             } else {
                 console.log("User already exists")
-                return res.redirect('/')
+                return res.redirect('/chat')
             }
         });
 
@@ -72,6 +63,53 @@ app.get('/chat', (req, res) => {
     }
 })
 
-app.listen(PORT, () => {
-    console.log('Server is running on http://localhost:3000');
+app.get('/chat', isAuthenticated, (req, res) => {
+    try {
+        res.render('chat', { user: req.session.user })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+/* chatgibity*/
+const http = require('http').createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(http);
+
+let activeUsers = {}; // { socket.id: username }
+
+io.on('connection', (socket) => {
+    console.log('New connection:', socket.id);
+
+    // When the client sends their name after connecting
+    socket.on('setName', (name) => {
+        activeUsers[socket.id] = name;
+        console.log(`${name} joined the chat`);
+
+        // Send updated list of usernames to everyone
+        io.emit('userList', Object.values(activeUsers));
+    });
+
+    // When a message comes in
+    socket.on('chatMessage', (msg) => {
+        const sender = activeUsers[socket.id] || "Anonymous";
+        const fullMessage = `${sender}: ${msg}`;
+        console.log(fullMessage);
+        io.emit('chatMessage', fullMessage);
+    });
+
+    // When someone disconnects
+    socket.on('disconnect', () => {
+        const name = activeUsers[socket.id];
+        console.log(`${name || "Someone"} disconnected`);
+        delete activeUsers[socket.id];
+
+        // Send updated list to everyone
+        io.emit('userList', Object.values(activeUsers));
+    });
+});
+
+http.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
 });
