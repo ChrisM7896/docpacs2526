@@ -6,7 +6,7 @@ const db = new sqlite3.Database('./dataPlace.db', (err) => {
 });
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const AUTH_URL = 'http://localhost:420';
+const AUTH_URL = 'https://formbeta.yorktechapps.com';
 const THIS_URL = 'http://localhost:3000/login';
 const CLIENT_ID = 'gotanycardsfriend';
 const CLIENT_SECRET = 'murderforthemoderntimes';
@@ -78,13 +78,17 @@ app.post('/profile', (req, res) => {
   console.log(req.body.confirmCheckbox)
   console.log(nametosend)
   console.log(idtosend)
+
   db.run(`INSERT INTO users (fbname,fbid) VALUES (?, ?)`, [nametosend, idtosend], function(err) {
+    // If you try to change your profile after you already set it, it will give an error because of the UNIQUE constraint on fbname
     if (err) {
+      // and it never sends the response back, so the browser just waits forever
       return console.log(err.message + " this probaly means you already checked your profile"); 
     }
     console.log(`A row has been inserted with rowid ${this.lastID}`);
     res.send('Profile saved!');
   });
+  // Because db.run is async, this will happen before the insert is done
   db.run(`UPDATE users SET profilechecked = 1 WHERE fbname = ?`, [nametosend], function(err) {
     if (err) {
       return console.log(err.message);
