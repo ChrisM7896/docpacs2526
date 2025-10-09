@@ -111,36 +111,54 @@
             box-sizing: border-box;
         }
 
-        #messages {
-            flex: 1;
-            overflow-y: auto;
+        /* Container for each message row */
+        .message-row {
+            display: flex;
+            margin: 6px 0;
+        }
+
+        .message-row.you {
+            justify-content: flex-end;
+            /* push to right */
+        }
+
+        .message-row.other {
+            justify-content: flex-start;
+            /* push to left */
+        }
+
+        /* Chat bubble itself */
+        .message {
+            max-width: 65%;
+            padding: 10px 14px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            word-wrap: break-word;
+        }
+
+        /* Your messages (right side) */
+        .message-row.you .message {
+            background: linear-gradient(135deg, #4b00a5, #002a7a);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: right;
+        }
+
+        /* Other people's messages (left side) */
+        .message-row.other .message {
+            background: rgba(255, 255, 255, 0.08);
             text-align: left;
         }
 
-        .message {
-            margin: 6px 0;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .message.you {
-            background: linear-gradient(135deg, #4b00a5, #002a7a);
-            align-self: flex-end;
-        }
-
-        /* Message input area */
+        /* Chat input area */
         #inputBar {
             display: flex;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background: #0d2033;
+            border: 1px solid #22394f;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
 
         #msg {
@@ -154,14 +172,14 @@
         }
 
         #send {
-            background: linear-gradient(to right, #4b00a5, #002a7a);
-            border: none;
-            padding: 12px 20px;
+            background: #132b45;
+            border: 1px solid #33577b;
             color: white;
             font-size: 16px;
             font-weight: 600;
+            padding: 12px 20px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s, transform 0.1s;
         }
 
         #send:hover {
@@ -198,48 +216,11 @@
         </section>
     </main>
 
-    <script src="/app.js"></script>
     <script>
-        const socket = io(); // Connects automatically
-
-        const msgInput = document.getElementById("msg");
-        const sendBtn = document.getElementById("send");
-        const messages = document.getElementById("messages");
-        const sidebar = document.getElementById("chat-sidebar");
-
-        // Prompt for username (temporary method)
-        const username = prompt("Enter your Formbar name:") || "Guest";
-        socket.emit("setName", username);
-
-        // Send message
-        sendBtn.addEventListener("click", () => {
-            const text = msgInput.value.trim();
-            if (text !== "") {
-                socket.emit("chatMessage", text);
-                msgInput.value = "";
-            }
-        });
-
-        // Listen for new chat messages
-        socket.on("chatMessage", ({ name, message }) => {
-            const div = document.createElement("div");
-            div.classList.add("message");
-            if (name === username) div.classList.add("you");
-            div.textContent = `${name}: ${message}`;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        });
-
-        // Listen for updated user list
-        socket.on("userList", (users) => {
-            sidebar.innerHTML = "<h2>Users</h2>";
-            users.forEach(u => {
-                const p = document.createElement("p");
-                p.textContent = u;
-                sidebar.appendChild(p);
-            });
-        });
+        const USERNAME = "<%= username %>";
     </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/script.js"></script>
 </body>
 
 </html>

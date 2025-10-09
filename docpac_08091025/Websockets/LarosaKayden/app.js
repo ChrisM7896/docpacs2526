@@ -10,6 +10,10 @@ const PORT = 3000;
 const AUTH_URL = "https://formbeta.yorktechapps.com/";
 const THIS_URL = "http://localhost:3000/";
 
+
+//use public
+app.use(express.static('public'));
+
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -94,9 +98,7 @@ io.on('connection', (socket) => {
     // When a message comes in
     socket.on('chatMessage', (msg) => {
         const sender = activeUsers[socket.id] || "Anonymous";
-        const fullMessage = `${sender}: ${msg}`;
-        console.log(fullMessage);
-        io.emit('chatMessage', fullMessage);
+        io.emit('chatMessage', { name: sender, message: msg });
     });
 
     // When someone disconnects
