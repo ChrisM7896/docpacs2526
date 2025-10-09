@@ -172,9 +172,10 @@
 
         roomList.addEventListener('click', (e) => {
             if (e.target.classList.contains('room')) {
-                const room = e.target.dataset.room;
+                const room = e.target.getAttribute('value');
                 socket.emit('join room', room);
                 currentRoom = room;
+                socket.emit('leave room', document.querySelector('.room.active').dataset.room);
                 document.querySelectorAll('.room').forEach(r => r.classList.remove('active'));
                 e.target.classList.add('active');
             }
@@ -221,6 +222,7 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (messageInput.value.trim()) {
+                console.log('Sending message to room:', currentRoom);
                 socket.emit('chat message', {
                     message: messageInput.value,
                     room: currentRoom
@@ -231,7 +233,7 @@
 
         socket.on('chat message', function (msg) {
             const item = document.createElement('li');
-            item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message.message}`;
+            item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message}`;
             messages.appendChild(item);
             messages.scrollTop = messages.scrollHeight;
         });

@@ -86,17 +86,26 @@ io.on('connection', (socket) => {
     socket.username = session.user || 'Anonymous';
     activeUsers.push({username: socket.username, id: socket.id});
     console.log('Active users:', activeUsers);
+    socket.join('general');
     io.emit('active users', activeUsers);
     socket.on('chat message', (msg) => {
-        console.log('data:', msg, socket.username);
+        console.log('data:', msg.room, msg.message, socket.username);
         
-        io.emit('chat message', {
+        io.to(msg.room).emit('chat message', {
             username: socket.username,
-            message: msg
+            message: msg.message
         });
     });
     socket.on('create room', (roomName) => {
         io.emit('room created', roomName);
+    });
+    socket.on('join room', (room) => {
+        socket.join(room);
+        socket.emit('joined room', room);
+    });
+    socket.on('leave room', (room) => {
+        socket.leave(room);
+        socket.emit('left room', room);
     });
     socket.on('disconnect', () => {
         console.log('A user disconnected');
