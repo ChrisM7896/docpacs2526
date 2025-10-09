@@ -100,7 +100,6 @@
             </div>
         </div>
         <div id="users">
-            <div id="name">Users</div>
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -119,15 +118,37 @@
         });
         socket.on('user connected', (user) => {
             const item1 = document.createElement('li')
+            const currentMessages = Messages.innerHTML
             item1.innerHTML = user
+            Messages.innerHTML = ''
             userDisplay.append(item1)
+            const item2 = userDisplay.innerHTML
+            console.log(item2)
+            userDisplay.innerHTML = ''
+            socket.emit('chat refresh', currentMessages, item2)
         });
         socket.on('chat message', (msg, user) => {
             const item = document.createElement('li')
             item.innerHTML = user + ': ' + msg
             console.log(msg);
             Messages.append(item)
+        });
+        socket.on('clear user list', (disconnect) => {
+            if (disconnect) {
+                const item = document.getElementById('users')
+                item.innerHTML = ''
+                socket.emit('user connected')
+            }
         })
+        socket.on('chat refresh', (msg, userList) => {
+            const item = document.createElement('li')
+            const item3 = document.createElement('li')
+            item.innerHTML = msg
+            item3.innerHTML = userList
+            Messages.append(item)
+            userDisplay.append(item3)
+
+        });
     </script>
 </body>
 
