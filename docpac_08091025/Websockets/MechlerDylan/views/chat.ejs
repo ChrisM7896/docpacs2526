@@ -142,11 +142,9 @@
         })
         socket.on('chat refresh', (msg, userList) => {
             const item = document.createElement('li')
-            const item3 = document.createElement('li')
             item.innerHTML = msg
-            item3.innerHTML = userList
+            userDisplay.innerHTML = userList
             Messages.append(item)
-            userDisplay.append(item3)
 
         });
     </script>
