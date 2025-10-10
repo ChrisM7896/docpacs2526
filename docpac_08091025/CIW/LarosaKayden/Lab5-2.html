@@ -25,7 +25,9 @@
 			let inputValue = document.getElementById("gradeInput").value.trim();
 			let grade = parseInt(inputValue, 10);
 
-			//while () {}
+			while (isNaN(grade)) {
+				grade = parseInt(prompt("Enter a numerical grade:"));
+			}
 
 			let message;
 			if (grade >= 90) {
