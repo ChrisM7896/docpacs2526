@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forumbar</title>
+    <link rel="icon" href="/favicon.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header id="forumbarHeader">
+        <a href="/" id="headerLogo">
+            <h1>Forumbar</h1>
+            <p id="version">Welcome, <%= user %></p>
+        </a>
+    </header>
+    <div id="mainContainer">
+    <div id="chatContainer">
+        <div id="messages"></div>
+        <form id="chatForm">
+                <input id="messageInput" autocomplete="off" placeholder="Type your message..." type="text" />
+                <button type="submit" id="sendButton">Send</button>
+        </form>
+    </div>
+    <div id="sidebar">
+        <h2>Active Users</h2>
+        <div id="userList"></div>
+    </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Initialize socket.io client
+        const socket = io();
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const messages = document.getElementById('messages');
+        const userList = document.getElementById('userList');
+        const user = "<%= user %>";
+        const userId = "<%= id %>";
+        // Notify server of new user
+        socket.emit('newUser', {user, userId});
+        // Listen for messages from server
+        socket.on('message', (data) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
+            messages.appendChild(li);
+            messages.scrollTop = messages.scrollHeight;
+        });
+        // Listen for user list updates
+        socket.on('userList', (users) => {
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = user;
+                userList.appendChild(li);
+            });
+        });
+        // Handle form submission
+        chatForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const message = messageInput.value;
+            if (!message) return;
+            socket.emit('message', {user, message});
+            messageInput.value = '';
+        });
+    </script>
+</body>
+</html>
