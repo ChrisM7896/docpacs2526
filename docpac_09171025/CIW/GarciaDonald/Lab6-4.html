@@ -41,11 +41,11 @@
 
 				// Add a script to show alert after the page loads
 				const scriptElem = doc.createElement('script');
-				scriptElem.textContent = `
+				scriptElem.textContent = 
 					window.onload = function() {
 						alert('The page ' + document.title + ' was created: ' + document.lastModified);
 					};
-				`;
+				;
 				doc.head.appendChild(scriptElem);
 
 				// Set body styles and add content
