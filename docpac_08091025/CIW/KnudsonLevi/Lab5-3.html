@@ -25,16 +25,17 @@
 		  let grade = parseInt(inputValue, 10);
 		  let attempts = 0;
 
-		  while (Number.isNaN(grade)) {
+		  while (Number.isNaN(grade) && attempts <= 2) {
 			const userInput = prompt("Please enter a numerical grade value:");
+			attempts++;
+			grade = parseInt(userInput.trim(), 10);
+		  }
 
-
-
-
-
-
-
-			}
+		  if (Number.isNaN(grade)) {
+			document.getElementById("result").textContent = "Invalid input after 3 attempts.";
+			return;
+		  } else if (attempts > 0) {
+			const userInput = prompt("Please enter a numerical grade value:");
 			grade = parseInt(userInput.trim(), 10);
 		  }
 
