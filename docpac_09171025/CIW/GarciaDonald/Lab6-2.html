@@ -6,41 +6,45 @@
     </head>
 	
 	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
 
-	  <button type="button" id="openWindowBtn">Open New Window</button>
+	<button type="button" id="openWindowBtn">Open New Window</button>
 
-	  <script>
+	<script>
 		document.addEventListener('DOMContentLoaded', () => {
-		  const openWindowBtn = document.getElementById('openWindowBtn');
+		const openWindowBtn = document.getElementById('openWindowBtn');
 
-		  openWindowBtn.addEventListener('click', () => {
-			const popup = 
+		openWindowBtn.addEventListener('click', () => {
+		const popup = window.open("smallWin", height='150'. width='200')
 
 		
-			}
 
-			// Build a safe HTML structure using DOM methods
-			popup.document.title = 'Popup Window';
+		// Build a safe HTML structure using DOM methods
+		popup.document.title = 'Popup Window';
 
-			const style = popup.document.createElement('style');
-			style.textContent = 'body { font-family: sans-serif; padding: 10px; }';
-			popup.document.head.appendChild(style);
+		const style = popup.document.createElement('style');
+		style.textContent = 'body { font-family: sans-serif; padding: 10px; }';
+		popup.document.head.appendChild(style);
 
-			const heading = popup.document.createElement('h4');
-			heading.textContent = 'Popup Window';
-			popup.document.body.appendChild(heading);
+		const heading = popup.document.createElement('h4');
+		heading.textContent = 'Popup Window';
+		popup.document.body.appendChild(heading);
 
-			const closeBtn = popup.document.createElement('button');
-			closeBtn.textContent = 'Close';
-			closeBtn.type = 'button';
-			closeBtn.addEventListener('click', () => popup.close());
+		const closeBtn = popup.document.createElement('button');
+		closeBtn.textContent = 'Close';
+		closeBtn.type = 'button';
+		closeBtn.addEventListener('click', () => popup.close());
 
-			popup.document.body.appendChild(closeBtn);
-		  });
-		});
-	  </script>
+		popup.document.body.appendChild(closeBtn);
+
+		if (!popup) {
+			alert('Pop-up blocked. Please allow popups for this site.');
+			return;
+		}
+		
+		})});
+	</script>
 
 	</body>
 </html>
