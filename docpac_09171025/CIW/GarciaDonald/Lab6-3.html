@@ -3,33 +3,33 @@
     <head>
         <meta charset="utf-8">
         <title>Lab 6-3</title>
-	  <style>
+	<style>
 		#ciwLink {
-		  color: purple;
-		  transition: color 0.2s ease;
+		color: purple;
+		transition: color 0.2s ease;
 		}
-	  </style>
+	</style>
     </head>
 	
 	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
 
-	  <a href="http://www.CIWcertified.com" id="ciwLink">Visit CIW!</a>
+	<a href="http://www.CIWcertified.com" id="ciwLink">Visit CIW!</a>
 
-	  <script>
+	<script>
 		document.addEventListener('DOMContentLoaded', () => {
-		  const ciwLink = document.getElementById('ciwLink');
+		const ciwLink = document.getElementById('ciwLink');
 
-		  ciwLink.addEventListener('mouseover', () => {
-			ciwLink.style.color = 'red';
-		  });
-
-		  ciwLink.addEventListener('mouseout', () => {
-			ciwLink.style.color = 'purple';
-		  });
+		ciwLink.addEventListener('mouseover', () => {
+		ciwLink.style.color = 'green';
 		});
-	  </script>
+
+		ciwLink.addEventListener('mouseout', () => {
+		ciwLink.style.color = 'orange';
+		});
+		});
+	</script>
 
 	</body>
 </html>
