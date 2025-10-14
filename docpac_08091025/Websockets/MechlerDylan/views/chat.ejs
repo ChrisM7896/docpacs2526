@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <style>
+        #nameDisplay {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 5px;
+            height: 69px;
+            margin-bottom: -1px;
+        }
+
+        #main {
+            display: flex;
+            width: 100%;
+            height: 779px;
+
+        }
+
+        #message {
+            display: inline-block;
+            width: 80%;
+            text-align: center;
+            height: 776px;
+        }
+
+        #display {
+            border: 1px solid rgb(0, 0, 0);
+            height: 95%;
+            overflow: auto;
+        }
+
+        #send {
+            height: 2%;
+            margin-top: -1px;
+            display: flex;
+        }
+
+        #users {
+            border: 1px solid rgb(0, 0, 0);
+            width: 20%;
+            text-align: center;
+            height: 778px;
+            margin-left: -1px;
+            overflow: auto;
+        }
+
+        #text {
+            width: 1200px;
+            height: 36px;
+            overflow: auto;
+        }
+
+        #sendMessage {
+            width: 315px;
+            height: 42px;
+            margin-left: -5px;
+            margin-right: -12px;
+        }
+
+        #displayedMessage {
+            border-left: 1px solid rgb(0, 0, 0);
+            border-top: 2px solid rgb(0, 0, 0);
+            border-bottom: 2px solid rgb(0, 0, 0);
+            height: auto;
+            margin: -1px;
+            width: 100%;
+        }
+
+        #sender {
+            border-bottom: 1px solid rgb(0, 0, 0);
+        }
+
+        #name {
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-top: 1px solid rgb(0, 0, 0);
+            font-size: 15px;
+            margin-top: -1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nameDisplay">
+        <h2>Welcome, <%-user%></h2>
+    </div>
+    <div id="main">
+        <div id="message">
+            <div id="display">
+            </div>
+            <div id="send">
+                <form action="" id="form">
+                    <input type="text" id="text" name="text" autocomplete="off" placeholder="Type Message Here">
+                    <input type="submit" id="sendMessage" value="Send">
+                </form>
+            </div>
+        </div>
+        <div id="users">
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const userDisplay = document.getElementById('users');
+        const form = document.getElementById('form')
+        const sendChatMessage = document.getElementById('text')
+        const Messages = document.getElementById('display')
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (sendChatMessage.value) {
+                socket.emit('chat message', sendChatMessage.value);
+                sendChatMessage.value = ''
+            }
+        });
+        socket.on('user connected', (user) => {
+            const item1 = document.createElement('li')
+            const currentMessages = Messages.innerHTML
+            item1.innerHTML = user
+            Messages.innerHTML = ''
+            userDisplay.append(item1)
+            const item2 = userDisplay.innerHTML
+            console.log(item2)
+            userDisplay.innerHTML = ''
+            socket.emit('chat refresh', currentMessages, item2)
+        });
+        socket.on('chat message', (msg, user) => {
+            const item = document.createElement('li')
+            item.innerHTML = user + ': ' + msg
+            console.log(msg);
+            Messages.append(item)
+        });
+        socket.on('clear user list', (disconnect) => {
+            if (disconnect) {
+                const item = document.getElementById('users')
+                item.innerHTML = ''
+                socket.emit('user connected')
+            }
+        })
+        socket.on('chat refresh', (msg, userList) => {
+            const item = document.createElement('li')
+            item.innerHTML = msg
+            userDisplay.innerHTML = userList
+            Messages.append(item)
+
+        });
+    </script>
+</body>
+
+</html>

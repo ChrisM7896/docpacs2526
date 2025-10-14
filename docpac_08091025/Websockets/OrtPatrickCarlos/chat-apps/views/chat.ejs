@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    color: #444;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="text"] {
+    width: calc(100% - 110px);
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#message-list {
+    margin-top: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#messages li {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#messages li:last-child {
+    border-bottom: none;
+}
+
+#user-list {
+    margin-top: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#users {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#users li {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#users li:last-child {
+    border-bottom: none;
+}
+
+#user {
+    display: none;
+}
+    </style>
+</head>
+
+<body>
+    <button onclick="location.href='/index'">Home</button>
+    <button onclick="signout()">Logout</button>
+    <h1>Welcome <%= user %></h1>
+    <div id="user-list">
+        <h2>Online Users</h2>
+        <ul id="users"></ul>
+    </div>
+    
+    <div id="message-list">
+        <h2>Messages</h2>
+        <ul id="messages" style="max-height: 300px; overflow-y: scroll;"></ul>
+    </div>
+    
+    <form id="form">
+        <input type="text" id="input" placeholder="Type your message..." required>
+        <button type="submit">Send</button>
+    </form>
+    
+    <div id="user" style="display: none;"><%= user %></div>
+</body>
+<script src="script.js"></script>
+<script>
+    function signout() {
+        fetch('/logout', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            });
+    }
+</script>
+</html>
