@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Is this your card?</h1>
+    <h2 id="namefb"></h2>
+    <h3 id="govnamefb"></h3>
+    <form id="checkboxForm" action="/profile" method="POST">
+        <input type="hidden" name="tokname" value="<%= tokname %>">
+        <input type="hidden" name="fbid" value="<%= fbid %>">
+        <input type="checkbox" id="confirmCheckbox" name="confirmCheckbox" required>
+        <label for="confirmCheckbox">Yes, this is my formbar display name</label><br>
+        <button type="submit">Submit</button>
+    <script>
+        console.log("Token Name:", "<%= tokname %>");
+        console.log("FB ID:", "<%= fbid %>");
+        document.getElementById('namefb').innerText = "<%= tokname %>";
+        document.getElementById('govnamefb').innerText = "<%= fbid %>";
+
+    </script>
+</body>
+</html>
