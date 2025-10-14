@@ -62,7 +62,6 @@ app.get('/login', (req, res) => {
     res.redirect('/profile',tokname=`${tokenData.displayName}` ,fbid=`${tokenData.id}`);
 
 } else {
-    //res.redirect('/profile',tokname='Mynameislie' ,fbid='Ihavenoid');
     res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`)
 };
 });

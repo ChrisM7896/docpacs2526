@@ -1,0 +1,288 @@
+@font-face {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqQ4E.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+html, body {
+    height: 100%;
+    box-sizing: border-box;
+}
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+:root {
+    --header-h: 60px;
+    --body-pad: 24px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    font: 24px "Outfit", Arial, sans-serif;
+    padding: var(--body-pad);
+    padding-top: calc(var(--header-h) + var(--body-pad));
+    text-align: center;
+    transition: background-color 0.5s, color 0.5s;
+    background: linear-gradient(45deg, #072438 30%, #000c15 100%);
+    color: white;
+    overflow: hidden;
+}
+#mainContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    height: calc(100vh - var(--header-h) - var(--body-pad) * 2);
+    max-width: 100%;
+}
+#sidebar {
+    background: #00000077;
+    border: 2px solid #ffffff22;
+    outline: 2px solid #fff4;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+    box-sizing: border-box;
+    width: 300px;
+    flex-shrink: 0;
+    overflow-y: hidden;
+}
+#chatContainer {
+    background: #00000077;
+    border: 2px solid #ffffff22;
+    outline: 2px solid #fff4;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    border-radius: 10px;
+    padding: 5px 10px !important;
+    font-size: 20px;
+    z-index: 5;
+    scrollbar-color: transparent;
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    margin-top: 0;
+    scrollbar-width: none;
+}
+#chatForm {
+    display: flex;
+    padding: 10px 0;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#messages {
+    overflow-y: scroll;
+    height: calc(100% - 60px);
+    box-sizing: border-box;
+    scrollbar-color: transparent;
+    scrollbar-width: none;
+    text-align: left;
+}
+#messages li {
+    list-style: none;
+    text-align: left;
+    padding: 5px 10px;
+    border: 2px solid #fff4;
+    border-radius: 10px;
+    margin: 3px 0;
+}
+#userList {
+    padding: 0;
+    margin: 0;
+    max-height: calc(100% - 40px);
+    overflow-y: scroll;
+    scrollbar-width: none;
+    scrollbar-color: transparent;
+}
+#userList li {
+    padding: 5px 10px;
+    border-bottom: 2px solid #fff4;
+    border-radius: 10px;
+    margin: 3px 0; 
+}
+#sendButton {
+    font: 24px "Outfit", Arial, sans-serif;
+    margin-left: 10px;
+    padding: 5px 20px;
+}
+input[type="text"] {
+    display: flex;
+    width: 100%;
+    padding: 5px 20px;
+    margin: auto;
+    border: 2px solid #fff4;
+    border-radius: 10px;
+    background-color: #d5e5ff33;
+    color: white;
+    font-size: 24px;
+    outline: none;
+    box-sizing: border-box;
+    cursor: text;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+button {
+    font-family: "Outfit", Arial, sans-serif;
+    color: white;
+    margin: auto;
+    background-color: #d5e5ff33;
+    border: #fff4 2px solid;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: 2px solid #0004;
+}
+button:hover {
+    background-color: #83868c33;
+    transform: scale(1.025);
+    transform-origin: center;
+    transition: 0.2s background-color ease-in-out, 0.2s transform ease-in-out;
+}
+#forumbarHeader {
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 15px;
+    right: 15px;
+    background: linear-gradient(179deg, #390184, #00256e);
+    height: var(--header-h);
+    box-shadow: 0px 3px 10px black;
+    color: white;
+    padding: 0 20px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    font-size: 20px;
+    border-radius: 0 0 10px 10px;
+    box-sizing: border-box;
+    z-index: 20;
+}
+#headerLogo {
+    text-align: left;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0;
+    color: white;
+    font-size: 20px;
+}
+#headerLogo h1 {
+    display: inline-block;
+}
+#headerLogo p {
+    display: inline-block;
+    font-size: 14px;
+    color: #fffa;
+    margin: 0;
+    margin-left: 10px;
+}
+a {
+    text-decoration: none;
+}
+#buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+#submitButton {
+    color: white;
+    margin: auto;
+    margin-top: 30px;
+    background-color: #d5e5ff33;
+    border: #fff4 2px solid;
+    border-radius: 10px;
+    cursor: pointer;
+    font: 24px "Outfit", Arial, sans-serif;
+    outline: 2px solid #0004;
+    padding: 5px 20px;
+}
+input[type="password"], input[type="email"] {
+    display: flex;
+    width: 80%;
+    max-width: 400px;
+    padding: 5px 20px;
+    margin: auto;
+    margin-top: 8px;
+    border: 2px solid #fff4;
+    border-radius: 10px;
+    background-color: #d5e5ff33;
+    color: white;
+    font-size: 24px;
+    outline: none;
+    box-sizing: border-box;
+    cursor: text;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+::placeholder {
+    font-family: 'outfit', Arial, sans-serif;
+    color: black;
+    opacity: 0.5;
+}
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #d5e5ff33;
+    margin: 0;
+    color: #d5e5ff33;
+    width: 2.5em;
+    height: 2.5em;
+    border: 0.15em solid #fff4;
+    border-radius: 10px;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 1.85em;
+    height: 1.85em;
+    border-radius: 25%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+input[type="checkbox"]:focus {
+    outline: max(2px, 0.15em) solid currentColor;
+    outline-offset: max(2px, 0.15em);
+}
+.checkbox-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+h2 {
+    margin: 0 0 10px 0;
+}
+form p {
+    margin: 0 0 5px 0;
+    font-size: 24px;
+}
