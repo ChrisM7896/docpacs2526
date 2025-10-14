@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
 
 app.get('/chat', isAuthenticated, (req, res) => {
     try {
-        res.render('chat', { user: req.session.user })
+        res.render('chat', { username: req.session.user })
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Internal Server Error");

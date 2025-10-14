@@ -7,10 +7,6 @@ const sendBtn = document.getElementById("send");
 const messages = document.getElementById("messages");
 const sidebar = document.getElementById("chat-sidebar");
 
-// Use the Formbar username passed from EJS (no prompt)
-const username = "<%= user %>"
-socket.emit("setName", username);
-
 // Send message
 sendBtn.addEventListener("click", () => {
     const text = msgInput.value.trim();
