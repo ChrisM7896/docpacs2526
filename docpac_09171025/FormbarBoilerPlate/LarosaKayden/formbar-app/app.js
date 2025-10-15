@@ -4,6 +4,7 @@ const app = express();
 
 //requirements
 require('dotenv').config();
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET);
 const jwt = require('jsonwebtoken')
 //const fetch = require('node-fetch')
 
@@ -38,7 +39,7 @@ app.get('/login', (req, res) => {
         req.session.user = data.displayName;
         res.redirect('/');
     } else {
-        res.redirect('${process.env.AUTH_URL}/oauth?redirectURL=${process.env.THIS_URL}');
+        res.redirect(`${process.env.AUTH_URL}/oauth?redirectURL=${process.env.THIS_URL}`);
     }
 });
 
