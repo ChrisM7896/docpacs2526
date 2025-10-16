@@ -6,7 +6,7 @@ const app = express();
 require('dotenv').config();
 console.log("SESSION_SECRET:", process.env.SESSION_SECRET);
 const jwt = require('jsonwebtoken')
-//const fetch = require('node-fetch')
+
 
 //view set
 app.set('view engine', 'ejs');
@@ -30,8 +30,10 @@ function isAuthenticated(req, res, next) {
     res.redirect(`/login?redirectURL=${process.env.THIS_URL}`);
 }
 
-//gets
-app.get('/', isAuthenticated, (req, res) => res.render('index', { user: req.session.user }));
+//routes
+app.get('/', isAuthenticated, (req, res) => {
+    res.render('index');
+});
 
 app.get('/login', (req, res) => {
     if (req.query.token) {
