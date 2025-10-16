@@ -23,6 +23,7 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', (req, res) => {
     try {
+        
         const { username, password } = req.body;
         const hashedPassword = crypto.createHmac('sha256', SECRET_KEY).update(password).digest('hex');
         db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, hashedPassword], (err, row) => {

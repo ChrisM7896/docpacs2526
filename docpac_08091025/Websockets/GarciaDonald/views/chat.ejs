@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    h1 {
+        color: #333;
+    }
+    #chat-container {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #fff;
+        max-width: 600px;
+        margin-bottom: 20px;
+    }
+    #messages {
+        list-style-type: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+    #messages li {
+        padding: 5px 10px;
+        border-bottom: 1px solid #eee;
+    }
+    #chat-input-container {
+        display: flex;
+    }
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    #chat-form button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        border-radius: 4px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    #chat-form button:hover {
+        background-color: #218838;
+    }
+    .users-online {
+        margin-top: 20px;
+    }
+    .users-online ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .users-online li {
+        padding: 5px 0;
+    }
+</style>
+<body>
+    <h1>Welcome to the Chat</h1>
+    <p>User ID: <%= id %></p>
+    <p>Display Name: <%= displayName %></p>
+    <div id="chat-container">
+        <h2>Chat Messages</h2>
+        <ul id="messages">
+            <!-- Chat messages will be dynamically added here -->
+        </ul>
+    </div>
+    <div id="chat-input-container">
+        <form id="chat-form">
+            <input type="text" id="message-input" placeholder="Type your message here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <div class="users-online">
+        <h3>Users Online</h3>
+        <ul id="users-list">
+            <!-- List of online users will be dynamically added here -->
+        </ul>
+    </div>
+    <!-- Expose a small CURRENT_USER object for the client script -->
+    <script>
+        window.CURRENT_USER = {
+            id: '<%= id %>',
+            displayName: '<%= displayName %>'
+        };
+    </script>
+    <!-- Socket.IO client script served by the server -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Our client-side logic -->
+    <script src="/script.js"></script>
+</body>
+</html>
