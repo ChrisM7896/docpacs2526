@@ -1,75 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-		<title>Lesson 6 Application Project</title>
-    </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-	  <label for="imageSelector">Choose an image:</label>
-	  <select id="imageSelector">
+
+<head>
+	<meta charset="utf-8">
+	<title>Lesson 6 Application Project</title>
+</head>
+
+<body>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+	<label for="imageSelector">Choose an image:</label>
+	<select id="imageSelector">
 		<option value="">--Select an image--</option>
 		<option value="image_1.jpg">Image 1</option>
 		<option value="image_2.jpg">Image 2</option>
-	  </select>
+	</select>
 
-	  <script>
+	<script>
 		'use strict';
 
 		let popupWindow = null;
 
 		function clearPopupDocument(doc) {
-		  // Remove all children from <html> element
-		  while (doc.documentElement.firstChild) {
-			doc.documentElement.removeChild(doc.documentElement.firstChild);
-		  }
+			// Remove all children from <html> element
+			while (doc.documentElement.firstChild) {
+				doc.documentElement.removeChild(doc.documentElement.firstChild);
+			}
 		}
 
 		function createAndAppend(tag, parent, options = {}) {
-		  const el = parent.ownerDocument.createElement(tag);
-		  if (options.text) el.textContent = options.text;
-		  if (options.html) el.innerHTML = options.html;
-		  if (options.attrs) {
-			for (const [key, val] of Object.entries(options.attrs)) {
-			  el.setAttribute(key, val);
+			const el = parent.ownerDocument.createElement(tag);
+			if (options.text) el.textContent = options.text;
+			if (options.html) el.innerHTML = options.html;
+			if (options.attrs) {
+				for (const [key, val] of Object.entries(options.attrs)) {
+					el.setAttribute(key, val);
+				}
 			}
-		  }
-		  if (options.style) {
-			for (const [prop, val] of Object.entries(options.style)) {
-			  el.style[prop] = val;
+			if (options.style) {
+				for (const [prop, val] of Object.entries(options.style)) {
+					el.style[prop] = val;
+				}
 			}
-		  }
-		  if (options.events) {
-			for (const [evt, handler] of Object.entries(options.events)) {
-			  el.addEventListener(evt, handler);
+			if (options.events) {
+				for (const [evt, handler] of Object.entries(options.events)) {
+					el.addEventListener(evt, handler);
+				}
 			}
-		  }
-		  parent.appendChild(el);
-		  return el;
+			parent.appendChild(el);
+			return el;
 		}
 
 		function buildPopupContent(doc, title, imageUrl) {
-		  clearPopupDocument(doc);
+			clearPopupDocument(doc);
 
-		  // Create <html> structure: <head> + <body>
-		  const html = doc.documentElement;
+			// Create <html> structure: <head> + <body>
+			const html = doc.documentElement;
 
-		  // HEAD
-		  const head = doc.createElement('head');
-		  html.appendChild(head);
+			// HEAD
+			const head = doc.createElement('head');
+			html.appendChild(head);
 
-		  const meta = doc.createElement('meta');
-		  meta.setAttribute('charset', 'UTF-8');
-		  head.appendChild(meta);
+			const meta = doc.createElement('meta');
+			meta.setAttribute('charset', 'UTF-8');
+			head.appendChild(meta);
 
-		  const titleEl = doc.createElement('title');
-		  titleEl.textContent = 'Lesson 6 Application Project';
-		  head.appendChild(titleEl);
+			const titleEl = doc.createElement('title');
+			titleEl.textContent = 'Lesson 6 Application Project';
+			head.appendChild(titleEl);
 
-		  const style = doc.createElement('style');
-		  style.textContent = `
+			const style = doc.createElement('style');
+			style.textContent = `
 			body {
 			  margin: 0;
 			  font-family: Arial, sans-serif;
@@ -93,60 +94,61 @@
 			  cursor: pointer;
 			}
 		  `;
-		  head.appendChild(style);
+			head.appendChild(style);
 
-		  // BODY
-		  const body = doc.createElement('body');
-		  html.appendChild(body);
+			// BODY
+			const body = doc.createElement('body');
+			html.appendChild(body);
 
-		  createAndAppend('h3', body, { text: title });
+			createAndAppend('h3', body, { text: title });
 
-		  createAndAppend('img', body, { attrs: { src: imageUrl, alt: title } });
+			createAndAppend('img', body, { attrs: { src: imageUrl, alt: title } });
 
-		  createAndAppend('button', body, {
-			text: 'Close Preview',
-			events: {
-			  click: () => {
-				popupWindow.close();
-			  }
-			}
-		  });
+			createAndAppend('button', body, {
+				text: 'Close Preview',
+				events: {
+					click: () => {
+						popupWindow.close();
+					}
+				}
+			});
 		}
 
 		function display_image() {
-		  const selector = document.getElementById('imageSelector');
-		  const selectedValue = selector.value;
-		  const selectedText = selector.options[selector.selectedIndex].text;
+			const selector = document.getElementById('imageSelector');
+			const selectedValue = selector.value;
+			const selectedText = selector.options[selector.selectedIndex].text;
 
-		  if (!selectedValue) return;
+			if (!selectedValue) return;
 
-		  if (!popupWindow || popupWindow.closed) {
-		 
-		  } else {
-			popupWindow.focus();
-		  }
+			if (!popupWindow || popupWindow.closed) {
 
-		  // We wait for the popup to load fully
-		  popupWindow.onload = () => {
-			const doc = popupWindow.document;
-			// Construct absolute URL for image
-			const imageUrl = new URL(selectedValue,
-			buildPopupContent(doc, selectedText, imageUrl);
-		  };
+			} else {
+				popupWindow.focus();
+			}
 
-		  // Sometimes onload doesn't fire if page is about:blank already loaded,
-		  // so trigger immediately if readyState is complete
-		  if (popupWindow.document.readyState === 'complete') {
-			const doc = popupWindow.document;
-			const imageUrl = new URL(selectedValue, window.location.href).href;
-			buildPopupContent(doc, selectedText, imageUrl);
-		  }
+			// We wait for the popup to load fully
+			popupWindow.onload = () => {
+				const doc = popupWindow.document;
+				// Construct absolute URL for image
+				const imageUrl = new URL(selectedValue,
+					buildPopupContent(doc, selectedText, imageUrl);
+			};
 
-		  selector.selectedIndex = 0; // reset dropdown
+			// Sometimes onload doesn't fire if page is about:blank already loaded,
+			// so trigger immediately if readyState is complete
+			if (popupWindow.document.readyState === 'complete') {
+				const doc = popupWindow.document;
+				const imageUrl = new URL(selectedValue, window.location.href).href;
+				buildPopupContent(doc, selectedText, imageUrl);
+			}
+
+			selector.selectedIndex = 0; // reset dropdown
 		}
 
-		
-	  </script>
-	  
-	</body>
+
+	</script>
+
+</body>
+
 </html>
