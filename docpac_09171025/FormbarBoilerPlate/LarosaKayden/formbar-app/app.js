@@ -27,7 +27,7 @@ app.use(session({
 //login function
 function isAuthenticated(req, res, next) {
     if (req.session.user) return next();
-    res.redirect(`/login?redirectURL=${process.env.THIS_URL}`);
+    res.redirect(`/login`);
 }
 
 //routes
