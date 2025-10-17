@@ -6,7 +6,9 @@ app.set('view engine', 'ejs');
 const jwt = require('jsonwebtoken');
 const io = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose(); 
+const sqliteStore = require('connect-sqlite3')(session);
 
+//Constants
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.SESSION_SECRET;
 const AUTH_URL = process.env.AUTH_URL;
@@ -22,6 +24,7 @@ const db = new sqlite3.Database("./db/app.db", (err) => {
 });
 //Session setup
 const sessionOptions = {
+    store: new sqliteStore({db: 'sessions.db', dir: './db'}),
     secret: "It's a secret",
     resave: false,
     saveUninitialized: false,
@@ -62,6 +65,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login');
 });
+
 //Socket.io client to connect to auth server
 const socket = io(AUTH_URL, {
     extraHeaders: {
@@ -77,6 +81,20 @@ socket.on('disconnect', () => {
 });
 socket.on('setClass', (classData) => {
     console.log('Received class data:', classData);
+});
+app.get('/sendPogs', isAuthenticated, (req, res) => {
+for (let i = 0; i < 500; i++) {
+    const data = {
+        from: i,
+        to: 114,
+        amount: 1,
+        pin: '123456',
+        reason: "test"
+    };
+    socket.emit('transferDigipogs', data);
+    console.log(`Sent pogs from ${data.from} to ${data.to}`);
+}
+res.send('Sent 500 pog transfers. Check server console for details.');
 });
 app.listen(PORT, () =>
     console.log(`Example app listening at http://localhost:${PORT}`)
