@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const { io } = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
+const SQLiteStore = require('connect-sqlite3')(session);
+
 
 // Database setup
 const db = new sqlite3.Database('./db/database.db', (err) => {
@@ -30,6 +32,7 @@ app.use(express.static('public'));
 // app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
+    store: new SQLiteStore({ db: 'sessions.db', dir: './db' }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false
@@ -71,6 +74,22 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
+app.get('/sendpogs', isAuthenticated, (req, res) => {
+    const data = {
+        from: 106,
+        to: 111,
+        amount: 200,
+        pin: 1234,
+        reason: 'Test pog transfer'
+    };
+
+    socket.emit('transferDigipogs', data)
+
+    res.send('Pogs Sent!');
+});
+
+
+// Socket.io Client to auth server
 const socket = io(AUTH_URL, {
     extraHeaders: {
         api: API_KEY
