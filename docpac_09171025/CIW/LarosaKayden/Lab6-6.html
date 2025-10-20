@@ -14,9 +14,9 @@
 	  <script>
 		document.addEventListener("DOMContentLoaded", () => {
 		  const statusDiv = document.getElementById("cookieStatus");
-		  const cookiesEnabled =  
+		  const cookiesEnabled = navigator.cookieEnabled;
 
-		  if (          ) {
+		  if (cookiesEnabled) {
 			statusDiv.textContent = "Cookies are enabled in your browser.";
 		  } else {
 			statusDiv.textContent = "Cookies are disabled in your browser.";
