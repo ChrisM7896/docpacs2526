@@ -104,7 +104,11 @@ socket.on('disconnect', () => {
 
 socket.on('setClass', (classData) => {
     console.log('Received class data:', classData);
-    // Handle class data as needed
+    socket.emit('classUpdate');
+});
+
+socket.on('classUpdate', (classroomData) => {
+    console.log(classroomData);
 });
 
 // START SERVER
