@@ -26,6 +26,7 @@
 			doc.documentElement.removeChild(doc.documentElement.firstChild);
 		  }
 		}
+		doc.documentElement.removeChild(doc.documentElement.firstChild);
 
 		function createAndAppend(tag, parent, options = {}) {
 		  const el = parent.ownerDocument.createElement(tag);
@@ -42,7 +43,8 @@
 			}
 		  }
 		  if (options.events) {
-			for (const [evt, handler] of Object.entries(options.events)) {
+			for (const [evt, handler] of 
+			Object.entries(options.events)) {
 			  el.addEventListener(evt, handler);
 			}
 		  }
@@ -131,7 +133,7 @@
 			const doc = popupWindow.document;
 			// Construct absolute URL for image
 			const imageUrl = new URL(selectedValue,
-			buildPopupContent(doc, selectedText, imageUrl);
+			buildPopupContent(doc, selectedText, imageUrl));
 		  };
 
 		  // Sometimes onload doesn't fire if page is about:blank already loaded,
@@ -144,6 +146,8 @@
 
 		  selector.selectedIndex = 0; // reset dropdown
 		}
+		document.getElementById('imageSelector').addEventListener('change', display_image);
+		
 
 		
 	  </script>

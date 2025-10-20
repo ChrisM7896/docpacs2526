@@ -53,12 +53,19 @@
 		switchImageOn(ciwImg);
 		window.status = 'Visit CIW Certified';  // Note: window.status is deprecated in most browsers
 		});
+		ciw1Link.addEventListener('mouseout', () => {
+		switchImageOff(ciwImg);
+		window.status = '';
+		});
 
 
 		const ciw1Link = document.querySelector('a[href="https://www.ciwcertified.com/about-ciw/training-locator"]');
 		const ciw1Img = ciw1Link.querySelector('img');
 	
-
+		ciwLink.addEventListener('mouseover', () => {
+		switchImageOn(ciw1Img);
+		window.status = 'Visit CIW Certified';  
+		});
 		ciw1Link.addEventListener('mouseout', () => {
 		switchImageOff(ciw1Img);
 		window.status = '';
