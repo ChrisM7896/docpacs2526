@@ -72,28 +72,28 @@
 			const style = doc.createElement('style');
 			style.textContent = `
 			body {
-			margin: 0;
-			font-family: Arial, sans-serif;
-			height: 100vh;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
+			  margin: 0;
+			  font-family: Arial, sans-serif;
+			  height: 100vh;
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  justify-content: center;
+			  text-align: center;
 			}
 			img {
-			width: 150px;
-			height: 150px;
-			object-fit: contain;
-			border: 1px solid #ccc;
+			  width: 150px;
+			  height: 150px;
+			  object-fit: contain;
+			  border: 1px solid #ccc;
 			}
 			button {
-			margin-top: 20px;
-			padding: 10px 20px;
-			font-size: 1rem;
-			cursor: pointer;
+			  margin-top: 20px;
+			  padding: 10px 20px;
+			  font-size: 1rem;
+			  cursor: pointer;
 			}
-		`;
+		  `;
 			head.appendChild(style);
 
 			// BODY
@@ -122,7 +122,7 @@
 			if (!selectedValue) return;
 
 			if (!popupWindow || popupWindow.closed) {
-				popupWindow = window.open('', 'ImagePreview', 'width=400,height=400');
+				popupWindow = window.open('', 'ImagePopup', 'width=400,height=400');
 			} else {
 				popupWindow.focus();
 			}
@@ -130,9 +130,9 @@
 			// We wait for the popup to load fully
 			popupWindow.onload = () => {
 				const doc = popupWindow.document;
+				// Construct absolute URL for image
 				const imageUrl = new URL(selectedValue, window.location.href).href;
 				buildPopupContent(doc, selectedText, imageUrl);
-
 			};
 
 			// Sometimes onload doesn't fire if page is about:blank already loaded,
@@ -145,7 +145,7 @@
 
 			selector.selectedIndex = 0; // reset dropdown
 		}
-
+		document.getElementById('imageSelector').addEventListener('change', display_image);
 
 	</script>
 
