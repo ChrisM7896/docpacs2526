@@ -20,14 +20,14 @@
 
 		  // Get device memory in GB (approximate)
 		  if ('deviceMemory' in navigator) {
-			memoryDisplay.textContent = `Your device has approximately ${navigator.} GB of RAM.`;
+			memoryDisplay.textContent = `Your device has approximately ${navigator.deviceMemory} GB of RAM.`;
 		  } else {
 			memoryDisplay.textContent = "Your browser does not support reporting device memory.";
 		  }
 
 		  // Get number of logical CPU cores
 		  if ('hardwareConcurrency' in navigator) {
-			cpuDisplay.textContent = `Your device has ${navigator.} logical CPU cores.`;
+			cpuDisplay.textContent = `Your device has ${navigator.hardwareConcurrency} logical CPU cores.`;
 		  } else {
 			cpuDisplay.textContent = "Your browser does not support reporting CPU cores.";
 		  }
