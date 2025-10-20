@@ -107,7 +107,13 @@ socket.on('disconnect', () => {
 
 socket.on('setClass', (classData) => {
     console.log('Received class data:', classData);
-    // Handle class data as needed
+    socket.emit('classUpdate');
+});
+
+socket.on('classUpdate', (classroomData) => {
+    console.log(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
+    console.log(`Response: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
+    console.log(classroomData.poll.responses);
 });
 
 
