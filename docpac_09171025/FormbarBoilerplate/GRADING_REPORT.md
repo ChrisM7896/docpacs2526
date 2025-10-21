@@ -277,22 +277,135 @@
 
 **Score: 13/14** (Minor naming inconsistency and debug code)
 
+**Grade: A-**
 
 ---
 
-## Summary Rankings
+### 10. AajahPittman
 
-| Rank | Student | Score | Grade |
-|------|---------|-------|-------|
-| 1 | LiuVincent | 13/14 | A- |
-| 1 | MartinChristian | 13/14 | A- |
-| 1 | OrtpatrickCarlos | 13/14 | A- |
-| 1 | YeagerConnor | 13/14 | A- |
-| 5 | AndersonDylan | 12/14 | B+ |
-| 5 | LyndBryce | 12/14 | B+ |
-| 5 | OwensMarkus | 12/14 | B+ |
-| 5 | ReschStephen | 12/14 | B+ |
-| 5 | StevensGabriella | 12/14 | B+ |
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ✅ PASS | Server configured |
+| 5 | Database Script | ✅ PASS | init-db.js functional |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ✅ PASS | SQLite session store working |
+| 8 | Formbar OAuth | ⚠️ ISSUE | Multiple syntax errors in URL constants |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ⚠️ ISSUE | Typo in socket event: 'getACtiveClass' |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ✅ PASS | Users table configured |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Line 23: AUTH_URL missing colon: 'http//localhost:420/oauth' (should be 'http://localhost:420/oauth')
+- Line 24: THIS_URL has space and wrong template literal: ' http://localhost:${port}' (should use backticks)
+- Line 25: API_KEY missing value assignment
+- Line 92: Socket event typo: 'getACtiveClass' should be 'getActiveClass'
+- Line 4: package.json main points to "index.js" but file is "app.js"
+
+**Score: 11/14** (Multiple syntax errors and typos)
+
+**Grade: C+**
+
+---
+
+### 11. JanCruz
+
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure (nested in FormbarBoilerplate folder) |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ✅ PASS | Server configured |
+| 5 | Database Script | ✅ PASS | init-db.js functional |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ✅ PASS | SQLite session store working |
+| 8 | Formbar OAuth | ✅ PASS | OAuth implemented with error handling |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ✅ PASS | WebSocket connected |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ✅ PASS | Users table configured |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Excellent code organization with detailed comments
+- Includes error handling in routes
+- Clean, professional implementation
+- No significant issues found
+
+**Score: 14/14** (Excellent implementation with error handling)
+
+**Grade: A**
+
+---
+
+### 12. JoynesBenjamin
+
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure (uses app.db) |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ✅ PASS | Server configured |
+| 5 | Database Script | ✅ PASS | init-db.js correctly uses app.db |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ✅ PASS | SQLite session store working |
+| 8 | Formbar OAuth | ✅ PASS | OAuth implemented |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ✅ PASS | WebSocket connected |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ✅ PASS | Users table configured |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Line 4: package.json main points to "index.js" but file is "app.js"
+- Line 110: Typo - "Recieved" should be "Received"
+- Line 106: Typo - "Disconnected to" should be "Disconnected from"
+- Line 115: Uses process.env.PORT instead of PORT constant
+- Line 116: Typo - "Serever" should be "Server"
+
+**Score: 12/14** (Minor typos and package.json mismatch)
+
+**Grade: B+**
+
+---
+
+### 13. LarosaKayden
+
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ⚠️ ISSUE | Missing SQLiteStore import and session store |
+| 5 | Database Script | ✅ PASS | init-db.js functional |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ⚠️ ISSUE | No SQLite session store configured |
+| 8 | Formbar OAuth | ✅ PASS | OAuth implemented |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ✅ PASS | WebSocket connected |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ✅ PASS | Users table configured |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Missing SQLiteStore import and configuration (sessions won't persist properly)
+- Line 102: Typo - "Recieved" should be "Received"
+- Line 98: Typo - "Disconnected to" should be "Disconnected from"
+- Line 107: Uses process.env.PORT instead of PORT constant
+- Line 108: Typo - "Serever" should be "Server"
+- Missing sessions.db file (not created without SQLiteStore)
+
+**Score: 11/14** (Missing critical session store configuration)
+
+**Grade: C+**
 
 ---
 
