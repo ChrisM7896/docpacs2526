@@ -11,14 +11,15 @@
 		<div id="output"></div>
 
 		<script type="text/javascript">
-		 
+		citiesArray = ["New York", "Los Angeles", "Chicago"];
+		len = citiesArray.length;
 
+		citiesArray.sort();
 
-
-		  const outputDiv = document.getElementById("output");
+		const outputDiv = document.getElementById("output");
 		  
 		//Create for loop below
-		 {
+		  for (let i = 0; i < len; i++) {
 			// Create a paragraph element for each city with line breaks
 			const p = document.createElement("p");
 			p.textContent = citiesArray[i];
@@ -26,7 +27,7 @@
 		  }
 
 		//add alert below
-		  
+		alert(citiesArray[0]);
 
 
 		</script>

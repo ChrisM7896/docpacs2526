@@ -38,16 +38,16 @@
 
 	  <script>
 		function search(sub, string) {
-		  const where =  
+		  const where = string.indexOf(sub);
 		  const resultElement = document.getElementById('result');
 
-		  if   {
+		  if (!sub) {
 			resultElement.textContent = "Please enter a string to search for.";
 			return;
 		  }
 
-		  if   {
-			resultElement.textContent =  ;
+		  if (!sub) {
+			resultElement.textContent = "Please enter a string to search for.";
 		  } else {
 			resultElement.textContent = `Substring found at position: ${where + 1}`;
 		  }
@@ -60,7 +60,7 @@
 			event.preventDefault();
 			const sub = document.getElementById('what').value.trim();
 			const string = document.getElementById('toSearch').value;
-			search(       );
+			search(sub, string);
 		  });
 		});
 	  </script>

@@ -17,12 +17,12 @@
 		const fruitList = document.getElementById("fruitList");
 
 		//Create forEach() below
-		   {
-		  const p = document.createElement("p");
-		  p.textContent = value;
-		  fruitList.appendChild(p);
-		});
-	  </script>
+		  fruits.forEach(element => {
+			const p = document.createElement("p");
+			p.textContent = element;
+			fruitList.appendChild(p);
+		  });
 
+		  </script>
 	</body>
 </html>
