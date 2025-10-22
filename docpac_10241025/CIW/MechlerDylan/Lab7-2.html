@@ -19,6 +19,13 @@
 			});
 
 			form.elements["emailCheck"].addEventListener("change", (e) => {
+				if (!emailInput.value.includes('@')) {
+					alert("This is not a valid email")
+				} else if (emailInput.value.length < 6) {
+					alert("This email address is too short")
+				} else {
+					alert("This is a valid email")
+				}
 			});
 
 			form.elements["phoneBtn"].addEventListener("click", () => {
