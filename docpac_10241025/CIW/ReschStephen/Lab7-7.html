@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Lab 7-7</title>
-    </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-	  <h4>Today is the <span id="dateDisplay"></span></h4>
 
-	  <script>
-	//Create Date object named today
-		
+<head>
+	<meta charset="utf-8">
+	<title>Lab 7-7</title>
+</head>
+
+<body>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+	<h4>Today is the <span id="dateDisplay"></span></h4>
+
+	<script>
+		//Create Date object named today
+		const today = new Date();
 
 		const monthName = [
-		  "January", "February", "March", "April", "May", "June",
-		  "July", "August", "September", "October", "November", "December"
+			"January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December"
 		];
 
-	//get full year for myYear
-		 
+		//get full year for myYear
+		const myYear = today.getFullYear();
 
-	//get date for myDate
-		
+		//get date for myDate
+		const myDate = today.getDate();
 
 		let dayExt = "th";
 		if ([1, 21, 31].includes(myDate)) dayExt = "st";
@@ -40,7 +41,8 @@
 		// Update the page content without document.write
 		const dateDisplay = document.getElementById('dateDisplay');
 		dateDisplay.textContent = `${extDate} day of ${monthName[today.getMonth()]} in the year ${myYear}.`;
-	  </script>
+	</script>
 
-	</body>
+</body>
+
 </html>

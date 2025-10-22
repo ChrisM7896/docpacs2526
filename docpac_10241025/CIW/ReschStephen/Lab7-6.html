@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Lab 7-6</title>
-	  <script>
+
+<head>
+	<meta charset="utf-8">
+	<title>Lab 7-6</title>
+	<script>
 		const num = [1, 2, 3, 4, 5];
 
 		//add function fn()
-		   
+		var sq = num.map(function (n) {
+			return n * n;
+		});
 
 
 		//add alert
+		fn = function () {
+			alert("The value stored in the array is: " + sq);
+		};
 
 
+	</script>
+</head>
 
-	  </script>
-    </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-	  <input type="button" value="Check result." onclick="fn()" />
-	</body>
+<body>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+	<input type="button" value="Check result." onclick="fn()" />
+</body>
+
 </html>
