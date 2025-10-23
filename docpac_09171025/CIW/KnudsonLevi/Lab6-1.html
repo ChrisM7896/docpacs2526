@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Lab 6-1</title>
-    </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
 
-	  <form id="myForm">
+<head>
+	<meta charset="utf-8">
+	<title>Lab 6-1</title>
+</head>
+
+<body>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+
+	<form id="myForm">
 		<button type="button" id="openWindowBtn">Open New Window</button>
-	  </form>
+	</form>
 
-	  <script>
+	<script>
 		document.addEventListener('DOMContentLoaded', () => {
-		  const openWindowBtn = document.getElementById('openWindowBtn');
+			const openWindowBtn = document.getElementById('openWindowBtn');
 
-		  openWindowBtn.addEventListener('click', () => {
-			
-
-			  'CIWWindow',
-			  'toolbar=yes,scrollbars=yes,location=yes,status=yes,directories=yes,menubar=yes,resizable=yes,height=200,width=300'
+			openWindowBtn.addEventListener('click', () => {
+				window.open('http://www.CIWcertified.com'
+				,
+				'CIWWindow',
+					'toolbar=yes,scrollbars=yes,location=yes,status=yes,directories=yes,menubar=yes,resizable=yes,height=200,width=300'
 			);
-		  });
 		});
-	  </script>
+		});
+	</script>
 
-	</body>
+</body>
+
 </html>
