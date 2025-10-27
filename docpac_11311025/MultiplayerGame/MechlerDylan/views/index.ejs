@@ -1,11 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formbar Boilerplate</title>
+    <title>Game</title>
 </head>
+
 <body>
-    <h1>Hello, <%- user -%> </h1>
+    <div id="debug"></div>
+    <canvas width="900" height="900" id="canvasMover" style="border:1px solid #000000"></canvas>
 </body>
+<script>
+    var Up = 0;
+    var Down = 0;
+    var Left = 0;
+    var Right = 0;
+    const canvas = document.getElementById('canvasMover');
+    const ctx = canvas.getContext('2d');
+    const Player = {
+        x: 0,
+        y: 0,
+        r: 10,
+        speed: 2,
+        img: new Image()
+    }
+    Player.img.src = 'screenshot.png'
+    document.addEventListener('keydown', function (event) {
+        console.log(event.key)
+        if (event.key === 'ArrowUp') {
+            Up = 1;
+        } else if (event.key === 'ArrowDown') {
+            console.log('down');
+            Down = 1;
+        } else if (event.key === 'ArrowLeft') {
+            console.log('left');
+            Left = 1;
+        } else if (event.key === 'ArrowRight') {
+            console.log('right');
+            Right = 1;
+        }
+    })
+    document.addEventListener('keyup', function (event) {
+        if (event.key === 'ArrowUp') {
+            console.log('up release');
+            Up = 0;
+        } else if (event.key === 'ArrowDown') {
+            console.log('down release');
+            Down = 0;
+        } else if (event.key === 'ArrowLeft') {
+            console.log('left release');
+            Left = 0;
+        } else if (event.key === 'ArrowRight') {
+            console.log('right release');
+            Right = 0;
+        }
+    })
+    function movePlayer() {
+        Player.y -= (Up * Player.speed);
+        Player.y += (Down * Player.speed);
+        Player.x -= (Left * Player.speed);
+        Player.x += (Right * Player.speed);
+        if (Player.x < 0) {
+            Player.x = 0;
+        }
+        if (Player.y < 0) {
+            Player.y = 0;
+        }
+        if (Player.x + Player.r > canvas.width) {
+            Player.x = canvas.width - Player.r;
+        }
+        if (Player.y + Player.r > canvas.height) {
+            Player.y = canvas.height - Player.r;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.arc(Player.x, Player.y, Player.r, 0, 2*Math.PI)
+        ctx.stroke();
+        requestAnimationFrame(movePlayer);
+    }
+    requestAnimationFrame(movePlayer);
+</script>
+
 </html>
