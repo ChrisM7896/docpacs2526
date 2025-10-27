@@ -7,11 +7,16 @@
 		const num = [1, 2, 3, 4, 5];
 
 		//add function fn()
-		   
+		function fn() {
+			var sq = num.map(function(n) {
+				return n * n;
+			});
+			alert("The values are: " + sq.join(", "));
+		};
 
 
 		//add alert
-
+		
 
 
 	  </script>

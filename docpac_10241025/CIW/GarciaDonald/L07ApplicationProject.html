@@ -38,16 +38,16 @@
 
 	  <script>
 		function search(sub, string) {
-		  const where =  
+		  const where =  string.indexOf(sub);
 		  const resultElement = document.getElementById('result');
 
-		  if   {
+		  if  (!sub) {
 			resultElement.textContent = "Please enter a string to search for.";
 			return;
 		  }
 
-		  if   {
-			resultElement.textContent =  ;
+		  if  (where === -1) {
+			resultElement.textContent = "Substring not found.";
 		  } else {
 			resultElement.textContent = `Substring found at position: ${where + 1}`;
 		  }
