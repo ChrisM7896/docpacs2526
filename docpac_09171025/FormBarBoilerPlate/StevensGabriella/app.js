@@ -20,7 +20,7 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
 // Constants
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
-const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
+const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420';
 const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
@@ -106,7 +106,15 @@ socket.on('disconnect', () => {
 
 socket.on('setClass', (classData) => {
     console.log('Received class data:', classData);
-    // Handle class data as needed
+    socket.emit('classUpdate');
+});
+
+socket.on('classUpdate', (classroomData) => {
+    console.log(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
+    console.log(`Response ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
+    console.log(classroomData.poll.responses);
+    
+    
 });
 
 app.listen(PORT, () => {
