@@ -72,19 +72,9 @@ const socket = io(AUTH_URL, {
         'API': API_KEY
     }
 });
-
-const data = {
-    from: 41,
-    to: 40,
-    amount: 1,
-    pin: 84115,
-    reason: "test"
-};
-
 socket.on('connect', () => {
     console.log('Connected to auth server');
     socket.emit('getActiveClass');
-    socket.emit("transferDigipogs", data);
 });
 socket.on('disconnect', () => {
     console.log('Disconnected from auth server');
@@ -96,17 +86,15 @@ socket.on("transferResponse", (response) => {
     console.log("Transfer Response:", response);
 });
 app.get('/sendPogs', isAuthenticated, (req, res) => {
-//for (let i = 0; i < 500; i++) {
     const data = {
-        from: 40,
-        to: 41,
+        from: 1,
+        to: 2,
         amount: 1,
-        pin: null,
+        pin: 1234,
         reason: "test"
     };
     socket.emit('transferDigipogs', data);
-    res.send('Pogs sent');
-//}
+    res.send('Transfer request sent');
 });
 app.listen(PORT, () =>
     console.log(`Example app listening at http://localhost:${PORT}`)
