@@ -1,6 +1,6 @@
 // Imports
 require('dotenv').config();
-const express = require('express');
+const express = require('express')
 const app = express();
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
@@ -13,40 +13,37 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
     if (err) {
         console.error('Error connecting to database:', err);
     } else {
-        console.log('Connected to database');
+        console.log('Connected to database.')
     }
-});
-
+})
 // Constants
-const PORT = process.env.PORT || 3000;
-const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
-const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
-const API_KEY = process.env.API_KEY || 'your_api_key';
+const PORT = process.env.port || 3000;
+const SESSION_SECRET = process.env.SESSION_SECRET || 'monkey';
+const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth'
+const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`
+const API_KEY = process.env.API_KEY || 'nutsonme'
 
-//Middleware
-app.set('view engine', 'ejs');
+// Middleware
+app.set('view engine', 'ejs')
 app.use(express.static('public'));
-// app.use(express.json());
+// app.use(express.json()):
 // app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
-    store: new SQLiteStore({
-        db: 'sessions.db',
-        dir: './db'
-    }),
+    store: new SQLiteStore ({ db: 'sessions.db', dir: './db'}),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false
-}));
+}))
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
-    else res.redirect('/login');
+    else res.redirect('/login')
 };
 
-//Routes
+// Routes
 app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', { user: req.session.user });
+    res.render('index', {user: req.session.user})
 });
 
 app.get('/login', (req, res) => {
@@ -55,16 +52,14 @@ app.get('/login', (req, res) => {
         req.session.token = tokenData;
         req.session.user = tokenData.displayName;
 
-        // Save user to database if they do not exist
+        //save user to database if not exists
         db.run('INSERT OR REPLACE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
             if (err) {
                 return console.error(err.message);
             }
-            console.log(`User ${tokenData.displayName} saved to database.`);
+            console.log(`User ${tokenData.displayName} saved to database.`)
         });
-
         res.redirect('/');
-
     } else {
         res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
     };
@@ -73,21 +68,23 @@ app.get('/login', (req, res) => {
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login');
+
 });
 
 app.get('/sendpogs', isAuthenticated, (req, res) => {
     const data = {
-        from: 108,
-        to: 89,
+        from: 104,
+        to: 114,
         amount: 2,
-        pin: 0o371,
-        reason: 'Test pogs transfer'
-    }
-
+        pin: 404902,
+        reason: 'test'
+    };
     socket.emit('transferDigipogs', data);
 
     res.send('Pogs sent!');
-});
+})
+
+app
 
 const socket = io(AUTH_URL, {
     extraHeaders: {
@@ -96,27 +93,15 @@ const socket = io(AUTH_URL, {
 });
 
 socket.on('connect', () => {
-    console.log('Connected to auth server');
+    console.log('Connected');
     socket.emit('getActiveClass');
 });
 
-socket.on('disconnect', () => {
-    console.log('Disconnected from auth server');
+socket.on('setClass', (newClassId) => {
+    console.log(`The user is currently in the class with id ${newClassId}`);
 });
 
-socket.on('setClass', (classData) => {
-    console.log('Received class data:', classData);
-    socket.emit('classUpdate');
-});
-
-socket.on('classUpdate', (classroomData) => {
-    console.log(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
-    console.log(`Response ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
-    console.log(classroomData.poll.responses);
-    
-    
-});
-
+// Start Server
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server is running at http://localhost:${PORT}`)
 });
