@@ -6,7 +6,11 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const { io } = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
-
+const { createServer } = require('node:http')
+const { join } = require("node:path")
+const { Server } = require("socket.io")
+const server = createServer(app);
+const socketServer = new Server(server);
 //express setup
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -77,18 +81,19 @@ const socket = io(AUTH_URL, {
     }
 });
 
-socket.on('connect', () => {
+socketServer.on('connect', () => {
     console.log('Connected to auth server');
-    socket.emit('getActiveClass')
+    socketServer.emit('connected');
 });
 
-socket.on('disconnect', () => {
+socketServer.on('playState', (playState) => {
+    if (playState) {
+        socketServer.emit('playable')
+    }
+})
+
+socketServer.on('disconnect', () => {
     console.log('Disconnected to auth server');
-});
-
-socket.on('setClass', (classData) => {
-    console.log('Recieved class data:', classData);
-    //
 });
 
 //listening

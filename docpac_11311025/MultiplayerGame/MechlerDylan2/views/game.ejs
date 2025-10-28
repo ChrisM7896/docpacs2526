@@ -47,9 +47,9 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io()
-    const content = document.getElementById("spells")
-    var playState = true
+    const socket = io();
+    const content = document.getElementById("spells");
+    var playState = true;
 
     function castSpell(spell) {
         playState = false
@@ -58,13 +58,15 @@
     };
 
     socket.on('connected', () => {
+        console.log('connected')
         socket.emit('playState', playState);
     });
 
     socket.on('playable', () => {
+        console.log('playable')
         playState = false
         content.innerHTML = ''
-    })
+    });
 </script>
 
 </html>
