@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="gameArea"></div>
+    <div id="scoreBoard">
+        <h2>Scores</h2>
+        <div id="player1Score">Player 1: 0</div>
+        <div id="player2Score">Player 2: 0</div>
+    </div>
+    <div id="chatArea"></div>
+    <div id="inputArea">
+        <input type="text" id="chatInput" placeholder="Type your message here...">
+        <button id="sendChat">Send</button>
+    </div>
+    
+</body>
+<script>
+    alert("NOTE: Multiplayer mode is still in development. Features may be incomplete or buggy.");
+    alert("Welcome to Multiplayer Button Masher V2!");
+    alert("This mode is meant for you and a friend to compete in real-time to see who can mash the button the most within the time limit.");
+    alert("Good luck and have fun!");
+    // score variables
+    var player1Score = 0;
+    var player2Score = 0;
+    var timer = 20;
+    var direction = 0;
+    setInterval(()=>{
+        if (timer > 0) {
+            timer = timer - 1
+            if (timer == 0) {
+            alert("Time's up! Final Scores - Player 1: " + player1Score + ", Player 2: " + player2Score);
+            if (player1Score > player2Score) {
+                alert("Player 1 wins!");
+            } else if (player2Score > player1Score) {
+                alert("Player 2 wins!");
+            } else {
+                alert("It's a tie!");
+            }
+            clearInterval(setInterval);
+            }
+        }
+        
+    }, 1000);
+    
+    // Placeholder for multiplayer game functionality
+    const socket = io();
+
+    socket.on('gameUpdate', (data) => {
+        // Update game state based on data from server
+        console.log(data);
+    });
+    socket.on('chatMessage', (data) => {
+        // Display chat message in chat area
+        const chatArea = document.getElementById('chatArea');
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = `${data.username}: ${data.message}`;
+        chatArea.appendChild(messageDiv);
+    });
+    document.getElementById('sendChat').addEventListener('click', () => {
+        const chatInput = document.getElementById('chatInput');
+        const message = chatInput.value;
+        socket.emit('chatMessage', { message: message });
+        chatInput.value = '';
+    });
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('sendChat').click();
+        }
+    });
+
+
+</script>
+</html>
