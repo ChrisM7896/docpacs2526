@@ -11,6 +11,7 @@ const AUTH_URL = 'https://formbeta.yorktechapps.com'
 const THIS_URL = 'http://localhost:3000/login'
 const server = createServer(app);
 const io = new Server(server);
+var Player = { Player1: null, Player2: null }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,15 +41,33 @@ function isAuthenticated(req, res, next) {
     else res.redirect(`/login?redirectURL=${THIS_URL}`);
 };
 
-function findRoom() {
-    
+function findRoom(user) {
+    if (!Player.Player1) {
+        Player.Player1 = user
+    } else if (!Player.Player2) {
+        Player.Player2 = user
+    }
 };
+
+function startGame() {
+    Player.Player1Health = 100
+    Player.Player2Health = 100
+    Player.turn = 1
+    Player.Player1Spell = null
+    Player.Player2Spell = null
+}
+
+function spellCast() {
+    if (Player.turn = 1) {
+        //check if you can use turn to see who cast a spell
+    }
+}
 
 app.get('/', isAuthenticated, (req, res) => {
     res.render('index', { user: req.session.user });
 });
 
-app.get('/game', (req,res) => {
+app.get('/game', (req, res) => {
     res.render('game.ejs')
 });
 
@@ -67,7 +86,10 @@ io.on('connection', (socket) => {
     var data = socket.request.session;
     const user = data.user
     console.log("User Connected: ", user);
+    socket.join("some room");
+    findRoom(user)
     io.emit('connected')
+    io.to("some room").emit('playerJoined', Player)
     socket.on('playState', (playState) => {
         console.log(playState)
         if (playState) {
@@ -76,6 +98,7 @@ io.on('connection', (socket) => {
     });
     socket.on('spell', (spell) => {
         console.log(spell)
+        console.log(user)
     })
     socket.on('disconnect', () => {
         console.log("User Disconnected: ", user)

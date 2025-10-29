@@ -53,7 +53,6 @@
 
     function castSpell(spell) {
         playState = false
-        content.innerHTML = ''
         socket.emit('spell', spell);
     };
 
@@ -62,10 +61,13 @@
         socket.emit('playState', playState);
     });
 
+    socket.on("playerJoined", (msg) => {
+        console.log(msg)
+    })
+
     socket.on('playable', () => {
         console.log('playable')
         playState = false
-        content.innerHTML = ''
     });
 </script>
 
