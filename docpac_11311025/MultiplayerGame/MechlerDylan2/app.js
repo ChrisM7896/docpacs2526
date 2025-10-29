@@ -42,7 +42,7 @@ function isAuthenticated(req, res, next) {
 
 function findRoom() {
     
-}
+};
 
 app.get('/', isAuthenticated, (req, res) => {
     res.render('index', { user: req.session.user });
