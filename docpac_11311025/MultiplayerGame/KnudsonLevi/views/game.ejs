@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        #gameBoard {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 0;
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameBoard">
+        <div class="cell" onclick="makeMove(0)" style="border-right: 1px solid black; border-bottom: 1px solid black;"></div>
+        <div class="cell" onclick="makeMove(1)"></div>
+        <div class="cell" onclick="makeMove(2)" style="border-left: 1px solid black; border-bottom: 1px solid black;"></div>
+        <div class="cell" onclick="makeMove(3)" style="border-right: 1px solid black; border-bottom: 1px solid black;"></div>
+        <div class="cell" onclick="makeMove(4)"></div> 
+        <div class="cell" onclick="makeMove(5)" style="border-left: 1px solid black; border-bottom: 1px solid black;"></div>
+        <div class="cell" onclick="makeMove(6)" style="border-right: 1px solid black;"></div>
+        <div class="cell" onclick="makeMove(7)"></div>
+        <div class="cell" onclick="makeMove(8)" style="border-left: 1px solid black;"></div>
+    </div>
+</body>
+</html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        socket.emit('joinGame', { username: null });
+    });
+    socket.on('requestUsername', () => {
+        const username = prompt("Enter your username:");
+        socket.emit('joinGame', { username });
+    });
+    socket.on('roomJoined', (data) => {
+        symbol = data.symbol;
+        console.log('Joined room:', data.roomId, 'as', data.symbol);
+    });
+    socket.on('startGame', (data) => {
+        console.log('Game started with players:', data.players);
+    });
+    socket.on('updateBoard', (data) => {
+        console.log('Board updated:', data.board, 'Next turn:', data.turn);
+        const boardDiv = document.getElementById('gameBoard');
+    });
+    socket.on('gameOver', (data) => {
+        console.log('Game over! Winner:', data.winner);
+    });
+</script>
