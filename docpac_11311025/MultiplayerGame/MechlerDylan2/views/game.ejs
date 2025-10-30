@@ -161,19 +161,32 @@
             Playable = false
             if (userNum == 1) {
                 alert("You Lose!")
+                socket.emit('reload')
             } else if (userNum == 2) {
                 alert("YOU WIN! CONGRATULATIONS!")
+                socket.emit('reload')
             }
         } else if (Player.Player2Health <= 0) {
             console.log("Player 2 Lost")
             Playable = false
             if (userNum == 2) {
                 alert("You Lose!")
+                socket.emit('reload')
             } else if (userNum == 1) {
                 alert("YOU WIN! CONGRATULATIONS!")
+                socket.emit('reload')
             }
         }
     });
+
+    socket.on('opponent left', () => {
+        alert("Opponent Left")
+        socket.emit('reload')
+    })
+
+    socket.on('redirect', (url) => {
+        window.location.href = url
+    })
 </script>
 
 </html>

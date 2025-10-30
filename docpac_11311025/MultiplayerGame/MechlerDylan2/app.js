@@ -175,6 +175,13 @@ io.on('connection', (socket) => {
     });
     socket.on('disconnect', () => {
         console.log("User Disconnected: ", user)
+        startGame();
+        io.emit('opponent left')
+    });
+    
+    socket.on('reload', () => {
+        socket.leave("some room");
+        socket.emit('redirect', '/');
     });
 });
 
