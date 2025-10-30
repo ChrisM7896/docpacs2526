@@ -11,6 +11,9 @@
         <h2>Scores</h2>
         <div id="player1Score">Player 1: 0</div>
         <div id="player2Score">Player 2: 0</div>
+        <div id="timer">Time Left: 20</div>
+        <div id="currentTurn">Waiting for players...</div>
+        <div id="directionBox"></div>
     </div>
     <div id="chatArea"></div>
     <div id="inputArea">
@@ -44,33 +47,129 @@
             clearInterval(setInterval);
             }
         }
-        
+        document.getElementById("timer").innerHTML = "Time Left: " + timer
     }, 1000);
-    
-    // Placeholder for multiplayer game functionality
-    const socket = io();
-
-    socket.on('gameUpdate', (data) => {
-        // Update game state based on data from server
-        console.log(data);
-    });
-    socket.on('chatMessage', (data) => {
-        // Display chat message in chat area
-        const chatArea = document.getElementById('chatArea');
-        const messageDiv = document.createElement('div');
-        messageDiv.textContent = `${data.username}: ${data.message}`;
-        chatArea.appendChild(messageDiv);
-    });
-    document.getElementById('sendChat').addEventListener('click', () => {
-        const chatInput = document.getElementById('chatInput');
-        const message = chatInput.value;
-        socket.emit('chatMessage', { message: message });
-        chatInput.value = '';
-    });
-    document.getElementById('chatInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            document.getElementById('sendChat').click();
+    // controls
+    setInterval(()=>{
+        if (timer > 0) {
+            direction = Math.floor(Math.random() * 4)
+        if (direction == 0) {
+            document.getElementById("directionBox").innerHTML = "UP"
         }
+        if (direction == 1) {
+            document.getElementById("directionBox").innerHTML = "DOWN"
+        }
+        if (direction == 2) {
+            document.getElementById("directionBox").innerHTML = "LEFT"
+        }
+        if (direction == 3) {
+            document.getElementById("directionBox").innerHTML = "RIGHT"
+        }
+        }
+    }, 2000);
+    window.addEventListener("gamepadconnected", function(e) {
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
+        setInterval(pollGamepad, 100);
+    });
+    function pollGamepad() {
+        if (!isMyTurn) return; // Don't process inputs if it's not player's turn
+        
+        var gamepads = navigator.getGamepads();
+        if (!gamepads) {
+            return;
+        }
+        var gp = gamepads[0];
+        if (gp.buttons[0].pressed && timer > 0) { // A button
+            if ( gp.axes[1] == -1 && direction == 0) { // Up
+            score = score + 1
+            document.getElementById("score box").innerHTML = score
+        }
+        if ( gp.axes[1] == +1 && direction == 1 && timer > 0) { // Down
+            score = score + 1
+            document.getElementById("score box").innerHTML = score
+        }
+        if ( gp.axes[0] == -1 && direction == 2 && timer > 0) { // Left
+            score = score + 1
+            document.getElementById("score box").innerHTML = score
+        }
+        if ( gp.axes[0] == +1 && direction == 3 && timer > 0) { // Right
+            score = score + 1
+            document.getElementById("score box").innerHTML = score
+        }
+        }
+        
+        if (gp.buttons[9].pressed) { // Start button
+            window.location.reload();
+        }
+    }
+    
+    // Multiplayer game functionality
+    const socket = io();
+    let isMyTurn = false;
+    let currentPlayer = '';
+    const username = '<%= user %>'; // Get username from EJS
+    const roomId = 'game-' + Math.random().toString(36).substr(2, 9); // Generate random room ID
+
+    // Join game room
+    socket.emit('joinGame', { roomId, username });
+
+    socket.on('gameStart', (data) => {
+        alert('Game starting! Players: ' + data.players.join(' vs '));
+        currentPlayer = data.currentPlayer;
+        isMyTurn = currentPlayer === username;
+        updateTurnDisplay();
+    });
+
+    socket.on('turnChanged', (data) => {
+        currentPlayer = data.nextPlayer;
+        isMyTurn = currentPlayer === username;
+        updateTurnDisplay();
+        
+        // Update scores
+        player1Score = data.scores[Object.keys(data.scores)[0]] || 0;
+        player2Score = data.scores[Object.keys(data.scores)[1]] || 0;
+        document.getElementById('player1Score').innerHTML = 'Player 1: ' + player1Score;
+        document.getElementById('player2Score').innerHTML = 'Player 2: ' + player2Score;
+    });
+
+    function updateTurnDisplay() {
+        const turnDisplay = document.getElementById('currentTurn');
+        if (isMyTurn) {
+            turnDisplay.innerHTML = "It's your turn!";
+            turnDisplay.style.color = 'green';
+        } else {
+            turnDisplay.innerHTML = "Waiting for opponent's turn...";
+            turnDisplay.style.color = 'red';
+        }
+    }
+
+    // Modified timer to handle turns
+    setInterval(() => {
+        if (timer > 0 && isMyTurn) {
+            timer = timer - 1;
+            if (timer == 0) {
+                socket.emit('endTurn', { 
+                    roomId, 
+                    username, 
+                    score: player1Score // or player2Score depending on player
+                });
+                timer = 20; // Reset timer for next turn
+            }
+        }
+        document.getElementById("timer").innerHTML = "Time Left: " + timer;
+    }, 1000);
+
+    // if someone disconnects
+    socket.on('playerDisconnected', (data) => {
+        alert(`${data.username} has disconnected from the game.`);
+        window.location.href = '/gamemenu';
+    });
+    // if the game ends
+    socket.on('gameEnded', (data) => {
+        alert('The game has ended. Returning to game menu.');
+        window.location.href = '/gamemenu';
     });
 
 

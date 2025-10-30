@@ -99,6 +99,21 @@ const socket = io(AUTH_URL, {
     }
 });
 
+// Game state management
+const gameRooms = new Map();
+
+// Helper function to initialize a game room
+function initializeGameRoom(roomId) {
+    if (!gameRooms.has(roomId)) {
+        gameRooms.set(roomId, {
+            players: [],
+            currentTurn: 0,
+            scores: {},
+            isGameStarted: false
+        });
+    }
+}
+
 // multiplayer game lobby
 app.get('/lobby', isAuthenticated, (req, res) => {
     res.render('lobby', {user: req.session.user})
@@ -116,6 +131,42 @@ socket.on('connect', () => {
 
 socket.on('setClass', (newClassId) => {
     console.log(`The user is currently in the class with id ${newClassId}`);
+});
+
+// Game socket events
+socket.on('joinGame', (data) => {
+    const { roomId, username } = data;
+    initializeGameRoom(roomId);
+    const room = gameRooms.get(roomId);
+    
+    if (room.players.length < 2) {
+        room.players.push(username);
+        room.scores[username] = 0;
+        
+        if (room.players.length === 2) {
+            room.isGameStarted = true;
+            room.currentTurn = 0;
+            socket.emit('gameStart', {
+                players: room.players,
+                currentPlayer: room.players[0]
+            });
+        }
+    }
+});
+
+socket.on('endTurn', (data) => {
+    const { roomId, username, score } = data;
+    const room = gameRooms.get(roomId);
+    
+    if (room && room.players[room.currentTurn] === username) {
+        room.scores[username] = score;
+        room.currentTurn = (room.currentTurn + 1) % room.players.length;
+        
+        socket.emit('turnChanged', {
+            nextPlayer: room.players[room.currentTurn],
+            scores: room.scores
+        });
+    }
 });
 
 // Start Server
