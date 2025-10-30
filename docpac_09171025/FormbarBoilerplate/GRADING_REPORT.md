@@ -409,6 +409,74 @@
 
 ---
 
+### 14. GarciaDonald
+
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ⚠️ ISSUE | Missing semicolons, incomplete code |
+| 5 | Database Script | ✅ PASS | init-db.js functional |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ✅ PASS | SQLite session store working |
+| 8 | Formbar OAuth | ⚠️ ISSUE | Uses INSERT OR REPLACE instead of INSERT OR IGNORE |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ⚠️ ISSUE | Socket handler expects wrong data format |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ⚠️ ISSUE | Uses INSERT OR REPLACE (updates existing users) |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Line 3: Missing semicolon after require statement
+- Line 20: Uses 'port' (lowercase) instead of 'PORT' (process.env.port should be process.env.PORT)
+- Line 29: Comment has colon instead of semicolon
+- Line 46: Missing space after comma: {user: should be { user:
+- Line 56: Uses `INSERT OR REPLACE` instead of `INSERT OR IGNORE` (will update existing users on each login)
+- Line 87: Incomplete code: `app` with no route definition
+- Line 100: Socket handler expects classId but should handle classData object
+- Multiple missing semicolons throughout
+
+**Score: 11/14** (Multiple syntax errors and database logic issue)
+
+**Grade: C+**
+
+---
+
+### 15. MechlerDylan
+
+| # | Criteria | Status | Notes |
+|---|----------|--------|-------|
+| 1 | Initialize Project | ✅ PASS | Dependencies installed |
+| 2 | Folder Structure | ✅ PASS | Proper structure |
+| 3 | Environment Setup | ✅ PASS | .gitignore present (no .env required) |
+| 4 | Basic Express Server | ✅ PASS | Server configured |
+| 5 | Database Script | ✅ PASS | init-db.js functional |
+| 6 | EJS & Middleware | ✅ PASS | EJS configured |
+| 7 | Sessions Enabled | ⚠️ ISSUE | No SQLite session store configured |
+| 8 | Formbar OAuth | ✅ PASS | OAuth implemented |
+| 9 | Protected Routes | ✅ PASS | isAuthenticated working |
+| 10 | Formbar WebSocket | ✅ PASS | WebSocket connected |
+| 11 | Gitignore & README | ✅ PASS | .gitignore present (README optional) |
+| 12 | Logout Route | ✅ PASS | Logout working |
+| 13 | User Database | ✅ PASS | Users table configured |
+| 14 | Push to GitHub | ✅ PASS | Code in repository |
+
+**Issues Found:**
+- Missing SQLiteStore import and configuration (sessions won't persist properly)
+- Line 102: Typo - "Recieved" should be "Received"
+- Line 98: Typo - "Disconnected to" should be "Disconnected from"
+- Line 107: Uses process.env.PORT instead of PORT constant
+- Line 108: Typo - "Serever" should be "Server"
+- Missing sessions.db file (not created without SQLiteStore)
+
+**Score: 11/14** (Missing critical session store configuration)
+
+**Grade: C+**
+
+---
+
 ## Common Issues Across All Projects
 
 1. **No login.ejs content** - Most students have empty login.ejs files (they only handle OAuth redirects)
@@ -436,6 +504,28 @@
 - Database integration is solid across all projects
 - Protected routes are properly implemented
 - Session management with SQLite is correctly configured
+
+---
+
+## Summary Rankings
+
+| Rank | Student | Score | Grade |
+|------|---------|-------|-------|
+| 1 | JanCruz | 14/14 | A |
+| 2 | LiuVincent | 13/14 | A- |
+| 2 | MartinChristian | 13/14 | A- |
+| 2 | OrtpatrickCarlos | 13/14 | A- |
+| 2 | YeagerConnor | 13/14 | A- |
+| 6 | AndersonDylan | 12/14 | B+ |
+| 6 | JoynesBenjamin | 12/14 | B+ |
+| 6 | LyndBryce | 12/14 | B+ |
+| 6 | OwensMarkus | 12/14 | B+ |
+| 6 | ReschStephen | 12/14 | B+ |
+| 6 | StevensGabriella | 12/14 | B+ |
+| 12 | AajahPittman | 11/14 | C+ |
+| 12 | GarciaDonald | 11/14 | C+ |
+| 12 | LarosaKayden | 11/14 | C+ |
+| 12 | MechlerDylan | 11/14 | C+ |
 
 ---
 
