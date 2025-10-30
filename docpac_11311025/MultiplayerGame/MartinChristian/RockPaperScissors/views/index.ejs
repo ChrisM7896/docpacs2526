@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #loginInfo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        #logout-button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        #digipogInfo {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #play-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+    </script>
+</head>
+<body>
+    <div id="loginInfo">Logged in as <%- user -%><button id="logout-button" onclick="logout()">Logout</button></div>
+    <h1>Rock Paper Scissors</h1>
+    <div id="game-container">
+        <button id="play-button" onclick="play()">PLAY</button><br><br>
+        <button class="buttons" value="rock" onclick="buttonPress()">Rock</button>
+        <button class="buttons" value="paper" onclick="buttonPress()">Paper</button>
+        <button class="buttons" value="scissors" onclick="buttonPress()">Scissors</button>
+        <div id="result"></div><br>
+        <div id="digipogInfo"></div>
+    </div>
+</body>
+<script>
+    let userScore = 0;
+    let enemyScore = 0;
+    let roundsPlayed = 0;
+    let userDigipogs = 1000
+    let enemyDigipogs = 1000
+    let digipogCost = 50
+    let tax = digipogCost * 0.1
+    let pogPool = 0
+    const choices = ['rock', 'paper', 'scissors'];
+    const buttons = document.getElementsByClassName('buttons');
+    const playButton = document.getElementById('play-button');
+
+    for (let button of buttons) {
+        button.disabled = true;
+    }
+
+    function play() {
+        if (userDigipogs < digipogCost && enemyDigipogs < digipogCost) {
+            alert("Not enough funds");
+            return;
+        } else {
+            enableButtons();
+        }
+    }
+
+    function enableButtons() {
+        for (let button of buttons) {
+            button.disabled = false;
+        }
+        playButton.disabled = false;
+    }
+
+    function disableButtons () {
+        for (let button of buttons) {
+            button.disabled = true;
+        }
+        playButton.disabled = true;
+    }
+
+    function getEnemyChoice() {
+        
+    }
+
+    function buttonPress() {
+        userDigipogs -= digipogCost;
+        enemyDigipogs -= digipogCost;
+        pogPool = (digipogCost - tax) * 2;
+        disableButtons();
+        getUserChoice(event);
+    }
+
+    function getUserChoice(event) {
+        let userChoice = event.target.value;
+        console.log("User choice: " + userChoice);
+        let enemyChoice = getEnemyChoice();
+        console.log("Enemy choice: " + enemyChoice);
+        document.getElementById('result').innerText = `You chose ${userChoice}. The enemy is choosing...`;
+        setTimeout(() => determineWinner(userChoice, enemyChoice), 2000);
+    }
+
+    function determineWinner(userChoice, enemyChoice) {
+        if (userChoice === enemyChoice) {
+            document.getElementById('result').innerText = `It's a tie! You both chose ${userChoice}.`;
+            userDigipogs += pogPool / 2;
+            enemyDigipogs += pogPool / 2;
+        } else if (
+            (userChoice === 'rock' && enemyChoice === 'scissors') ||
+            (userChoice === 'paper' && enemyChoice === 'rock') ||
+            (userChoice === 'scissors' && enemyChoice === 'paper')
+        ) {
+            userScore++;
+            userDigipogs += pogPool;
+            document.getElementById('result').innerText = `You win this round! You chose ${userChoice} and the enemy chose ${enemyChoice}.`;
+        } else {
+            enemyScore++;
+            enemyDigipogs += pogPool;
+            document.getElementById('result').innerText = `You lose this round! You chose ${userChoice} and the enemy chose ${enemyChoice}.`;
+        }
+        roundsPlayed++;
+        pogPool = 0;
+        playButton.disabled = false;
+    }
+
+    function logout() {
+        window.location.href = '/logout';
+    }
+
+    function gameLoop() {
+        document.getElementById('digipogInfo').innerHTML = `<h3>Digipog Info</h3>Your Digipogs: ${userDigipogs}<br>Enemy Digipogs: ${enemyDigipogs}<br>Pog Pool: ${pogPool}<br><br><h3>Score:</h3>You: ${userScore}<br>Enemy: ${enemyScore}<br><br>Rounds Played: ${roundsPlayed}`;
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+</script>
+</html>
