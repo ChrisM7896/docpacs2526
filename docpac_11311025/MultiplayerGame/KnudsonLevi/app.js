@@ -55,30 +55,39 @@ io.on('connection', (socket) => {
                 if (room.players.length === 1) {
                     room.players.push(username);
                     socket.join(roomId);
-                    socket.emit('roomJoined', { roomId, symbol: 'O' });
-                    io.to(roomId).emit('startGame', { players: room.players });
-                    io.to(roomId).emit('updateBoard', { board: room.board, turn: room.turn });
+                    socket.emit('roomJoined', {roomId, symbol: 'O'});
+                    io.to(roomId).emit('startGame', {players: room.players});
+                    io.to(roomId).emit('updateBoard', {board: room.board, turn: room.turn});
                     socket.roomId = roomId;
                     socket.symbol = 'O';
                     break;
                 }
             }
         }
+        room = activeRooms.get(socket.roomId);
+        socket.emit('updateBoard', {board: room.board, turn: room.turn});
     });
     socket.on('makeMove', (data) => {
         console.log(`${socket.username} made a move at position ${data.position} in room ${socket.roomId}`);
         const roomId = socket.roomId;
         const position = data.position;
         const room = activeRooms.get(roomId);
-        if (room.board[position] === null && room.players[room.turn] === socket.symbol) {
+        if (room.board[position] === null && room.turn === socket.symbol) {
             room.board[position] = room.turn;
+            console.log(room.turn)
+            console.log(`Board updated in room ${roomId}:`, room.board);
             room.turn = room.turn === 'X' ? 'O' : 'X';
-            io.to(roomId).emit('updateBoard', { board: room.board, turn: room.turn });
+            io.to(roomId).emit('updateBoard', {board: room.board, turn: room.turn});
         }
         if (checkWin(room.board)) {
             console.log(`Game over in room ${roomId}! Winner: ${socket.username}`);
-            io.to(roomId).emit('gameOver', { winner: socket.symbol });
+            io.to(roomId).emit('gameOver', {winner: socket.symbol});
             activeRooms.delete(roomId);
+            socket.leave(roomId);
+        } else if (room.board.every(cell => cell !== null)) {
+            io.to(roomId).emit('gameOver', {winner: null});
+            activeRooms.delete(roomId);
+            socket.leave(roomId);
         }
     });
     socket.on('disconnect', () => {
@@ -86,6 +95,8 @@ io.on('connection', (socket) => {
             room.players = room.players.filter(player => player !== socket.username);
             if (room.players.length === 0) {
                 activeRooms.delete(roomId);
+            } else if (room.players.length === 1) {
+                io.to(roomId).emit('forfeit');
             }
         });
         console.log('User disconnected');
