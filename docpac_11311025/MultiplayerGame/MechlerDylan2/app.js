@@ -8,7 +8,7 @@ const { Server } = require("socket.io")
 //add encryption if necessary
 const app = express();
 const AUTH_URL = 'https://formbeta.yorktechapps.com'
-const THIS_URL = 'http://localhost:3000/login'
+const THIS_URL = 'http://172.16.3.208:3000/login'
 const server = createServer(app);
 const io = new Server(server);
 var Player = { Player1: null, Player2: null }
@@ -181,7 +181,10 @@ io.on('connection', (socket) => {
     
     socket.on('reload', () => {
         socket.leave("some room");
+        Player.Player1 = null
+        Player.Player2 = null
         socket.emit('redirect', '/');
+        console.log(Player)
     });
 });
 
