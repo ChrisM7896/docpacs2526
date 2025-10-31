@@ -28,8 +28,8 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
 //Constants
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
-const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
+const AUTH_URL = process.env.AUTH_URL || 'http://172.16.3.228:420/oauth';
+const THIS_URL = process.env.THIS_URL || `http://172.16.3.228:${PORT}`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
 // Middleware
@@ -95,32 +95,6 @@ app.get('/sendpogs', isAuthenticated, (req, res) => {
 });
 
 
-// // Socket.io Client to auth server
-// const socket = io(AUTH_URL, {
-//     extraHeaders: {
-//         api: API_KEY
-//     }
-// });
-
-// socket.on('connect', () => {
-//     console.log('Connected to auth server');
-//     socket.emit('getActiveClass');
-// });
-
-// socket.on('disconnect', () => {
-//     console.log('Disconnected from auth server');
-// });
-
-// socket.on('setClass', (classData) => {
-//     console.log('Received class data:', classData);
-//     socket.emit('classUpdate');
-// });
-
-// socket.on('classUpdate', (classroomData) => {
-//     console.log(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
-//     console.log(`Response: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
-//     console.log(classroomData.poll.responses);
-// });
 const gameState = {
     player1: null, // Will store socket.id when someone joins
     player2: null,
