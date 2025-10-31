@@ -121,12 +121,35 @@ app.get('/sendpogs', isAuthenticated, (req, res) => {
 //     console.log(`Response: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
 //     console.log(classroomData.poll.responses);
 // });
-
+const gameState = {
+    player1: null, // Will store socket.id when someone joins
+    player2: null,
+    positions: {
+        player1: { x: 314, y: 366 },
+        player2: { x: 720, y: 366 }
+    }
+};
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
     // Send initial player positions to the new client
     socket.emit('initialize', players);
+
+    if (!gameState.player1) {
+        gameState.player1 = socket.id;
+        socket.emit('assignPlayer', { player: 'player1', positions: gameState.positions });
+        console.log(`${socket.id} assigned as player1`);
+    } else if (!gameState.player2) {
+        gameState.player2 = socket.id;
+        socket.emit('assignPlayer', { player: 'player2', positions: gameState.positions });
+        console.log(`${socket.id} assigned as player2`);
+
+        // Both players connected, start game
+        io.emit('gameStart');
+    } else {
+        // Game full
+        socket.emit('gameFull');
+    }
 
     // Handle player movement
     socket.on('move', (data) => {
@@ -144,6 +167,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('A user disconnected:', socket.id);
+        if (socket.id === gameState.player1) {
+            gameState.player1 = null;
+        } else if (socket.id === gameState.player2) {
+            gameState.player2 = null;
+        }
     });
 });
 
