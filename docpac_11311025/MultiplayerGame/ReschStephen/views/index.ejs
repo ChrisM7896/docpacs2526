@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="controls">Control Method: Keyboard</div>
+    <div id="position">Player1 X: Player1 Y: </div>
+    <div id="position2">Player2 X: Player2 Y: </div>
+    <canvas width="1400" height="700"></canvas>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        const avatar = {
+            x: 314,
+            y: 366,
+            w: 50,
+            h: 50,
+            img: new Image(),
+            playerSpeed: 1,
+            velocityX: 0,
+            velocityY: 0,
+            minVelocity: -5,
+            maxVelocity: 5,
+            deadPork: false
+        }
+
+        const avatar2 = {
+            x: 720,
+            y: 366,
+            w: 50,
+            h: 50,
+            img: new Image(),
+            playerSpeed: 1,
+            velocityX: 0,
+            velocityY: 0,
+            minVelocity: -5,
+            maxVelocity: 5,
+            deadPork: false
+        }
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        var inputVertical = 0;
+        var inputHorizontal = 0;
+        var keyWDown = false;
+        var keyADown = false;
+        var keySDown = false;
+        var keyDDown = false;
+
+        var inputVertical2 = 0;
+        var inputHorizontal2 = 0;
+        var keyWDown2 = false;
+        var keyADown2 = false;
+        var keySDown2 = false;
+        var keyDDown2 = false;
+
+        avatar.img.src = 'Hog.png';
+        avatar2.img.src = 'DeadHog.png';
+
+        document.addEventListener('keydown', (key) => {
+            switch (key.key) {
+                case 'w':
+                    inputVertical = -1;
+                    keyWDown = true;
+                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
+                    break;
+                case 'a':
+                    inputHorizontal = -1;
+                    keyADown = true;
+                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
+                    break;
+                case 's':
+                    inputVertical = 1;
+                    keySDown = true;
+                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
+                    break;
+                case 'd':
+                    inputHorizontal = 1;
+                    keyDDown = true;
+                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (key) => {
+            switch (key.key) {
+                case 'w':
+                    keyWDown = false;
+                    break;
+                case 'a':
+                    keyADown = false;
+                    break;
+                case 's':
+                    keySDown = false;
+                    break;
+                case 'd':
+                    keyDDown = false;
+                    break;
+            }
+        })
+
+        document.addEventListener('keydown', (key) => {
+            switch (key.key) {
+                case 'i':
+                    inputVertical2 = -1;
+                    keyWDown2 = true;
+                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    break;
+                case 'j':
+                    inputHorizontal2 = -1;
+                    keyADown2 = true;
+                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    break;
+                case 'k':
+                    inputVertical2 = 1;
+                    keySDown2 = true;
+                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    break;
+                case 'l':
+                    inputHorizontal2 = 1;
+                    keyDDown2 = true;
+                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (key) => {
+            switch (key.key) {
+                case 'i':
+                    keyWDown2 = false;
+                    break;
+                case 'j':
+                    keyADown2 = false;
+                    break;
+                case 'k':
+                    keySDown2 = false;
+                    break;
+                case 'l':
+                    keyDDown2 = false;
+                    break;
+            }
+        })
+
+        // document.addEventListener('keyup', (key) => {
+        //     switch (key.key) {
+        //         case 'i':
+        //             keyWDown2 = false;
+        //             if (keySDown2) {
+        //                 inputVertical2 = 1;
+        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             }
+        //             // } else {
+        //             //     inputVertical2 = 0;
+        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             // }
+        //             break;
+        //         case 'j':
+        //             keyADown2 = false;
+        //             if (keyDDown2) {
+        //                 inputHorizontal2 = 1;
+        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             }
+        //             // } else {
+        //             //     inputHorizontal2 = 0;
+        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             // }
+        //             break;
+        //         case 'k':
+        //             keySDown2 = false;
+        //             if (keyWDown2) {
+        //                 inputVertical2 = -1;
+        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             }
+        //             // } else {
+        //             //     inputVertical2 = 0;
+        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             // 
+        //             break;
+        //         case 'l':
+        //             keyDDown2 = false;
+        //             if (keyADown2) {
+        //                 inputHorizontal2 = -1;
+        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar2.y}`;
+        //             }
+        //             // } else {
+        //             //     inputHorizontal2 = 0;
+        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             // }
+        //             break;
+        //     }
+        // });
+
+        function update() {
+
+            if (keyWDown || keySDown) {
+                avatar.velocityY += 0.2 * inputVertical
+            }
+            if (keyADown || keyDDown) {
+                avatar.velocityX += 0.2 * inputHorizontal
+            }
+            if (!keyWDown && !keySDown) {
+                if (avatar.velocityY > 0.1) {
+                    avatar.velocityY -= 0.1
+                } else if (avatar.velocityY < -0.1) {
+                    avatar.velocityY += 0.1
+                } else {
+                    avatar.velocityY = 0
+                }
+            }
+            if (!keyADown && !keyDDown) {
+                if (avatar.velocityX > 0.1) {
+                    avatar.velocityX -= 0.1
+                } else if (avatar.velocityX < -0.1) {
+                    avatar.velocityX += 0.1
+                } else {
+                    avatar.velocityX = 0
+                }
+            }
+            if (avatar.velocityX < avatar.minVelocity) {
+                avatar.velocityX = avatar.minVelocity;
+            } else if (avatar.velocityX > avatar.maxVelocity) {
+                avatar.velocityX = avatar.maxVelocity;
+            }
+            if (avatar.velocityY < avatar.minVelocity) {
+                avatar.velocityY = avatar.minVelocity;
+            } else if (avatar.velocityY > avatar.maxVelocity) {
+                avatar.velocityY = avatar.maxVelocity;
+            }
+            avatar.x += avatar.playerSpeed * avatar.velocityX;
+            avatar.y += avatar.playerSpeed * avatar.velocityY;
+            if (avatar.x < 0) {
+                avatar.deadPork = true;
+            } else if (avatar.y < 0) {
+                avatar.deadPork = true;
+            } else if (avatar.x + avatar.w > canvas.width) {
+                avatar.deadPork = true;
+            } else if (avatar.y + avatar.h > canvas.height) {
+                avatar.deadPork = true;
+            }
+
+            document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
+            ctx.fillStyle = 'pink';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (!avatar.deadPork) {
+                ctx.drawImage(avatar.img, avatar.x, avatar.y, avatar.w, avatar.h);
+            }
+        }
+
+        function update2() {
+            // Player 2
+            if (keyWDown2 || keySDown2) {
+                avatar2.velocityY += 0.2 * inputVertical2
+            }
+            if (keyADown2 || keyDDown2) {
+                avatar2.velocityX += 0.2 * inputHorizontal2
+            }
+            if (!keyWDown2 && !keySDown2) {
+                if (avatar2.velocityY > 0.1) {
+                    avatar2.velocityY -= 0.1
+                } else if (avatar2.velocityY < -0.1) {
+                    avatar2.velocityY += 0.1
+                } else {
+                    avatar2.velocityY = 0
+                }
+            }
+            if (!keyADown2 && !keyDDown2) {
+                if (avatar2.velocityX > 0.1) {
+                    avatar2.velocityX -= 0.1
+                } else if (avatar2.velocityX < -0.1) {
+                    avatar2.velocityX += 0.1
+                } else {
+                    avatar2.velocityX = 0
+                }
+            }
+            if (avatar2.velocityX < avatar2.minVelocity) {
+                avatar2.velocityX = avatar2.minVelocity;
+            } else if (avatar2.velocityX > avatar2.maxVelocity) {
+                avatar2.velocityX = avatar2.maxVelocity;
+            }
+            if (avatar2.velocityY < avatar2.minVelocity) {
+                avatar2.velocityY = avatar2.minVelocity;
+            } else if (avatar2.velocityY > avatar2.maxVelocity) {
+                avatar2.velocityY = avatar2.maxVelocity;
+            }
+            avatar2.x += avatar2.playerSpeed * avatar2.velocityX;
+            avatar2.y += avatar2.playerSpeed * avatar2.velocityY;
+            if (avatar2.x < 0) {
+                avatar2.deadPork = true;
+            } else if (avatar2.y < 0) {
+                avatar2.deadPork = true;
+            } else if (avatar2.x + avatar2.w > canvas.width) {
+                avatar2.deadPork = true;
+            } else if (avatar2.y + avatar2.h > canvas.height) {
+                avatar2.deadPork = true;
+            }
+
+            document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+            if (!avatar2.deadPork) {
+                ctx.drawImage(avatar2.img, avatar2.x, avatar2.y, avatar2.w, avatar2.h);
+            }
+        }
+
+        function checkCollision(player1, player2) {
+            return (
+                player1.x < player2.x + player2.w &&
+                player1.x + player1.w > player2.x &&
+                player1.y < player2.y + player2.h &&
+                player1.y + player1.h > player2.y
+            );
+        }
+
+        function handleCollision(player1, player2) {
+
+            const dx = (player1.x + player1.w / 2) - (player2.x + player2.w / 2);
+            const dy = (player1.y + player1.h / 2) - (player2.y + player2.h / 2);
+
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                player1.velocityX *= -1.05;
+                player2.velocityX *= -1.05;
+            } else {
+                player1.velocityY *= -1.05;
+                player2.velocityY *= -1.05;
+            }
+
+            if (checkCollision(player1, player2)) {
+                player1.x += player1.velocityX;
+                player1.y += player1.velocityY;
+                player2.x += player2.velocityX;
+                player2.y += player2.velocityY;
+            }
+        }
+
+        function gameLoop() {
+            update();
+            update2();
+            if (checkCollision(avatar, avatar2)) {
+                handleCollision(avatar, avatar2);
+            }
+            requestAnimationFrame(gameLoop);
+        }
+        gameLoop();
+
+    </script>
+</body>
+
+</html>
