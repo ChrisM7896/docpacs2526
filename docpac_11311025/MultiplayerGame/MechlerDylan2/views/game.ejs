@@ -85,6 +85,7 @@
     var Player = {}
     var Playable = true
     var GameStarted = false
+    var displayedPlayer = false
 
     function castSpell(spell) {
         if (GameStarted == true) {
@@ -120,10 +121,12 @@
         console.log(msg)
         Player = msg
         console.log(Player)
-        if (userNum == 1) {
+        if ((userNum == 1) && (displayedPlayer == false)) {
             alert("You are Player 1")
-        } else if (userNum == 2) {
+            displayedPlayer = true
+        } else if ((userNum == 2) && (displayedPlayer == false)) {
             alert("You are Player 2")
+            displayedPlayer == true
         } else {
             alert("Game Full")
         }
@@ -163,7 +166,12 @@
                 }
             }
         };
-        if (Player.Player1Health <= 0) {
+        if ((Player.Player1Health <= 0) && (Player.Player2Health <= 0)) {
+            console.log("Player 1 Lost")
+            Playable = false
+            alert("TIE!")
+            socket.emit('reload')
+        } else if (Player.Player1Health <= 0) {
             console.log("Player 1 Lost")
             Playable = false
             if (userNum == 1) {
