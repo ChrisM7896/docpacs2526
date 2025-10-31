@@ -46,6 +46,10 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        socket.on('results', (data) => {
+            enemyChoice = data.choices.find(choice => choice !== userChoice);
+            console.log('Enemy choice received:', enemyChoice);
+        });
     </script>
 </head>
 <body>
@@ -100,13 +104,8 @@
         playButton.disabled = true;
     }
 
-    function getEnemyChoice() {
-        
-    }
-
     function buttonPress() {
         userDigipogs -= digipogCost;
-        enemyDigipogs -= digipogCost;
         pogPool = (digipogCost - tax) * 2;
         disableButtons();
         getUserChoice(event);
@@ -114,11 +113,10 @@
 
     function getUserChoice(event) {
         let userChoice = event.target.value;
-        console.log("User choice: " + userChoice);
-        let enemyChoice = getEnemyChoice();
-        console.log("Enemy choice: " + enemyChoice);
-        document.getElementById('result').innerText = `You chose ${userChoice}. The enemy is choosing...`;
-        setTimeout(() => determineWinner(userChoice, enemyChoice), 2000);
+        socket.emit('choiceMade', userChoice);
+        setTimeout(() => {
+            determineWinner(userChoice, enemyChoice);
+        }, 2000);
     }
 
     function determineWinner(userChoice, enemyChoice) {

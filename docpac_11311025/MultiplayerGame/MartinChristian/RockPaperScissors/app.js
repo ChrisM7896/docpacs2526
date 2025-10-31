@@ -105,6 +105,22 @@ io.on('connection', (socket) => {
     });
 });
 
+io.on('choiceMade', (data) => {
+    console.log(data);
+    var userChoices = {};
+    userChoices[socket.id] = data;
+    console.log('User choices so far:', userChoices);
+    console.log('Choice received:', data);
+    if (Object.keys(userChoices).length === 2) {
+        socket.emit('results', userChoices);
+        userChoices = {}; // reset for next round
+    }
+});
+
+io.on('results', (data) => {
+    console.log(data[0], data[1]);
+});
+
 // START SERVER
 server.listen(PORT, () => { // start the http server, not app.listen
     console.log(`Server is running at http://localhost:${PORT}`);
