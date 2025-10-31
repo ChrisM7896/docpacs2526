@@ -154,6 +154,20 @@ socket.on('joinGame', (data) => {
     }
 });
 
+socket.on('scoreUpdate', (data) => {
+    const { roomId, username, score } = data;
+    const room = gameRooms.get(roomId);
+    
+    if (room && room.players.includes(username)) {
+        room.scores[username] = score;
+        
+        // Broadcast the updated scores to all players in the room
+        socket.emit('scoresUpdated', {
+            scores: room.scores
+        });
+    }
+});
+
 socket.on('endTurn', (data) => {
     const { roomId, username, score } = data;
     const room = gameRooms.get(roomId);

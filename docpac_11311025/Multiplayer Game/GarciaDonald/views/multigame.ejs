@@ -81,27 +81,44 @@
             return;
         }
         var gp = gamepads[0];
-        if (gp.buttons[0].pressed && timer > 0) { // A button
-            if ( gp.axes[1] == -1 && direction == 0) { // Up
-            score = score + 1
-            document.getElementById("score box").innerHTML = score
-        }
-        if ( gp.axes[1] == +1 && direction == 1 && timer > 0) { // Down
-            score = score + 1
-            document.getElementById("score box").innerHTML = score
-        }
-        if ( gp.axes[0] == -1 && direction == 2 && timer > 0) { // Left
-            score = score + 1
-            document.getElementById("score box").innerHTML = score
-        }
-        if ( gp.axes[0] == +1 && direction == 3 && timer > 0) { // Right
-            score = score + 1
-            document.getElementById("score box").innerHTML = score
-        }
+        if (timer > 0 && gp) {
+            // Handle directional inputs
+            if (gp.axes[1] <= -0.5 && direction == 0) { // Up
+                updateScore();
+            }
+            if (gp.axes[1] >= 0.5 && direction == 1) { // Down
+                updateScore();
+            }
+            if (gp.axes[0] <= -0.5 && direction == 2) { // Left
+                updateScore();
+            }
+            if (gp.axes[0] >= 0.5 && direction == 3) { // Right
+                updateScore();
+            }
         }
         
         if (gp.buttons[9].pressed) { // Start button
             window.location.reload();
+        }
+    }
+
+    function updateScore() {
+        // Update the appropriate player's score
+        if (username === currentPlayer) {
+            if (Object.keys(gameRooms.get(roomId).scores)[0] === username) {
+                player1Score++;
+                document.getElementById("player1Score").innerHTML = "Player 1: " + player1Score;
+            } else {
+                player2Score++;
+                document.getElementById("player2Score").innerHTML = "Player 2: " + player2Score;
+            }
+            
+            // Emit score update to server
+            socket.emit('scoreUpdate', {
+                roomId,
+                username,
+                score: player1Score
+            });
         }
     }
     
@@ -170,6 +187,14 @@
     socket.on('gameEnded', (data) => {
         alert('The game has ended. Returning to game menu.');
         window.location.href = '/gamemenu';
+    });
+
+    // Handle score updates
+    socket.on('scoresUpdated', (data) => {
+        const scores = data.scores;
+        const players = Object.keys(scores);
+        document.getElementById('player1Score').innerHTML = 'Player 1: ' + scores[players[0]];
+        document.getElementById('player2Score').innerHTML = 'Player 2: ' + scores[players[1]];
     });
 
 
