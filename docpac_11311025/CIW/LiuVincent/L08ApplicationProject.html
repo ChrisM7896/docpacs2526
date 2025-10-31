@@ -4,51 +4,40 @@
         <meta charset="utf-8">
         <title>Lesson 8 Application Project</title>
     </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-
-		<script>
-			// Creating an empty object and then adding properties
-			
-
-
-
-		</script>
-
-		<script>
-			// Create an object literal with properties and methods
-		
-
-
-
-		</script>
-
-		<script>
-			// Create a constructor function 
-		   
-
-
-
-			// Create an array of objects
-	   
-
-
-		</script>
-
-		<script>
-		// Create a function        
-
-		</script>
-
-		<h3>Please click on this button to... Remember to create a button for this!</h3><br>
-		
-
-		<script>
-		// Add an event listener for the button      
-
-		</script>
-
-	</body>
+   
+    <body>
+      <h2>CIW JavaScript Specialist</h2>
+      <hr>
+ 
+        <script>
+            const car = ["name", "color", "year", "brand"]
+        for (i = 0; i < 4; i++) {
+            document.write(` ${car[i]}`)
+        }
+        </script>
+        <script>
+            class Car{
+                constructor(name, color, year, brand) {
+                    this.name = name;
+                    this.color = color;
+                    this.year = year;
+                    this.brand = brand;
+                }
+            }
+ 
+        </script>
+        <script>
+            const mustang = new Car("mustang", "red", "2009", "ford")
+        </script>
+        <h3>Please click on this button to... <button id="btn">View Data!</button></h3><br>
+        <script>
+        document.getElementById("btn").addEventListener("click", function() {
+            for (let data in mustang) {
+            alert(`${data}: ${mustang[data]}`)
+        }
+        })
+ 
+        </script>
+ 
+    </body>
 </html>

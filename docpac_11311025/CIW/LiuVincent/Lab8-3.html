@@ -4,21 +4,31 @@
         <meta charset="utf-8">
         <title>Lab 3-2</title>
     </head>
-	
-	<body>
-	  <div id="output"></div>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-
-	  <script>
-		//  write your code here
-	   
-		//  create generator object here
-	  
-		//  get reference to the HTML element where generator output will be displayed
-
-		//  write the for loop here    
-
-	  </script>
-	</body>
+   
+    <body>
+      <div id="output"></div>
+      <h2>CIW JavaScript Specialist</h2>
+      <hr>
+ 
+      <script>
+        function* integer() {
+            num = 1
+            while (true) {
+                yield num++;
+            }
+        }
+       
+        const get = integer()
+     
+        const output = document.getElementById("output")
+ 
+        for (i = 0; i < 5; i++) {
+            const span = output.createElement
+            const next = get.next().value
+ 
+            output.textContent += next + " ";
+        }
+ 
+      </script>
+    </body>
 </html>
