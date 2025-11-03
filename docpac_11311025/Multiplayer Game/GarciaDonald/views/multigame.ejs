@@ -3,25 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Multiplayer Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        #gameArea {
+            display: flex;
+            gap: 20px;
+        }
+        #scoreBoard {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #chatContainer {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #chatArea {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        #inputArea {
+            display: flex;
+            gap: 10px;
+        }
+        #chatInput {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #sendChat {
+            padding: 8px 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #directionBox {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            transition: background-color 0.1s;
+        }
+        .chat-message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .chat-message.mine {
+            background-color: #e3f2fd;
+            text-align: right;
+        }
+        .chat-message.other {
+            background-color: #f5f5f5;
+        }
+        #currentTurn {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .player-score {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
-    <div id="gameArea"></div>
-    <div id="scoreBoard">
-        <h2>Scores</h2>
-        <div id="player1Score">Player 1: 0</div>
-        <div id="player2Score">Player 2: 0</div>
-        <div id="timer">Time Left: 20</div>
-        <div id="currentTurn">Waiting for players...</div>
-        <div id="directionBox"></div>
+    <div id="gameArea">
+        <div id="scoreBoard">
+            <h2>Button Masher Game</h2>
+            <div id="playerCount">Players Connected: 0/2</div>
+            <div id="player1Score" class="player-score">Player 1: 0</div>
+            <div id="player2Score" class="player-score">Player 2: 0</div>
+            <div id="timer">Time Left: 20</div>
+            <div id="currentTurn">Waiting for players...</div>
+            <div id="directionBox"></div>
+        </div>
+        <div id="chatContainer">
+            <h2>Game Chat</h2>
+            <div id="chatArea"></div>
+            <div id="inputArea">
+                <input type="text" id="chatInput" placeholder="Type your message here...">
+                <button id="sendChat">Send</button>
+            </div>
+        </div>
     </div>
-    <div id="chatArea"></div>
-    <div id="inputArea">
-        <input type="text" id="chatInput" placeholder="Type your message here...">
-        <button id="sendChat">Send</button>
-    </div>
-    
 </body>
+<script src="/socket.io/socket.io.js"></script>
 <script>
     alert("NOTE: Multiplayer mode is still in development. Features may be incomplete or buggy.");
     alert("Welcome to Multiplayer Button Masher V2!");
@@ -103,22 +189,29 @@
     }
 
     function updateScore() {
-        // Update the appropriate player's score
         if (username === currentPlayer) {
-            if (Object.keys(gameRooms.get(roomId).scores)[0] === username) {
+            // Increment local score
+            if (isPlayerOne) {
                 player1Score++;
-                document.getElementById("player1Score").innerHTML = "Player 1: " + player1Score;
+                document.getElementById("player1Score").innerHTML = username + ": " + player1Score;
             } else {
                 player2Score++;
-                document.getElementById("player2Score").innerHTML = "Player 2: " + player2Score;
+                document.getElementById("player2Score").innerHTML = username + ": " + player2Score;
             }
             
             // Emit score update to server
             socket.emit('scoreUpdate', {
                 roomId,
                 username,
-                score: player1Score
+                score: isPlayerOne ? player1Score : player2Score
             });
+            
+            // Add a visual feedback
+            const directionBox = document.getElementById("directionBox");
+            directionBox.style.backgroundColor = "#4CAF50";
+            setTimeout(() => {
+                directionBox.style.backgroundColor = "";
+            }, 100);
         }
     }
     
@@ -127,15 +220,36 @@
     let isMyTurn = false;
     let currentPlayer = '';
     const username = '<%= user %>'; // Get username from EJS
-    const roomId = 'game-' + Math.random().toString(36).substr(2, 9); // Generate random room ID
+    const roomId = '<%= roomId %>'; // Get roomId passed from lobby
 
     // Join game room
     socket.emit('joinGame', { roomId, username });
+
+    // Handle room updates (player joins/disconnects)
+    socket.on('roomUpdate', (data) => {
+        document.getElementById('playerCount').innerHTML = `Players Connected: ${data.players.length}/2`;
+        document.getElementById('currentTurn').innerHTML = data.players.length < 2 ? 
+            "Waiting for players..." : 
+            "Game ready to start!";
+            
+        // Update player names if available
+        if (data.players[0]) {
+            document.getElementById('player1Score').innerHTML = `${data.players[0]}: 0`;
+        }
+        if (data.players[1]) {
+            document.getElementById('player2Score').innerHTML = `${data.players[1]}: 0`;
+        }
+    });
+
+    // Track if we're player one or two
+    let isPlayerOne = false;
 
     socket.on('gameStart', (data) => {
         alert('Game starting! Players: ' + data.players.join(' vs '));
         currentPlayer = data.currentPlayer;
         isMyTurn = currentPlayer === username;
+        // Set player position
+        isPlayerOne = data.players[0] === username;
         updateTurnDisplay();
     });
 
@@ -187,6 +301,43 @@
     socket.on('gameEnded', (data) => {
         alert('The game has ended. Returning to game menu.');
         window.location.href = '/gamemenu';
+    });
+
+    // Chat functionality
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChat');
+    const chatArea = document.getElementById('chatArea');
+
+    function addChatMessage(message, isMine) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isMine ? 'mine' : 'other'}`;
+        messageDiv.textContent = message;
+        chatArea.appendChild(messageDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    sendChatBtn.addEventListener('click', () => {
+        const message = chatInput.value.trim();
+        if (message) {
+            socket.emit('chatMessage', {
+                roomId,
+                username,
+                message
+            });
+            chatInput.value = '';
+        }
+    });
+
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendChatBtn.click();
+        }
+    });
+
+    socket.on('chatMessage', (data) => {
+        const isMine = data.username === username;
+        const message = `${data.username}: ${data.message}`;
+        addChatMessage(message, isMine);
     });
 
     // Handle score updates

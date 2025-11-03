@@ -62,6 +62,14 @@
             }
             clearInterval(setInterval);
             }
+            if (score == 0 && timer == 0) {
+                alert("You didn't press any buttons... Wow. Just wow. Is this game that boring to you?")
+                clearInterval(setInterval);
+            }
+            if (score > 100) {
+                alert("this kid is a tryhard")
+                clearInterval(setInterval);
+            }
         }
         
         document.getElementById("timer box").innerHTML = timer
