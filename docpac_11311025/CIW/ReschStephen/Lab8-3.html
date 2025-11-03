@@ -16,25 +16,17 @@
 		function* integerGenerator() {
 			let num = 1;
 			while (true) {
-				yield;
+				yield num; // ✅ yield the value
 				num++;
 			}
 		}
 		//  create generator object here
-		const get = function integerGenerator() {
-			let num = 1;
-			while (true) {
-				yield;
-				num++;
-			}
-
-		}
+		const get = integerGenerator();
 		//  get reference to the HTML element where generator output will be displayed
 		const output = document.getElementById("output");
-		//  write the for loop here    
+		let i = 0;
 		for (let value of get) {
-			let i = 0;
-			if (i < 4) {
+			if (i < 5) {
 				output.innerHTML += value + " ";
 				i++;
 			} else {
