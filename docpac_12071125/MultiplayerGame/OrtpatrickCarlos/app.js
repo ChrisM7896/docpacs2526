@@ -98,57 +98,51 @@ const socket = ioClient(AUTH_URL, {
     }
 });
 
-let players = [];
-let currentGame = new TicTacToe();
-let games = {
-    
+// Create a new game instance for each pair of players
+const gameId = `${socket.id}-${Date.now()}`;
+games[gameId] = new TicTacToe();
+
+// Assign the game to the player
+socket.join(gameId);
+
+// Notify players of their game ID
+socket.emit('gameId', gameId);
+
+// Assign player symbols (X or O)
+if (players.length < 2) {
+    const symbol = players.length === 0 ? 'X' : 'O';
+    players.push({ id: socket.id, symbol });
+    socket.emit('assignSymbol', symbol);
+} else {
+    socket.emit('gameFull');
 }
 
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
-
-    // Assign player symbols (X or O)
-    if (players.length < 2) {
-        const symbol = players.length === 0 ? 'X' : 'O';
-        players.push({ id: socket.id, symbol });
-        socket.emit('assignSymbol', symbol);
-    } else {
-        socket.emit('gameFull');
+// Handle move events for the specific game
+socket.on('makeMove', (data) => {
+    const player = players.find(p => p.id === socket.id);
+    if (player && player.symbol === games[gameId].currentPlayer) {
+        games[gameId].makeMove(data.row, data.col);
+        io.to(gameId).emit('updateGame', {
+            board: games[gameId].board,
+            currentPlayer: games[gameId].currentPlayer,
+            winner: games[gameId].winner
+        });
     }
+});
 
-    // Handle move events
-    socket.on('makeMove', (data) => {
-        const player = players.find(p => p.id === socket.id);
-        if (player && player.symbol === currentGame.currentPlayer) {
-            currentGame.makeMove(data.row, data.col);
-            io.emit('updateGame', {
-                board: currentGame.board,
-                currentPlayer: currentGame.currentPlayer,
-                winner: currentGame.winner
-            });
-        }
-    });
+// Handle reset game for the specific game
+socket.on('resetGame', () => {
+    io.to(gameId).emit('resetGame');
+    games[gameId].reset();
+});
 
-    // Handle reset game
-    socket.on('resetGame', () => {
-        // Broadcast the resetGame event to all connected clients
-        io.emit('resetGame');
-        // Reset the game state on the server if needed
-        currentGame.reset();
-    });
-
-    // Handle disconnection
-    socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
-        players = players.filter(p => p.id !== socket.id);
-        if (players.length === 0) {
-            currentGame.reset();
-        }
-    });
-    // Handle game full notification
-    socket.on('gameFull', () => {
-        statusDiv.textContent = 'Game is full. Please wait for a player to leave.';
-    });
+// Handle disconnection
+socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
+    players = players.filter(p => p.id !== socket.id);
+    if (players.length === 0) {
+        delete games[gameId]; // Remove the game instance if no players are left
+    }
 });
 
 server.listen(port, () => {
