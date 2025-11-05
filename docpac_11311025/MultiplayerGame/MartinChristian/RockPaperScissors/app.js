@@ -25,8 +25,8 @@ const db = new sqlite3.Database('./db/app.db', (err) => {
 // CONSTANTS
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
-const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
+const AUTH_URL = process.env.AUTH_URL || 'http://172.16.3.196:420';
+const THIS_URL = process.env.THIS_URL || `http://172.16.3.196:${PORT}`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
 // MIDDLEWARE
@@ -97,31 +97,47 @@ const authSocket = ioClient(AUTH_URL, {
     }
 });
 
+let userChoices = {}; // shared across connections for the current round
+var usersConnected = 0;
+
 io.on('connection', (socket) => {
+    if (usersConnected >= 2) {
+        socket.emit('roomFull');
+        return;
+    } else if (usersConnected === 1) {
+        io.emit('startGame');
+    } else if (usersConnected === 0) {
+        io.emit('waitingForOpponent');
+    } else {
+        console.error('Unexpected number of users connected:', usersConnected);
+    }
     console.log('New client connected');
+    usersConnected++;
+    console.log('Users connected:', usersConnected);
 
     socket.on('disconnect', () => {
+        // remove the user's choice if they disconnect
+        if (userChoices[socket.id]) {
+            delete userChoices[socket.id];
+        }
+        usersConnected--;
         console.log('Client disconnected');
+        console.log('Users connected:', usersConnected);
+        io.emit('forfeit')
     });
-});
 
-io.on('choiceMade', (data) => {
-    console.log(data);
-    var userChoices = {};
-    userChoices[socket.id] = data;
-    console.log('User choices so far:', userChoices);
-    console.log('Choice received:', data);
-    if (Object.keys(userChoices).length === 2) {
-        socket.emit('results', userChoices);
-        userChoices = {}; // reset for next round
-    }
-});
-
-io.on('results', (data) => {
-    console.log(data[0], data[1]);
+    socket.on('choiceMade', (data) => {
+        console.log('Choice received from', socket.id, data);
+        userChoices[socket.id] = data;
+        console.log('User choices so far:', userChoices);
+        if (Object.keys(userChoices).length === 2) {
+            io.emit('results', userChoices);
+            userChoices = {};
+        }
+    });
 });
 
 // START SERVER
 server.listen(PORT, () => { // start the http server, not app.listen
-    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server is running at http://172.16.3.239:${PORT}`);
 });
