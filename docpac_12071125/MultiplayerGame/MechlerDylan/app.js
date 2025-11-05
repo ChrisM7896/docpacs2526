@@ -50,25 +50,56 @@ function isAuthenticated(req, res, next) {
 };
 
 function findRoom(user) {
-    //var roomFound = false
-    //for (let i = 0; i <= Rooms.length; i++) {if (Rooms[(i-1)].Player1 == null) {Rooms[(i-1)].Player1 = user; return i.toString} else if (Rooms[(i-1)].Player2 == null) {Rooms[(i-1)].Player2 = user; return i.toString}} else {add code to initialize and create new room}
-    if (!Player.Player1) {
-        startGame();
-        Player.Player1 = user
-        return 1
-    } else if (!Player.Player2) {
-        Player.Player2 = user
-        return 2
-    }
+    var roomAndUser = 0
+    var roomMade = false
+    for (let i = 0; (i <= Rooms.length) && (!roomMade); i++) {
+        if (i < Rooms.length) {
+            if (Rooms[i].Player1 == null) {
+                Rooms[i].Player1 = user
+                roomAndUser = (1 + 0.1)
+                console.log("1: " + roomAndUser)
+                roomMade = true
+            } else if (Rooms[i].Player2 == null) {
+                Rooms[i].Player2 = user
+                roomAndUser = (1 + 0.2)
+                console.log("2: " + roomAndUser)
+                roomMade = true
+            }
+        } else if (i == Rooms.length) {
+            createRoom(i)
+            roomMade = true
+            Rooms[i].Player1 = user
+            startGame(i)
+            roomAndUser = (1 + 0.1)
+            console.log("3: " + roomAndUser)
+            console.log(i)
+        }
+    };
+    console.log("4: " + roomAndUser)
+    return roomAndUser
 };
 
-function startGame() {
-    Player.Player1Health = 100
-    Player.Player2Health = 100
-    Player.turn = 1
-    Player.Player1Spell = null
-    Player.Player2Spell = null
-    Player.roundState = "going"
+function createRoom(room) {
+    Rooms.push({
+        Player1: null,
+        Player2: null,
+        roomNum: room.toString(),
+        Player1Health: 100,
+        Player2Health: 100,
+        turn: 1,
+        Player1Spell: null,
+        Player2Spell: null,
+        roundState: "going"
+    })
+}
+
+function startGame(room) {
+    Rooms[room].Player1Health = 100
+    Rooms[room].Player2Health = 100
+    Rooms[room].turn = 1
+    Rooms[room].Player1Spell = null
+    Rooms[room].Player2Spell = null
+    Rooms[room].roundState = "going"
 };
 
 function spellCast(spell) {
@@ -156,9 +187,18 @@ io.on('connection', (socket) => {
     const user = data.user
     const id = socket.id
     console.log("User Connected: ", user);
+    var findRoomData = findRoom(id);
+    console.log("Room Data: " + findRoomData)
+    var room = Math.floor(findRoomData)
+    console.log("Room: " + room)
+    var userNum = (Math.round((findRoomData - room)*10))
+    console.log("User: " + userNum)
+    console.log("Makes No Sense 1: " + ((1.1-1)*10))
+    console.log("Makes No Sense 2: " + ((1.2-1)*10))
+    room = room.toString()
+    console.log("Room: " + room)
     socket.join("room");
-    var userNum = findRoom(id);
-    io.emit('connected', userNum);
+    io.emit('connected', userNum, room);
     io.to("room").emit('playerJoined', Player);
     socket.on('playState', (playState) => {
         console.log(playState)
@@ -181,7 +221,7 @@ io.on('connection', (socket) => {
         startGame();
         io.emit('opponent left')
     });
-    
+
     socket.on('reload', () => {
         socket.leave("room");
         Player.Player1 = null
