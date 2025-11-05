@@ -12,8 +12,8 @@ const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
 
 const players = {
-    player1: { x: 314, y: 366 },
-    player2: { x: 720, y: 366 }
+    avatar: { x: 314, y: 366 },
+    avatar2: { x: 720, y: 366 }
 };
 
 // Database setup
@@ -96,27 +96,29 @@ app.get('/sendpogs', isAuthenticated, (req, res) => {
 
 
 const gameState = {
-    player1: null, // Will store socket.id when someone joins
-    player2: null,
+    avatar: null, // Will store socket.id when someone joins
+    avatar2: null,
     positions: {
-        player1: { x: 314, y: 366 },
-        player2: { x: 720, y: 366 }
+        avatar: { x: 314, y: 366 },
+        avatar2: { x: 720, y: 366 }
     }
 };
+
+
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
     // Send initial player positions to the new client
     socket.emit('initialize', players);
 
-    if (!gameState.player1) {
-        gameState.player1 = socket.id;
-        socket.emit('assignPlayer', { player: 'player1', positions: gameState.positions });
-        console.log(`${socket.id} assigned as player1`);
-    } else if (!gameState.player2) {
-        gameState.player2 = socket.id;
-        socket.emit('assignPlayer', { player: 'player2', positions: gameState.positions });
-        console.log(`${socket.id} assigned as player2`);
+    if (!gameState.avatar) {
+        gameState.avatar = socket.id;
+        socket.emit('assignPlayer', { player: 'avatar', positions: gameState.positions });
+        console.log(`${socket.id} assigned as avatar`);
+    } else if (!gameState.avatar2) {
+        gameState.avatar2 = socket.id;
+        socket.emit('assignPlayer', { player: 'avatar2', positions: gameState.positions });
+        console.log(`${socket.id} assigned as avatar2`);
 
         // Both players connected, start game
         io.emit('gameStart');
@@ -127,12 +129,12 @@ io.on('connection', (socket) => {
 
     // Handle player movement
     socket.on('move', (data) => {
-        if (data.player === 'player1') {
-            players.player1.x += data.dx;
-            players.player1.y += data.dy;
-        } else if (data.player === 'player2') {
-            players.player2.x += data.dx;
-            players.player2.y += data.dy;
+        if (data.player === 'avatar') {
+            players.avatar.x += data.dx;
+            players.avatar.y += data.dy;
+        } else if (data.player === 'avatar2') {
+            players.avatar2.x += data.dx;
+            players.avatar2.y += data.dy;
         }
 
         // Broadcast updated positions to all clients
@@ -141,10 +143,10 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('A user disconnected:', socket.id);
-        if (socket.id === gameState.player1) {
-            gameState.player1 = null;
-        } else if (socket.id === gameState.player2) {
-            gameState.player2 = null;
+        if (socket.id === gameState.avatar) {
+            gameState.avatar = null;
+        } else if (socket.id === gameState.avatar2) {
+            gameState.avatar2 = null;
         }
     });
 });

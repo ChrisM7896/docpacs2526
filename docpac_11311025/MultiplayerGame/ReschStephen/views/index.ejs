@@ -9,12 +9,26 @@
 
 <body>
     <div id="controls">Control Method: Keyboard</div>
-    <div id="position">Player1 X: Player1 Y: </div>
-    <div id="position2">Player2 X: Player2 Y: </div>
+    <div id="position">avatar X: avatar Y: </div>
+    <div id="position2">avatar2 X: avatar2 Y: </div>
     <canvas width="1400" height="700"></canvas>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io();
+        let myPlayer = null;
+        let myAvatar = null;
 
+        socket.on('assignPlayer', (data) => {
+            myPlayer = data.player;
+
+            if (myPlayer === 'player1') {
+                myAvatar = avatar;
+                console.log("You are controlling Player 1");
+            } else if (myPlayer === 'player2') {
+                myAvatar = avatar2;
+                console.log("You are controlling Player 2");
+            }
+        });
         const avatar = {
             x: 314,
             y: 366,
@@ -110,22 +124,22 @@
                 case 'i':
                     inputVertical2 = -1;
                     keyWDown2 = true;
-                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
                     break;
                 case 'j':
                     inputHorizontal2 = -1;
                     keyADown2 = true;
-                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
                     break;
                 case 'k':
                     inputVertical2 = 1;
                     keySDown2 = true;
-                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
                     break;
                 case 'l':
                     inputHorizontal2 = 1;
                     keyDDown2 = true;
-                    document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar.y}`;
+                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
                     break;
             }
         });
@@ -153,44 +167,44 @@
         //             keyWDown2 = false;
         //             if (keySDown2) {
         //                 inputVertical2 = 1;
-        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             }
         //             // } else {
         //             //     inputVertical2 = 0;
-        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             // }
         //             break;
         //         case 'j':
         //             keyADown2 = false;
         //             if (keyDDown2) {
         //                 inputHorizontal2 = 1;
-        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             }
         //             // } else {
         //             //     inputHorizontal2 = 0;
-        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             // }
         //             break;
         //         case 'k':
         //             keySDown2 = false;
         //             if (keyWDown2) {
         //                 inputVertical2 = -1;
-        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             }
         //             // } else {
         //             //     inputVertical2 = 0;
-        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             // 
         //             break;
         //         case 'l':
         //             keyDDown2 = false;
         //             if (keyADown2) {
         //                 inputHorizontal2 = -1;
-        //                 document.getElementById('position2').innerText = `Player2 X: ${avatar.x} Player2 Y: ${avatar2.y}`;
+        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar2.y}`;
         //             }
         //             // } else {
         //             //     inputHorizontal2 = 0;
-        //             //     document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
         //             // }
         //             break;
         //     }
@@ -300,40 +314,40 @@
                 avatar2.deadPork = true;
             }
 
-            document.getElementById('position2').innerText = `Player2 X: ${avatar2.x} Player2 Y: ${avatar2.y}`;
+            document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
             if (!avatar2.deadPork) {
                 ctx.drawImage(avatar2.img, avatar2.x, avatar2.y, avatar2.w, avatar2.h);
             }
         }
 
-        function checkCollision(player1, player2) {
+        function checkCollision(avatar, avatar2) {
             return (
-                player1.x < player2.x + player2.w &&
-                player1.x + player1.w > player2.x &&
-                player1.y < player2.y + player2.h &&
-                player1.y + player1.h > player2.y
+                avatar.x < avatar2.x + avatar2.w &&
+                avatar.x + avatar.w > avatar2.x &&
+                avatar.y < avatar2.y + avatar2.h &&
+                avatar.y + avatar.h > avatar2.y
             );
         }
 
-        function handleCollision(player1, player2) {
+        function handleCollision(avatar, avatar2) {
 
-            const dx = (player1.x + player1.w / 2) - (player2.x + player2.w / 2);
-            const dy = (player1.y + player1.h / 2) - (player2.y + player2.h / 2);
+            const dx = (avatar.x + avatar.w / 2) - (avatar2.x + avatar2.w / 2);
+            const dy = (avatar.y + avatar.h / 2) - (avatar2.y + avatar2.h / 2);
 
 
             if (Math.abs(dx) > Math.abs(dy)) {
-                player1.velocityX *= -1.05;
-                player2.velocityX *= -1.05;
+                avatar.velocityX *= -1.05;
+                avatar2.velocityX *= -1.05;
             } else {
-                player1.velocityY *= -1.05;
-                player2.velocityY *= -1.05;
+                avatar.velocityY *= -1.05;
+                avatar2.velocityY *= -1.05;
             }
 
-            if (checkCollision(player1, player2)) {
-                player1.x += player1.velocityX;
-                player1.y += player1.velocityY;
-                player2.x += player2.velocityX;
-                player2.y += player2.velocityY;
+            if (checkCollision(avatar, avatar2)) {
+                avatar.x += avatar.velocityX;
+                avatar.y += avatar.velocityY;
+                avatar2.x += avatar2.velocityX;
+                avatar2.y += avatar2.velocityY;
             }
         }
 
