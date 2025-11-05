@@ -4,14 +4,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let playerSymbol = null;
     let gameActive = false;
 
+
+    // Get game code from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameCode = urlParams.get('code');
+
     // DOM elements
     const cells = document.querySelectorAll('.cell');
     const statusDiv = document.getElementById('status');
     const resetButton = document.getElementById('reset');
 
+
+    //join game room if game code is present in URL
+    if (gameCode) {
+        socket.emit('joinGameCode', gameCode);
+    }
+
     // Handle cell clicks
     cells.forEach(cell => {
         cell.addEventListener('click', () => {
+            console.log('Cell clicked!'); // Add this first
+            console.log('gameActive:', gameActive); // Check this value
+            console.log('cell.textContent:', cell.textContent); // Check if empty
+            console.log('playerSymbol:', playerSymbol); // Check if assigned
             if (gameActive && cell.textContent === '' && playerSymbol) {
                 const row = parseInt(cell.dataset.row);
                 const col = parseInt(cell.dataset.col);
@@ -25,13 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('resetGame');
     });
 
-
     // Handle server events
-    socket.on('assignSymbol', (symbol) => {
-        playerSymbol = symbol;
+    socket.on('playerAssigned', (data) => {
+        playerSymbol = data.symbol;
         gameActive = true;
         if (statusDiv) {
-            statusDiv.textContent = `You are player ${playerSymbol}.`;
+            statusDiv.textContent = `You are player ${playerSymbol}. Game code: ${data.gameCode}`;
         }
     });
 
@@ -73,13 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.style.display = 'none'; // Hide the reset button for all players
     });
     
-    socket.on('gameFull', () => {
+    socket.on('error', (message) => {
+        console.log('Error received:', message);
         if (statusDiv) {
-            statusDiv.textContent = 'Game is full. Please wait for a player to leave.';
-        } else {
-            console.error('Element with id "status" not found in the DOM.');
+            statusDiv.textContent = message;
         }
-        gameActive = false;
     });
     
     });

@@ -17,6 +17,7 @@ const TicTacToe = require('./scripts/ttt').TicTacToe;
 
 
 
+
 //database setup
 const db = new sqlite3.Database('./db/venture.db', (err) => {
     if (err) {
@@ -41,12 +42,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/shared', express.static(path.join(__dirname, 'shared')))
 
-app.use(session({
+
+const sessionMiddleware = session({
     store: new SQLiteStore({db : 'sessions.db', dir: './db'}),
-    secret: SESSION_SECRET,
+    secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: false
-}));
+    saveUninitialized: false,
+    cookie: { secure: false }, // Set to true if using HTTPS
+});
+app.use(sessionMiddleware);
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next();
@@ -78,20 +82,39 @@ app.get('/login', (req, res) => {
          res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
     };
 });
-app.post('/joinGameCode', isAuthenticated, (req, res) => {
-
+app.get('/joinGameCode', isAuthenticated, (req, res) => {
+    const code = req.query.code; // Get code from URL parameter
+    if (!code) {
+        return res.status(400).send('Game code is required');
+    }
+    res.redirect(`/ttt?code=${code}`);
 });
 
-app.post('/joinRandomGame', isAuthenticated, (req, res) => {
-
-});
-
-app.post('/createGame', isAuthenticated, (req, res) => {
-    const gameCode = generateGameCode();
+// HTTP Routes
+app.get('/createGame', isAuthenticated, (req, res) => {
+    let gameCode = generateGameCode();
+    while (activeGames.has(gameCode)) {
+        gameCode = generateGameCode();
+    }
     activeGames.add(gameCode);
-    games[gameCode] = new TicTacToe(); // Create a new game instance
-    players[req.session.user] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
-    res.json({ gameCode, symbol: 'X' });
+    req.session.gameCode = gameCode; // Store the game code in the session
+    res.redirect(`/ttt?code=${gameCode}`);
+});
+
+app.get('/joinRandomGame', isAuthenticated, (req, res) => {
+    for (const gameCode of activeGames) {
+        const room = io.sockets.adapter.rooms.get(gameCode);
+        if (room && room.size < 2) {
+            req.session.gameCode = gameCode; // Store the game code in the session
+            res.redirect(`/ttt?code=${gameCode}`);
+            return;
+        }
+    }
+    res.status(404).send('No available games to join.');
+});
+
+app.get('/joinGame', isAuthenticated, (req, res) => {
+    res.render('joinGame', { user: req.session.user });
 });
 
 app.get('/ttt', isAuthenticated, (req, res) => {
@@ -113,6 +136,11 @@ const socket = ioClient(AUTH_URL, {
     }
 });
 
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, {}, next); // Share session with WebSocket
+});
+
+
 const games = {}; // Map game codes to TicTacToe instances
 const players = {}; // Map socket IDs to player info (game code and symbol)
 const activeGames = new Set(); // Track active game codes
@@ -128,101 +156,120 @@ function generateGameCode() {
 io.on('connection', (socket) => {
     console.log(`Player connected: ${socket.id}`);
 
-socket.on('createGame', () => {
-    const gameCode = generateGameCode();
-    activeGames.add(gameCode);
-    games[gameCode] = new TicTacToe(); // Create a new game instance
-    socket.join(gameCode); // Join the room
-    players[socket.id] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
-    socket.emit('gameCreated', { gameCode, symbol: 'X' });
-    console.log(`Game created with code: ${gameCode}`);
-});
+    // Handle game creation
+    socket.on('createGame', () => {
+        const gameCode = generateGameCode();
+        activeGames.add(gameCode);
+        games[gameCode] = new TicTacToe(); // Create a new game instance
+        socket.join(gameCode); // Join the room
+        players[socket.id] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
+        socket.emit('gameCreated', { gameCode, symbol: 'X' });
+        console.log(`Game created with code: ${gameCode}`);
+    });
 
+// Handle joining a game by code
 socket.on('joinGameCode', (code) => {
+    console.log(`Player ${socket.id} is trying to join game: ${code}`);
+    console.log('Active games:', Array.from(activeGames));
+    console.log('Games object:', Object.keys(games));
+
+    // Validate the game code
     if (!activeGames.has(code)) {
         socket.emit('error', 'Invalid game code.');
         return;
     }
 
+    // Ensure the game instance exists
+    if (!games[code]) {
+        console.log(`Game instance for code ${code} does not exist. Creating a new instance.`);
+        games[code] = new TicTacToe(); // Create the game instance if it doesn't exist
+    }
+
     const room = io.sockets.adapter.rooms.get(code);
-    const roomSize = room ? room.size : 0; // Get the room size before joining
+    const roomSize = room ? room.size : 0;
 
     if (roomSize < 2) {
-        const symbol = roomSize === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
+        const symbol = roomSize === 0 ? 'X' : 'O'; // Assign "X" to the first player, "O" to the second
         socket.join(code); // Join the room
         players[socket.id] = { gameCode: code, symbol };
         socket.emit('playerAssigned', { gameCode: code, symbol });
 
-        const updatedRoom = io.sockets.adapter.rooms.get(code); // Get the updated room after joining
-        if (updatedRoom.size === 2) {
+        if (roomSize + 1 === 2) { // Check if the room is now full
             io.to(code).emit('gameReady', 'Game is ready! Players assigned.');
         }
     } else {
-        socket.emit('error', 'Room is full or invalid.');
+        socket.emit('error', 'Room is full.');
     }
 });
 
-socket.on('joinRandomGame', () => {
-    let joined = false;
-
-    for (const gameCode of activeGames) {
-        const room = io.sockets.adapter.rooms.get(gameCode);
-        if (room && room.size < 2) {
-            const symbol = room.size === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
-            socket.join(gameCode);
-            players[socket.id] = { gameCode, symbol };
-            socket.emit('playerAssigned', { gameCode, symbol });
-
-            joined = true;
-            break;
+    socket.on('joinRandomGame', () => {
+        let joined = false;
+    
+        for (const gameCode of activeGames) {
+            const room = io.sockets.adapter.rooms.get(gameCode);
+            const roomSize = room ? room.size : 0;
+    
+            if (roomSize < 2) {
+                const symbol = roomSize === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
+                socket.join(gameCode); // Join the room
+                players[socket.id] = { gameCode, symbol };
+                socket.emit('playerAssigned', { gameCode, symbol });
+    
+                const updatedRoom = io.sockets.adapter.rooms.get(gameCode); // Get the updated room after joining
+                if (updatedRoom.size === 2) {
+                    io.to(gameCode).emit('gameReady', 'Game is ready! Players assigned.');
+                }
+    
+                joined = true;
+                break;
+            }
         }
-    }
-
-    if (!joined) {
-        socket.emit('error', 'No available games to join.');
-    }
-});
-
-socket.on('makeMove', ({ row, col }) => {
-    const player = players[socket.id];
-    if (!player) {
-        socket.emit('error', 'You are not part of a game.');
-        return;
-    }
-
-    const { gameCode, symbol } = player;
-    const game = games[gameCode];
-    if (!game) {
-        socket.emit('error', 'Game not found.');
-        return;
-    }
-
-    if (game.currentPlayer !== symbol) {
-        socket.emit('error', 'It is not your turn.');
-        return;
-    }
-
-    const moveResult = game.makeMove(row, col); // Now returns a boolean
-    if (moveResult) {
-        io.to(gameCode).emit('updateGame', {
-            board: game.board,
-            currentPlayer: game.currentPlayer,
-            winner: game.winner,
-        });
-
-        if (game.winner) {
-            io.to(gameCode).emit('gameOver', { winner: game.winner });
-            activeGames.delete(gameCode); // Remove the game from active games
-            delete games[gameCode]; // Clean up the game instance
-        } else if (game.checkDraw()) {
-            io.to(gameCode).emit('gameOver', { draw: true });
-            activeGames.delete(gameCode); // Remove the game from active games
-            delete games[gameCode]; // Clean up the game instance
+    
+        if (!joined) {
+            socket.emit('error', 'No available games to join.');
         }
-    } else {
-        socket.emit('error', 'Invalid move.');
-    }
-});
+    });
+
+    socket.on('makeMove', ({ row, col }) => {
+        const player = players[socket.id];
+        if (!player) {
+            socket.emit('error', 'You are not part of a game.');
+            return;
+        }
+
+        const { gameCode, symbol } = player;
+        const game = games[gameCode];
+        if (!game) {
+            socket.emit('error', 'Game not found.');
+            return;
+        }
+
+        if (game.currentPlayer !== symbol) {
+            socket.emit('error', 'It is not your turn.');
+            return;
+        }
+
+        const moveResult = game.makeMove(row, col);
+        if (moveResult) {
+            io.to(gameCode).emit('updateGame', {
+                board: game.board,
+                currentPlayer: game.currentPlayer,
+                winner: game.winner,
+            });
+
+            if (game.winner) {
+                io.to(gameCode).emit('gameOver', { winner: game.winner });
+                activeGames.delete(gameCode);
+                delete games[gameCode];
+            } else if (game.checkDraw()) {
+                io.to(gameCode).emit('gameOver', { draw: true });
+                activeGames.delete(gameCode);
+                delete games[gameCode];
+            }
+        } else {
+            socket.emit('error', 'Invalid move.');
+        }
+    });
 
 socket.on('resetGame', () => {
     const player = players[socket.id];
@@ -245,6 +292,7 @@ socket.on('resetGame', () => {
     });
 });
 
+// Handle disconnects
 socket.on('disconnect', () => {
     const player = players[socket.id];
     if (player) {
@@ -252,16 +300,15 @@ socket.on('disconnect', () => {
         const room = io.sockets.adapter.rooms.get(gameCode);
 
         if (!room || room.size === 0) {
-            activeGames.delete(gameCode); // Remove the game if the room is empty
-            delete games[gameCode]; // Clean up the game instance
+            activeGames.delete(gameCode);
+            delete games[gameCode];
         }
 
-        delete players[socket.id]; // Remove the player from tracking
+        delete players[socket.id];
     }
 
     console.log(`Player disconnected: ${socket.id}`);
 });
-
 });
 
 
