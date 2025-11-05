@@ -78,6 +78,21 @@ app.get('/login', (req, res) => {
          res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
     };
 });
+app.post('/joinGameCode', isAuthenticated, (req, res) => {
+
+});
+
+app.post('/joinRandomGame', isAuthenticated, (req, res) => {
+
+});
+
+app.post('/createGame', isAuthenticated, (req, res) => {
+    const gameCode = generateGameCode();
+    activeGames.add(gameCode);
+    games[gameCode] = new TicTacToe(); // Create a new game instance
+    players[req.session.user] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
+    res.json({ gameCode, symbol: 'X' });
+});
 
 app.get('/ttt', isAuthenticated, (req, res) => {
     res.render('ttt', { user: req.session.user });
@@ -98,52 +113,160 @@ const socket = ioClient(AUTH_URL, {
     }
 });
 
-// Create a new game instance for each pair of players
-const gameId = `${socket.id}-${Date.now()}`;
-games[gameId] = new TicTacToe();
+const games = {}; // Map game codes to TicTacToe instances
+const players = {}; // Map socket IDs to player info (game code and symbol)
+const activeGames = new Set(); // Track active game codes
 
-// Assign the game to the player
-socket.join(gameId);
-
-// Notify players of their game ID
-socket.emit('gameId', gameId);
-
-// Assign player symbols (X or O)
-if (players.length < 2) {
-    const symbol = players.length === 0 ? 'X' : 'O';
-    players.push({ id: socket.id, symbol });
-    socket.emit('assignSymbol', symbol);
-} else {
-    socket.emit('gameFull');
+function generateGameCode() {
+    let code;
+    do {
+        code = Math.floor(Math.random() * 1000) + 1; // Generate a code between 1 and 1000
+    } while (activeGames.has(code)); // Ensure the code is unique
+    return code.toString();
 }
 
-// Handle move events for the specific game
-socket.on('makeMove', (data) => {
-    const player = players.find(p => p.id === socket.id);
-    if (player && player.symbol === games[gameId].currentPlayer) {
-        games[gameId].makeMove(data.row, data.col);
-        io.to(gameId).emit('updateGame', {
-            board: games[gameId].board,
-            currentPlayer: games[gameId].currentPlayer,
-            winner: games[gameId].winner
+io.on('connection', (socket) => {
+    console.log(`Player connected: ${socket.id}`);
+
+socket.on('createGame', () => {
+    const gameCode = generateGameCode();
+    activeGames.add(gameCode);
+    games[gameCode] = new TicTacToe(); // Create a new game instance
+    socket.join(gameCode); // Join the room
+    players[socket.id] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
+    socket.emit('gameCreated', { gameCode, symbol: 'X' });
+    console.log(`Game created with code: ${gameCode}`);
+});
+
+socket.on('joinGameCode', (code) => {
+    if (!activeGames.has(code)) {
+        socket.emit('error', 'Invalid game code.');
+        return;
+    }
+
+    const room = io.sockets.adapter.rooms.get(code);
+    const roomSize = room ? room.size : 0; // Get the room size before joining
+
+    if (roomSize < 2) {
+        const symbol = roomSize === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
+        socket.join(code); // Join the room
+        players[socket.id] = { gameCode: code, symbol };
+        socket.emit('playerAssigned', { gameCode: code, symbol });
+
+        const updatedRoom = io.sockets.adapter.rooms.get(code); // Get the updated room after joining
+        if (updatedRoom.size === 2) {
+            io.to(code).emit('gameReady', 'Game is ready! Players assigned.');
+        }
+    } else {
+        socket.emit('error', 'Room is full or invalid.');
+    }
+});
+
+socket.on('joinRandomGame', () => {
+    let joined = false;
+
+    for (const gameCode of activeGames) {
+        const room = io.sockets.adapter.rooms.get(gameCode);
+        if (room && room.size < 2) {
+            const symbol = room.size === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
+            socket.join(gameCode);
+            players[socket.id] = { gameCode, symbol };
+            socket.emit('playerAssigned', { gameCode, symbol });
+
+            joined = true;
+            break;
+        }
+    }
+
+    if (!joined) {
+        socket.emit('error', 'No available games to join.');
+    }
+});
+
+socket.on('makeMove', ({ row, col }) => {
+    const player = players[socket.id];
+    if (!player) {
+        socket.emit('error', 'You are not part of a game.');
+        return;
+    }
+
+    const { gameCode, symbol } = player;
+    const game = games[gameCode];
+    if (!game) {
+        socket.emit('error', 'Game not found.');
+        return;
+    }
+
+    if (game.currentPlayer !== symbol) {
+        socket.emit('error', 'It is not your turn.');
+        return;
+    }
+
+    const moveResult = game.makeMove(row, col); // Now returns a boolean
+    if (moveResult) {
+        io.to(gameCode).emit('updateGame', {
+            board: game.board,
+            currentPlayer: game.currentPlayer,
+            winner: game.winner,
         });
+
+        if (game.winner) {
+            io.to(gameCode).emit('gameOver', { winner: game.winner });
+            activeGames.delete(gameCode); // Remove the game from active games
+            delete games[gameCode]; // Clean up the game instance
+        } else if (game.checkDraw()) {
+            io.to(gameCode).emit('gameOver', { draw: true });
+            activeGames.delete(gameCode); // Remove the game from active games
+            delete games[gameCode]; // Clean up the game instance
+        }
+    } else {
+        socket.emit('error', 'Invalid move.');
     }
 });
 
-// Handle reset game for the specific game
 socket.on('resetGame', () => {
-    io.to(gameId).emit('resetGame');
-    games[gameId].reset();
+    const player = players[socket.id];
+    if (!player) {
+        socket.emit('error', 'You are not part of a game.');
+        return;
+    }
+
+    const { gameCode } = player;
+    const game = games[gameCode];
+    if (!game) {
+        socket.emit('error', 'Game not found.');
+        return;
+    }
+
+    game.reset(); // Reset the game state
+    io.to(gameCode).emit('gameReset', {
+        board: game.board,
+        currentPlayer: game.currentPlayer,
+    });
 });
 
-// Handle disconnection
 socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
-    players = players.filter(p => p.id !== socket.id);
-    if (players.length === 0) {
-        delete games[gameId]; // Remove the game instance if no players are left
+    const player = players[socket.id];
+    if (player) {
+        const { gameCode } = player;
+        const room = io.sockets.adapter.rooms.get(gameCode);
+
+        if (!room || room.size === 0) {
+            activeGames.delete(gameCode); // Remove the game if the room is empty
+            delete games[gameCode]; // Clean up the game instance
+        }
+
+        delete players[socket.id]; // Remove the player from tracking
     }
+
+    console.log(`Player disconnected: ${socket.id}`);
 });
+
+});
+
+
+
+
 
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
