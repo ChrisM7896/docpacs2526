@@ -8,7 +8,7 @@ const { Server } = require("socket.io")
 //add encryption if necessary
 const app = express();
 const AUTH_URL = 'https://formbeta.yorktechapps.com'
-const THIS_URL = 'http://172.16.3.208:3000/login'
+const THIS_URL = 'http://localhost:3000/login'
 const server = createServer(app);
 const io = new Server(server);
 var Player = { Player1: null, Player2: null }
@@ -19,7 +19,7 @@ var spellList = [
     { Name: "Earth", Damage: 5, Weakness: 'Air' },
     { Name: "Air", Damage: 5, Weakness: 'Fire' }
 ]
-var Rooms = [{}]  //Change player stats to be in here and join/create rooms based on index
+var Rooms = []  //Change player stats to be in here and join/create rooms based on index
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,6 +50,8 @@ function isAuthenticated(req, res, next) {
 };
 
 function findRoom(user) {
+    //var roomFound = false
+    //for (let i = 0; i <= Rooms.length; i++) {if (Rooms[(i-1)].Player1 == null) {Rooms[(i-1)].Player1 = user; return i.toString} else if (Rooms[(i-1)].Player2 == null) {Rooms[(i-1)].Player2 = user; return i.toString}} else {add code to initialize and create new room}
     if (!Player.Player1) {
         startGame();
         Player.Player1 = user
