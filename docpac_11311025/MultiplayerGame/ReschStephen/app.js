@@ -104,6 +104,14 @@ const gameState = {
     }
 };
 
+function checkCollision(player1, player2) {
+    return (
+        player1.x < player2.x + 50 &&  // Using 50 as width/height
+        player1.x + 50 > player2.x &&
+        player1.y < player2.y + 50 &&
+        player1.y + 50 > player2.y
+    );
+}
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
@@ -132,14 +140,61 @@ io.on('connection', (socket) => {
         if (data.player === 'avatar') {
             players.avatar.x += data.dx;
             players.avatar.y += data.dy;
+            players.avatar.velocityX = data.velocityX || 0;
+            players.avatar.velocityY = data.velocityY || 0;
         } else if (data.player === 'avatar2') {
             players.avatar2.x += data.dx;
             players.avatar2.y += data.dy;
+            players.avatar2.velocityX = data.velocityX || 0;
+            players.avatar2.velocityY = data.velocityY || 0;
         }
 
-        // Broadcast updated positions to all clients
+        if (checkCollision(players.avatar, players.avatar2)) {
+            handleServerCollision();
+        }
+
         io.emit('update', players);
     });
+
+    function handleServerCollision() {
+        const speed1 = Math.abs(players.avatar.velocityX || 0) + Math.abs(players.avatar.velocityY || 0);
+        const speed2 = Math.abs(players.avatar2.velocityX || 0) + Math.abs(players.avatar2.velocityY || 0);
+
+        console.log("Collision detected! Speed1:", speed1, "Speed2:", speed2);
+
+        let victim = speed1 > speed2 ? 'avatar2' : 'avatar';
+        let aggressor = speed1 > speed2 ? 'avatar' : 'avatar2';
+
+        // Calculate separation direction
+        const dx = (players.avatar.x + 25) - (players.avatar2.x + 25); // 25 = half width
+        const dy = (players.avatar.y + 25) - (players.avatar2.y + 25); // 25 = half height
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Normalize direction
+        const separationDistance = 55; // Slightly more than combined width/height
+        const separateX = (dx / distance) * separationDistance;
+        const separateY = (dy / distance) * separationDistance;
+
+        // Separate the victim
+        if (victim === 'avatar') {
+            players.avatar.x = players.avatar2.x + separateX;
+            players.avatar.y = players.avatar2.y + separateY;
+        } else {
+            players.avatar2.x = players.avatar.x - separateX;
+            players.avatar2.y = players.avatar.y - separateY;
+        }
+
+        console.log("Victim determined:", victim);
+
+        // Send both the collision response AND updated positions
+        io.emit('collisionResponse', {
+            victim: victim,
+            positions: {
+                avatar: { x: players.avatar.x, y: players.avatar.y },
+                avatar2: { x: players.avatar2.x, y: players.avatar2.y }
+            }
+        });
+    }
 
     socket.on('disconnect', () => {
         console.log('A user disconnected:', socket.id);

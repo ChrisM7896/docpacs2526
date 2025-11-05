@@ -9,26 +9,42 @@
 
 <body>
     <div id="controls">Control Method: Keyboard</div>
-    <div id="position">avatar X: avatar Y: </div>
-    <div id="position2">avatar2 X: avatar2 Y: </div>
     <canvas width="1400" height="700"></canvas>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to server with ID:', socket.id);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
         let myPlayer = null;
         let myAvatar = null;
+        let gameLoopStarted = false;
 
         socket.on('assignPlayer', (data) => {
+            console.log("Received assignPlayer event:", data);
             myPlayer = data.player;
 
-            if (myPlayer === 'player1') {
+            if (myPlayer === 'avatar') {
                 myAvatar = avatar;
-                console.log("You are controlling Player 1");
-            } else if (myPlayer === 'player2') {
+                console.log("Assigned to avatar:", myAvatar);
+            } else if (myPlayer === 'avatar2') {
                 myAvatar = avatar2;
-                console.log("You are controlling Player 2");
+                console.log("Assigned to avatar2:", myAvatar);
+            }
+
+            if (!gameLoopStarted) {
+                gameLoopStarted = true;
+                console.log("Starting game loop now");
+                requestAnimationFrame(gameLoop);
             }
         });
+
         const avatar = {
             x: 314,
             y: 366,
@@ -67,37 +83,27 @@
         var keySDown = false;
         var keyDDown = false;
 
-        var inputVertical2 = 0;
-        var inputHorizontal2 = 0;
-        var keyWDown2 = false;
-        var keyADown2 = false;
-        var keySDown2 = false;
-        var keyDDown2 = false;
-
         avatar.img.src = 'Hog.png';
         avatar2.img.src = 'DeadHog.png';
 
         document.addEventListener('keydown', (key) => {
+            console.log("Key pressed:", key.key);
             switch (key.key) {
                 case 'w':
                     inputVertical = -1;
                     keyWDown = true;
-                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
                     break;
                 case 'a':
                     inputHorizontal = -1;
                     keyADown = true;
-                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
                     break;
                 case 's':
                     inputVertical = 1;
                     keySDown = true;
-                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
                     break;
                 case 'd':
                     inputHorizontal = 1;
                     keyDDown = true;
-                    document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
                     break;
             }
         });
@@ -117,249 +123,116 @@
                     keyDDown = false;
                     break;
             }
-        })
-
-        document.addEventListener('keydown', (key) => {
-            switch (key.key) {
-                case 'i':
-                    inputVertical2 = -1;
-                    keyWDown2 = true;
-                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
-                    break;
-                case 'j':
-                    inputHorizontal2 = -1;
-                    keyADown2 = true;
-                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
-                    break;
-                case 'k':
-                    inputVertical2 = 1;
-                    keySDown2 = true;
-                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
-                    break;
-                case 'l':
-                    inputHorizontal2 = 1;
-                    keyDDown2 = true;
-                    document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar.y}`;
-                    break;
-            }
         });
 
-        document.addEventListener('keyup', (key) => {
-            switch (key.key) {
-                case 'i':
-                    keyWDown2 = false;
-                    break;
-                case 'j':
-                    keyADown2 = false;
-                    break;
-                case 'k':
-                    keySDown2 = false;
-                    break;
-                case 'l':
-                    keyDDown2 = false;
-                    break;
-            }
-        })
-
-        // document.addEventListener('keyup', (key) => {
-        //     switch (key.key) {
-        //         case 'i':
-        //             keyWDown2 = false;
-        //             if (keySDown2) {
-        //                 inputVertical2 = 1;
-        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             }
-        //             // } else {
-        //             //     inputVertical2 = 0;
-        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             // }
-        //             break;
-        //         case 'j':
-        //             keyADown2 = false;
-        //             if (keyDDown2) {
-        //                 inputHorizontal2 = 1;
-        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             }
-        //             // } else {
-        //             //     inputHorizontal2 = 0;
-        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             // }
-        //             break;
-        //         case 'k':
-        //             keySDown2 = false;
-        //             if (keyWDown2) {
-        //                 inputVertical2 = -1;
-        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             }
-        //             // } else {
-        //             //     inputVertical2 = 0;
-        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             // 
-        //             break;
-        //         case 'l':
-        //             keyDDown2 = false;
-        //             if (keyADown2) {
-        //                 inputHorizontal2 = -1;
-        //                 document.getElementById('position2').innerText = `avatar2 X: ${avatar.x} avatar2 Y: ${avatar2.y}`;
-        //             }
-        //             // } else {
-        //             //     inputHorizontal2 = 0;
-        //             //     document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
-        //             // }
-        //             break;
-        //     }
-        // });
 
         function update() {
 
             if (keyWDown || keySDown) {
-                avatar.velocityY += 0.2 * inputVertical
+                myAvatar.velocityY += 0.2 * inputVertical
             }
             if (keyADown || keyDDown) {
-                avatar.velocityX += 0.2 * inputHorizontal
+                myAvatar.velocityX += 0.2 * inputHorizontal
             }
             if (!keyWDown && !keySDown) {
-                if (avatar.velocityY > 0.1) {
-                    avatar.velocityY -= 0.1
-                } else if (avatar.velocityY < -0.1) {
-                    avatar.velocityY += 0.1
+                if (myAvatar.velocityY > 0.1) {
+                    myAvatar.velocityY -= 0.1
+                } else if (myAvatar.velocityY < -0.1) {
+                    myAvatar.velocityY += 0.1
                 } else {
-                    avatar.velocityY = 0
+                    myAvatar.velocityY = 0
                 }
             }
             if (!keyADown && !keyDDown) {
-                if (avatar.velocityX > 0.1) {
-                    avatar.velocityX -= 0.1
-                } else if (avatar.velocityX < -0.1) {
-                    avatar.velocityX += 0.1
+                if (myAvatar.velocityX > 0.1) {
+                    myAvatar.velocityX -= 0.1
+                } else if (myAvatar.velocityX < -0.1) {
+                    myAvatar.velocityX += 0.1
                 } else {
-                    avatar.velocityX = 0
+                    myAvatar.velocityX = 0
                 }
             }
-            if (avatar.velocityX < avatar.minVelocity) {
-                avatar.velocityX = avatar.minVelocity;
-            } else if (avatar.velocityX > avatar.maxVelocity) {
-                avatar.velocityX = avatar.maxVelocity;
+            if (myAvatar.velocityX < myAvatar.minVelocity) {
+                myAvatar.velocityX = myAvatar.minVelocity;
+            } else if (myAvatar.velocityX > myAvatar.maxVelocity) {
+                myAvatar.velocityX = myAvatar.maxVelocity;
             }
-            if (avatar.velocityY < avatar.minVelocity) {
-                avatar.velocityY = avatar.minVelocity;
-            } else if (avatar.velocityY > avatar.maxVelocity) {
-                avatar.velocityY = avatar.maxVelocity;
+            if (myAvatar.velocityY < myAvatar.minVelocity) {
+                myAvatar.velocityY = myAvatar.minVelocity;
+            } else if (myAvatar.velocityY > myAvatar.maxVelocity) {
+                myAvatar.velocityY = myAvatar.maxVelocity;
             }
-            avatar.x += avatar.playerSpeed * avatar.velocityX;
-            avatar.y += avatar.playerSpeed * avatar.velocityY;
-            if (avatar.x < 0) {
-                avatar.deadPork = true;
-            } else if (avatar.y < 0) {
-                avatar.deadPork = true;
-            } else if (avatar.x + avatar.w > canvas.width) {
-                avatar.deadPork = true;
-            } else if (avatar.y + avatar.h > canvas.height) {
-                avatar.deadPork = true;
+            myAvatar.x += myAvatar.playerSpeed * myAvatar.velocityX;
+            myAvatar.y += myAvatar.playerSpeed * myAvatar.velocityY;
+
+            socket.emit('move', {
+                player: myPlayer,
+                dx: myAvatar.velocityX * myAvatar.playerSpeed,
+                dy: myAvatar.velocityY * myAvatar.playerSpeed,
+                velocityX: myAvatar.velocityX,
+                velocityY: myAvatar.velocityY
+            });
+
+            if (myAvatar.x < 0) {
+                myAvatar.deadPork = true;
+            } else if (myAvatar.y < 0) {
+                myAvatar.deadPork = true;
+            } else if (myAvatar.x + myAvatar.w > canvas.width) {
+                myAvatar.deadPork = true;
+            } else if (myAvatar.y + myAvatar.h > canvas.height) {
+                myAvatar.deadPork = true;
             }
 
-            document.getElementById('position').innerText = `Player X: ${avatar.x} Player Y: ${avatar.y}`;
             ctx.fillStyle = 'pink';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             if (!avatar.deadPork) {
                 ctx.drawImage(avatar.img, avatar.x, avatar.y, avatar.w, avatar.h);
             }
-        }
-
-        function update2() {
-            // Player 2
-            if (keyWDown2 || keySDown2) {
-                avatar2.velocityY += 0.2 * inputVertical2
-            }
-            if (keyADown2 || keyDDown2) {
-                avatar2.velocityX += 0.2 * inputHorizontal2
-            }
-            if (!keyWDown2 && !keySDown2) {
-                if (avatar2.velocityY > 0.1) {
-                    avatar2.velocityY -= 0.1
-                } else if (avatar2.velocityY < -0.1) {
-                    avatar2.velocityY += 0.1
-                } else {
-                    avatar2.velocityY = 0
-                }
-            }
-            if (!keyADown2 && !keyDDown2) {
-                if (avatar2.velocityX > 0.1) {
-                    avatar2.velocityX -= 0.1
-                } else if (avatar2.velocityX < -0.1) {
-                    avatar2.velocityX += 0.1
-                } else {
-                    avatar2.velocityX = 0
-                }
-            }
-            if (avatar2.velocityX < avatar2.minVelocity) {
-                avatar2.velocityX = avatar2.minVelocity;
-            } else if (avatar2.velocityX > avatar2.maxVelocity) {
-                avatar2.velocityX = avatar2.maxVelocity;
-            }
-            if (avatar2.velocityY < avatar2.minVelocity) {
-                avatar2.velocityY = avatar2.minVelocity;
-            } else if (avatar2.velocityY > avatar2.maxVelocity) {
-                avatar2.velocityY = avatar2.maxVelocity;
-            }
-            avatar2.x += avatar2.playerSpeed * avatar2.velocityX;
-            avatar2.y += avatar2.playerSpeed * avatar2.velocityY;
-            if (avatar2.x < 0) {
-                avatar2.deadPork = true;
-            } else if (avatar2.y < 0) {
-                avatar2.deadPork = true;
-            } else if (avatar2.x + avatar2.w > canvas.width) {
-                avatar2.deadPork = true;
-            } else if (avatar2.y + avatar2.h > canvas.height) {
-                avatar2.deadPork = true;
-            }
-
-            document.getElementById('position2').innerText = `avatar2 X: ${avatar2.x} avatar2 Y: ${avatar2.y}`;
             if (!avatar2.deadPork) {
                 ctx.drawImage(avatar2.img, avatar2.x, avatar2.y, avatar2.w, avatar2.h);
             }
         }
 
-        function checkCollision(avatar, avatar2) {
-            return (
-                avatar.x < avatar2.x + avatar2.w &&
-                avatar.x + avatar.w > avatar2.x &&
-                avatar.y < avatar2.y + avatar2.h &&
-                avatar.y + avatar.h > avatar2.y
-            );
-        }
+        socket.on('collisionResponse', (data) => {
+            console.log("Received collision response:", data);
 
-        function handleCollision(avatar, avatar2) {
+            avatar.x = data.positions.avatar.x;
+            avatar.y = data.positions.avatar.y;
+            avatar2.x = data.positions.avatar2.x;
+            avatar2.y = data.positions.avatar2.y;
 
-            const dx = (avatar.x + avatar.w / 2) - (avatar2.x + avatar2.w / 2);
-            const dy = (avatar.y + avatar.h / 2) - (avatar2.y + avatar2.h / 2);
+            if (data.victim === myPlayer) {
+                console.log("I am the victim - getting knocked back");
+                const otherAvatar = (myPlayer === 'avatar') ? avatar2 : avatar;
+                const dx = (myAvatar.x + myAvatar.w / 2) - (otherAvatar.x + otherAvatar.w / 2);
+                const dy = (myAvatar.y + myAvatar.h / 2) - (otherAvatar.y + otherAvatar.h / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const knockbackForce = 3;
 
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                avatar.velocityX *= -1.05;
-                avatar2.velocityX *= -1.05;
-            } else {
-                avatar.velocityY *= -1.05;
-                avatar2.velocityY *= -1.05;
+                myAvatar.velocityX = (dx / distance) * knockbackForce;
+                myAvatar.velocityY = (dy / distance) * knockbackForce;
             }
-
-            if (checkCollision(avatar, avatar2)) {
-                avatar.x += avatar.velocityX;
-                avatar.y += avatar.velocityY;
-                avatar2.x += avatar2.velocityX;
-                avatar2.y += avatar2.velocityY;
-            }
-        }
+        });
 
         function gameLoop() {
+            console.log("Game loop running");
             update();
-            update2();
-            if (checkCollision(avatar, avatar2)) {
-                handleCollision(avatar, avatar2);
-            }
             requestAnimationFrame(gameLoop);
         }
-        gameLoop();
+
+        socket.on('update', (playersData) => {
+            if (myPlayer === 'avatar') {
+                if (playersData.avatar2) {
+                    avatar2.x = playersData.avatar2.x;
+                    avatar2.y = playersData.avatar2.y;
+                }
+            } else if (myPlayer === 'avatar2') {
+                if (playersData.avatar) {
+                    avatar.x = playersData.avatar.x;
+                    avatar.y = playersData.avatar.y;
+                }
+            }
+        });
 
     </script>
 </body>
