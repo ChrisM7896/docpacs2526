@@ -124,12 +124,13 @@
     var GameStarted = false
     var displayedPlayer = false
     var Room = null
+    var tempNum = null 
 
-    function castSpell(spell) {
+    function castSpell(spell) { //If new room is made while other rooms is up, the second rooms spells will be the only ones that matter for both rooms
         if (GameStarted == true) {
             if (Player.turn == userNum) {
                 if (Playable == true) {
-                    socket.emit('spell', spell);
+                    socket.emit('spell', spell, Room);
                 }
             } else {
                 alert("Not Your Turn")
@@ -139,19 +140,20 @@
         }
     };
 
-    socket.on('connected', (userNum, room) => {
+    socket.on('connected', (num, room) => {
         console.log('connected')
         if (userNum == null) {
-            userNum = userNum
+            userNum = num
             console.log("User Num: " + userNum)
         }
         if (Room == null) {
             Room = room
+            console.log("Room Num: " + Room)
         }
-        if (userNum == 1) {
+        if (num == 1) {
             p1h.innerText = "Player 1 HP: 100"
             p2h.innerText = "Connect Player 2"
-        } else if (userNum == 2) {
+        } else if (num == 2) {
             GameStarted = true
             p1h.innerText = "Player 1 HP: 100"
             p2h.innerText = "Player 2 HP: 100"
@@ -213,33 +215,33 @@
             console.log("Player 1 Lost")
             Playable = false
             alert("TIE!")
-            socket.emit('reload')
+            socket.emit('reload', Room)
         } else if (Player.Player1Health <= 0) {
             console.log("Player 1 Lost")
             Playable = false
             if (userNum == 1) {
                 alert("You Lose!")
-                socket.emit('reload')
+                socket.emit('reload', Room)
             } else if (userNum == 2) {
                 alert("YOU WIN! CONGRATULATIONS!")
-                socket.emit('reload')
+                socket.emit('reload', Room)
             }
         } else if (Player.Player2Health <= 0) {
             console.log("Player 2 Lost")
             Playable = false
             if (userNum == 2) {
                 alert("You Lose!")
-                socket.emit('reload')
+                socket.emit('reload', Room)
             } else if (userNum == 1) {
                 alert("YOU WIN! CONGRATULATIONS!")
-                socket.emit('reload')
+                socket.emit('reload', Room)
             }
         }
     });
 
     socket.on('opponent left', () => {
         alert("Opponent Left")
-        socket.emit('reload')
+        socket.emit('reload', Room)
     })
 
     socket.on('redirect', (url) => {
