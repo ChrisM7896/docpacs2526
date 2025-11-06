@@ -6,55 +6,55 @@
     </head>
 	
 	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-	  <div id="SetDiv" data-special="CIW rules!">
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+	<div id="SetDiv" data-special="CIW rules!">
 		<p>What are the attributes of this div tag?</p>
-	  </div>
+	</div>
 
-	  <input type="button" id="btn" value="Click Me!">
-	  <p>Please click the button now.</p>
+	<input type="button" id="btn" value="Click Me!">
+	<p>Please click the button now.</p>
 
-	  <script>
+	<script>
 		const div = document.getElementById("SetDiv");
 		const button = document.getElementById("btn");
 
 		if (!div) {
-		  console.error("Error: Element with ID 'SetDiv' not found.");
+		console.error("Error: Element with ID 'SetDiv' not found.");
 		} else {
-		  button.addEventListener("click", getValues);
+		button.addEventListener("click", getValues);
 
-		  function getValues() {
+		function getValues() {
 			// Getting attributes
 			
 			
 
 			changeValues();
-		  }
+		}
 
-		  function changeValues() {
+		function changeValues() {
 			// Setting an attribute
 
 
 
 			removeValues();
-		  }
+		}
 
-		  function removeValues() {
+		function removeValues() {
 			// Removing an attribute
 
 
 
 			changeValuesBack();
-		  }
+		}
 
-		  function changeValuesBack() {
+		function changeValuesBack() {
 			// Setting an attribute again
 
 
 
-		  }
 		}
-	  </script>
+		}
+	</script>
 	</body>
 </html>
