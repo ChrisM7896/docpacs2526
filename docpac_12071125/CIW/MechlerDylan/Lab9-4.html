@@ -1,60 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Lab 9-4</title>
-    </head>
-	
-	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-	  <div id="SetDiv" data-special="CIW rules!">
+
+<head>
+	<meta charset="utf-8">
+	<title>Lab 9-4</title>
+</head>
+
+<body>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+	<div id="SetDiv" data-special="CIW rules!">
 		<p>What are the attributes of this div tag?</p>
-	  </div>
+	</div>
 
-	  <input type="button" id="btn" value="Click Me!">
-	  <p>Please click the button now.</p>
+	<input type="button" id="btn" value="Click Me!">
+	<p>Please click the button now.</p>
 
-	  <script>
+	<script>
 		const div = document.getElementById("SetDiv");
 		const button = document.getElementById("btn");
 
 		if (!div) {
-		  console.error("Error: Element with ID 'SetDiv' not found.");
+			console.error("Error: Element with ID 'SetDiv' not found.");
 		} else {
-		  button.addEventListener("click", getValues);
+			button.addEventListener("click", getValues);
 
-		  function getValues() {
-			// Getting attributes
-			
-			
+			function getValues() {
+				// Getting attributes
+				alert(div.id);
+				alert(div.getAttribute("data-special"));
+				changeValues();
+			}
 
-			changeValues();
-		  }
+			function changeValues() {
+				// Setting an attribute
+				div.setAttribute("title", "div1");
+				alert(div.getAttribute("title"));
+				removeValues();
+			}
 
-		  function changeValues() {
-			// Setting an attribute
+			function removeValues() {
+				// Removing an attribute
+				div.removeAttribute("title");
+				alert(div.getAttribute("title"));
+				changeValuesBack();
+			}
 
-
-
-			removeValues();
-		  }
-
-		  function removeValues() {
-			// Removing an attribute
-
-
-
-			changeValuesBack();
-		  }
-
-		  function changeValuesBack() {
-			// Setting an attribute again
-
-
-
-		  }
+			function changeValuesBack() {
+				// Setting an attribute again
+				div.setAttribute("title", "div2");
+				alert(div.getAttribute("title"));
+			}
 		}
-	  </script>
-	</body>
+	</script>
+</body>
+
 </html>
