@@ -5,7 +5,6 @@ const session = require('express-session')
 const { createServer } = require('node:http')
 const { join } = require("node:path")
 const { Server } = require("socket.io")
-//add encryption if necessary
 const app = express();
 const AUTH_URL = 'https://formbeta.yorktechapps.com'
 const THIS_URL = 'http://localhost:3000/login'
@@ -19,7 +18,7 @@ var spellList = [
     { Name: "Earth", Damage: 5, Weakness: 'Air' },
     { Name: "Air", Damage: 5, Weakness: 'Fire' }
 ]
-var Rooms = []  //Change player stats to be in here and join/create rooms based on index
+var Rooms = []
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -191,7 +190,7 @@ io.on('connection', (socket) => {
     console.log("User Connected: ", user);
     var findRoomData = findRoom(id);
     var room = Math.floor(findRoomData)
-    var userNum = (Math.round((findRoomData - room)*10))
+    var userNum = (Math.round((findRoomData - room) * 10))
     room = room.toString()
     roomIndex = returnRoom(room)
     socket.join(room);
