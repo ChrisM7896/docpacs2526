@@ -54,31 +54,23 @@ function findRoom(user) {
     var roomMade = false
     for (let i = 0; (i <= Rooms.length) && (!roomMade); i++) {
         if (i < Rooms.length) {
-            console.log("Empty Rooms")
             if (Rooms[i].Player1 == null) {
                 Rooms[i].Player1 = user
                 roomAndUser = (i + 0.1)
-                console.log("1: " + roomAndUser)
                 roomMade = true
             } else if (Rooms[i].Player2 == null) {
                 Rooms[i].Player2 = user
                 roomAndUser = (i + 0.2)
-                console.log("2: " + roomAndUser)
                 roomMade = true
             }
         } else if (i == Rooms.length) {
-            console.log("No Empty Rooms")
             createRoom(i)
+            startGame(i)
             roomMade = true
             Rooms[i].Player1 = user
-            startGame(i)
             roomAndUser = (i + 0.1)
-            console.log("3: " + roomAndUser)
-            console.log(i)
         }
     };
-    console.log("4: " + roomAndUser)
-    console.log(Rooms)
     return roomAndUser
 };
 
@@ -109,6 +101,8 @@ function returnRoom(room) {
 }
 
 function startGame(room) {
+    Rooms[room].Player1 = null
+    Rooms[room].Player2 = null
     Rooms[room].Player1Health = 100
     Rooms[room].Player2Health = 100
     Rooms[room].turn = 1
@@ -120,14 +114,9 @@ function startGame(room) {
 function spellCast(spell, index) {
     if (Rooms[index].turn == 1) {
         Rooms[index].Player1Spell = spell
-        console.log(Rooms[index].Player1Spell)
-        console.log(spellList[Rooms[index].Player1Spell])
         Rooms[index].turn += 1
-        console.log('Turn', Rooms[index].turn)
     } else if (Rooms[index].turn == 2) {
         Rooms[index].Player2Spell = spell
-        console.log(Rooms[index].Player2Spell)
-        console.log(spellList[Rooms[index].Player2Spell])
         if (spellList[Rooms[index].Player1Spell].Weakness == spellList[Rooms[index].Player2Spell].Name) {
             Rooms[index].Player1Health -= ((spellList[Rooms[index].Player2Spell].Damage) * 2)
         } else if (spellList[Rooms[index].Player2Spell].Weakness == spellList[Rooms[index].Player1Spell].Name) {
@@ -139,8 +128,6 @@ function spellCast(spell, index) {
         Rooms[index].turn -= 1
         Rooms[index].roundState = "over"
     }
-    console.log(Rooms[index].Player1Health)
-    console.log(Rooms[index].Player2Health)
     if (Rooms[index].Player1Spell == null) {
         console.log("P1 Spell is null")
     } else {
@@ -203,33 +190,23 @@ io.on('connection', (socket) => {
     const id = socket.id
     console.log("User Connected: ", user);
     var findRoomData = findRoom(id);
-    console.log("Room Data: " + findRoomData)
     var room = Math.floor(findRoomData)
-    console.log("Room: " + room)
     var userNum = (Math.round((findRoomData - room)*10))
-    console.log("User: " + userNum)
-    console.log("Makes No Sense 1: " + ((1.1-1)*10))
-    console.log("Makes No Sense 2: " + ((1.2-1)*10))
     room = room.toString()
     roomIndex = returnRoom(room)
-    console.log(roomIndex)
-    console.log(Rooms)
-    console.log(Rooms[roomIndex])
-    console.log("Room: " + room)
     socket.join(room);
-    io.emit('connected', userNum, room);
+    socket.currentRoom = room
+    io.to(room).emit('connected', userNum, room);
     io.to(room).emit('playerJoined', Rooms[roomIndex]);
     socket.on('playState', (playState) => {
-        console.log(playState)
         if (playState) {
-            io.emit('playable')
+            io.to(room).emit('playable')
         }
     });
     socket.on('spell', (spell, msg) => {
-        console.log(user)
         let indx = returnRoom(msg)
         spellCast(spell, indx)
-        io.emit('gameUpdate', Rooms[roomIndex])
+        io.to(msg).emit('gameUpdate', Rooms[indx])
         spellToIndex(indx);
         if (Rooms[indx].roundState == "over") {
             Rooms[indx].roundState = "going"
@@ -238,16 +215,14 @@ io.on('connection', (socket) => {
     });
     socket.on('disconnect', () => {
         console.log("User Disconnected: ", user)
-        startGame();
-        io.emit('opponent left')
+        io.to(socket.currentRoom).emit('opponent left')
     });
 
-    socket.on('reload', () => {
-        socket.leave("room");
-        Player.Player1 = null
-        Player.Player2 = null
+    socket.on('reload', (rm) => {
+        socket.leave(rm);
+        let indx = returnRoom(rm)
+        startGame(rm)
         socket.emit('redirect', '/');
-        console.log(Player)
     });
 });
 
