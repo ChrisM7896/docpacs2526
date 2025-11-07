@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spellbar</title>
     <style>
+        body {
+            background-color: black;
+            color: rgb(255, 255, 255);
+        }
+
         #content {
             display: flex;
             overflow: hidden;
@@ -17,18 +22,32 @@
         }
 
         #spells {
+            min-height: 200px;
+            height: fit-content;
             padding-left: 10px;
-            margin-right: 50px;
+            padding-right: 50px;
+            border-left: 2px solid rgb(255, 255, 255);
+            border-top: 2px solid rgb(255, 255, 255);
+            border-bottom: 2px solid rgb(255, 255, 255);
         }
 
         #health {
-            margin-left: 50px;
-            margin-right: 50px;
+            height: 200px;
+            padding-left: 50px;
+            padding-right: 50px;
+            border-top: 2px solid rgb(255, 255, 255);
+            border-bottom: 2px solid rgb(255, 255, 255);
+            border-left: 2px solid rgb(255, 255, 255);
+            border-right: 2px solid rgb(255, 255, 255);
         }
 
         #turn {
-            margin-left: 50px;
-            margin-right: 50px;
+            height: 200px;
+            padding-left: 50px;
+            padding-right: 50px;
+            border-right: 2px solid rgb(255, 255, 255);
+            border-top: 2px solid rgb(255, 255, 255);
+            border-bottom: 2px solid rgb(255, 255, 255);
         }
 
         button {
@@ -40,28 +59,59 @@
             display: flex;
             position: absolute;
             left: 90%;
-            transform: translate(137px, 0px);
+            transform: translate(117px, 0px);
             transition: ease-in-out 0.5s;
         }
 
         #extraInfo:hover {
             display: flex;
-            transform: translate(-48px, 0px);
+            transform: translate(-100px, 0px);
         }
 
         #hoverButton {
-            padding: 10px;
+            padding: 20px;
             height: 35px;
-            border-top: 2px solid rgb(0, 0, 0);
-            border-left: 2px solid rgb(0, 0, 0);
-            border-bottom: 2px solid rgb(0, 0, 0);
+            border-top: 2px solid rgb(255, 255, 255);
+            border-left: 2px solid rgb(255, 255, 255);
+            border-bottom: 2px solid rgb(255, 255, 255);
         }
 
         #extraInfoDisplay {
             padding: 5px;
-            border-top: 2px solid rgb(0, 0, 0);
-            border-left: 2px solid rgb(0, 0, 0);
-            border-bottom: 2px solid rgb(0, 0, 0);
+            padding-left: 30px;
+            padding-bottom: 40px;
+            padding-right: 15px;
+            border-top: 2px solid rgb(255, 255, 255);
+            border-left: 2px solid rgb(255, 255, 255);
+            border-bottom: 2px solid rgb(255, 255, 255);
+        }
+
+        #fire {
+            color: rgb(255, 136, 0);
+        }
+
+        #water {
+            color: rgb(0, 26, 255);
+        }
+
+        #lightning {
+            color: rgb(0, 177, 201);
+        }
+
+        #earth {
+            color: rgb(134, 83, 42);
+        }
+
+        #air {
+            color: rgb(28, 212, 120);
+        }
+
+        #p1HP {
+            color: red;
+        }
+
+        #p2HP {
+            color: red;
         }
     </style>
 </head>
@@ -70,11 +120,11 @@
     <div id="content">
         <div id="spells">
             <h1>Spells:</h1>
-            <button onclick="castSpell(0)">Fireball</button>
-            <button onclick="castSpell(1)">Water Jet</button>
-            <button onclick="castSpell(2)">Lightning Bolt</button>
-            <button onclick="castSpell(3)">Earth Strike</button>
-            <button onclick="castSpell(4)">Wind Blade</button>
+            <button id="fire" onclick="castSpell(0)">Fireball</button>
+            <button id="water" onclick="castSpell(1)">Water Jet</button>
+            <button id="lightning" onclick="castSpell(2)">Lightning Bolt</button>
+            <button id="earth" onclick="castSpell(3)">Earth Strike</button>
+            <button id="air" onclick="castSpell(4)">Wind Blade</button>
             <!--
             <button onclick="castSpell(4)">Acid Splash</button>
             <button onclick="castSpell(5)">Shadow Bolt</button>
@@ -85,7 +135,7 @@
         <div id="health">
             <h1>HP:</h1>
             <div id="p1HP">Player 1 HP: 100</div>
-            <div id="p2HP">Player 2 HP: 100</div>
+            <div id="p2HP">Connect Player 2</div>
         </div>
         <div id="turn">
             <h1>Turn:</h1>
