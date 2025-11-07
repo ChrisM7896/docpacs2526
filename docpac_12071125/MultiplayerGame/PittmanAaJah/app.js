@@ -15,6 +15,15 @@ app.get('/', (req, res) => {
 app.get('/game', (req, res) => {
   res.render('game', { user: req.query.user }); 
 });
+
+app.get('/signup', (req, res) => {
+  res.render('signup');
+});
+
+app.get('/profile', (req, res) => { 
+  res.render('profile');
+});
+
 server.listen(3000, () => {
   console.log(`Server running at http://localhost:3000`);
 });
