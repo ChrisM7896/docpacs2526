@@ -153,6 +153,34 @@ function generateGameCode() {
     return code.toString();
 }
 
+function updateGameStatus(gameCode) {
+    const room = io.sockets.adapter.rooms.get(gameCode);
+    const playerCount = room ? room.size : 0;
+    
+    if (playerCount === 0) {
+        return; // No players to update
+    }
+    
+    if (playerCount === 1) {
+        // Only one player - waiting for another
+        io.to(gameCode).emit('statusUpdate', {
+            message: 'Waiting for another player to join...',
+            canPlay: false,
+            playerCount: playerCount
+        });
+    } else if (playerCount === 2) {
+        // Both players present - game can proceed
+        const game = games[gameCode];
+        if (game && !game.winner) {
+            io.to(gameCode).emit('statusUpdate', {
+                message: `Player ${game.currentPlayer}'s turn.`,
+                canPlay: true,
+                playerCount: playerCount
+            });
+        }
+    }
+}
+
 io.on('connection', (socket) => {
     console.log(`Player connected: ${socket.id}`);
 
@@ -162,8 +190,8 @@ io.on('connection', (socket) => {
         activeGames.add(gameCode);
         games[gameCode] = new TicTacToe(); // Create a new game instance
         socket.join(gameCode); // Join the room
-        players[socket.id] = { gameCode, symbol: 'X' }; // Assign "X" to the creator
-        socket.emit('gameCreated', { gameCode, symbol: 'X' });
+        players[socket.id] = { gameCode, symbol: 'X', host: true }; // Assign "X" to the creator and set host to true
+        socket.emit('gameCreated', { gameCode, symbol: 'X', host: true });
         console.log(`Game created with code: ${gameCode}`);
     });
 
@@ -190,9 +218,20 @@ socket.on('joinGameCode', (code) => {
 
     if (roomSize < 2) {
         const symbol = roomSize === 0 ? 'X' : 'O'; // Assign "X" to the first player, "O" to the second
+        const host = roomSize === 0; // Set host to true for the first player
         socket.join(code); // Join the room
-        players[socket.id] = { gameCode: code, symbol };
-        socket.emit('playerAssigned', { gameCode: code, symbol });
+        players[socket.id] = { gameCode: code, symbol, host }; // Include host value
+        socket.emit('playerAssigned', { gameCode: code, symbol, host });
+
+        // Add these lines:
+        if (roomSize + 1 === 1) {
+            // First player joined - waiting for second
+            updateGameStatus(code);
+        } else if (roomSize + 1 === 2) {
+            // Second player joined - game ready
+            io.to(code).emit('gameReady', 'Game is ready! Players assigned.');
+            updateGameStatus(code);
+        }
 
         if (roomSize + 1 === 2) { // Check if the room is now full
             io.to(code).emit('gameReady', 'Game is ready! Players assigned.');
@@ -201,34 +240,6 @@ socket.on('joinGameCode', (code) => {
         socket.emit('error', 'Room is full.');
     }
 });
-
-    socket.on('joinRandomGame', () => {
-        let joined = false;
-    
-        for (const gameCode of activeGames) {
-            const room = io.sockets.adapter.rooms.get(gameCode);
-            const roomSize = room ? room.size : 0;
-    
-            if (roomSize < 2) {
-                const symbol = roomSize === 0 ? 'X' : 'O'; // Assign 'X' to the first player, 'O' to the second
-                socket.join(gameCode); // Join the room
-                players[socket.id] = { gameCode, symbol };
-                socket.emit('playerAssigned', { gameCode, symbol });
-    
-                const updatedRoom = io.sockets.adapter.rooms.get(gameCode); // Get the updated room after joining
-                if (updatedRoom.size === 2) {
-                    io.to(gameCode).emit('gameReady', 'Game is ready! Players assigned.');
-                }
-    
-                joined = true;
-                break;
-            }
-        }
-    
-        if (!joined) {
-            socket.emit('error', 'No available games to join.');
-        }
-    });
 
     socket.on('makeMove', ({ row, col }) => {
         const player = players[socket.id];
@@ -257,40 +268,139 @@ socket.on('joinGameCode', (code) => {
                 winner: game.winner,
             });
 
+            if (!game.winner && !game.checkDraw()) {
+                updateGameStatus(gameCode);
+            }
+            
             if (game.winner) {
                 io.to(gameCode).emit('gameOver', { winner: game.winner });
-                activeGames.delete(gameCode);
-                delete games[gameCode];
             } else if (game.checkDraw()) {
                 io.to(gameCode).emit('gameOver', { draw: true });
-                activeGames.delete(gameCode);
-                delete games[gameCode];
             }
         } else {
             socket.emit('error', 'Invalid move.');
         }
     });
 
-socket.on('resetGame', () => {
+    // Handle leaving a game
+socket.on('leaveGame', () => {
     const player = players[socket.id];
     if (!player) {
         socket.emit('error', 'You are not part of a game.');
         return;
     }
 
-    const { gameCode } = player;
-    const game = games[gameCode];
-    if (!game) {
-        socket.emit('error', 'Game not found.');
+    const { gameCode, host } = player;
+    
+    // Remove player from the game
+    socket.leave(gameCode);
+    delete players[socket.id];
+    
+    // Check remaining players in the room
+    const room = io.sockets.adapter.rooms.get(gameCode);
+    const remainingPlayers = room ? room.size : 0;
+    
+    if (remainingPlayers === 0) {
+        // No players left, close the game
+        activeGames.delete(gameCode);
+        delete games[gameCode];
+        console.log(`Game ${gameCode} closed - no players remaining`);
+    } else if (host && remainingPlayers > 0) {
+        // Host left, transfer host to remaining player
+        // Find the remaining player and make them host
+        for (let socketId in players) {
+            if (players[socketId].gameCode === gameCode) {
+                players[socketId].host = true;
+                io.to(socketId).emit('hostTransferred', { newHost: true });
+                console.log(`Host transferred to ${socketId} in game ${gameCode}`);
+                break;
+            }
+        }
+    }
+    
+    if (remainingPlayers > 0) {
+        // Update status for remaining players
+        updateGameStatus(gameCode);
+        // Also notify remaining players about the departure
+        io.to(gameCode).emit('playerLeft', { 
+            message: 'A player has left the game. Waiting for another player...' 
+        });
+    }
+    
+    // Redirect the leaving player
+    socket.emit('redirectToIndex');
+});
+
+// Handle closing lobby (host only)
+socket.on('closeLobby', () => {
+    const player = players[socket.id];
+    if (!player) {
+        socket.emit('error', 'You are not part of a game.');
         return;
     }
-
-    game.reset(); // Reset the game state
-    io.to(gameCode).emit('gameReset', {
-        board: game.board,
-        currentPlayer: game.currentPlayer,
-    });
+    
+    if (!player.host) {
+        socket.emit('error', 'Only the host can close the lobby.');
+        return;
+    }
+    
+    const { gameCode } = player;
+    
+    // Notify all players in the lobby
+    io.to(gameCode).emit('lobbyClosed');
+    
+    // Remove all players from this game
+    for (let socketId in players) {
+        if (players[socketId].gameCode === gameCode) {
+            delete players[socketId];
+        }
+    }
+    
+    // Close the game
+    activeGames.delete(gameCode);
+    delete games[gameCode];
+    console.log(`Lobby ${gameCode} closed by host`);
 });
+
+
+    socket.on('resetGame', () => {
+        console.log('=== RESET EVENT RECEIVED ==='); // Add this line
+        console.log('Socket ID:', socket.id); // Add this line
+        
+        const player = players[socket.id];
+        console.log('Player found:', player); // Add this line
+        
+        if (!player) {
+            console.log('No player found for socket ID'); // Add this line
+            socket.emit('error', 'You are not part of a game.');
+            return;
+        }
+    
+        const { gameCode } = player;
+        console.log('Game code:', gameCode); // Add this line
+        
+        const game = games[gameCode];
+        console.log('Game found:', !!game); // Add this line
+        
+        if (!game) {
+            console.log('No game found for code:', gameCode); // Add this line
+            socket.emit('error', 'Game not found.');
+            return;
+        }
+
+        console.log('About to reset game...'); // Add this line
+        game.reset(); // Reset the game state
+        console.log('Game reset completed'); // Add this line
+        console.log('Board after reset:', game.board); // Add this line
+        console.log('Current player after reset:', game.currentPlayer); // Add this line
+        
+        console.log('About to emit gameReset event...'); // Add this line
+        io.to(gameCode).emit('gameReset', {
+            board: game.board,
+            currentPlayer: game.currentPlayer,
+        });
+        console.log('gameReset event emitted'); // Add this line
+    });
 
 // Handle disconnects
 socket.on('disconnect', () => {
@@ -302,6 +412,7 @@ socket.on('disconnect', () => {
         if (!room || room.size === 0) {
             activeGames.delete(gameCode);
             delete games[gameCode];
+            console.log(`Game with code ${gameCode} ended due to all players disconnecting.`);
         }
 
         delete players[socket.id];
