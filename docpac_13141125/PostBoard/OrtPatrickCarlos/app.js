@@ -7,8 +7,7 @@ const session = require('express-session');
 const { io } = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
-const path = require('path');
-const fs = require('fs');
+
 
 
 
@@ -84,21 +83,12 @@ app.get('/postBoard', isAuthenticated, (req, res) => {
         SELECT posts.*, users.username 
         FROM posts 
         JOIN users ON posts.user_id = users.id 
-        ORDER BY create_at DESC
+        ORDER BY created_at DESC
     `, (err, posts) => {
         if (err) {
             return console.log(err.message);
         }
         res.render('postBoard', { posts, user: req.session.user });
-    });
-});
-
-app.get('/posts', isAuthenticated, (req, res) => {
-    db.all(`SELECT * FROM posts ORDER BY created_at DESC`, [], (err, rows) => {
-        if (err) {
-            throw err;
-        }
-        res.json(rows);
     });
 });
 
@@ -228,10 +218,6 @@ app.post('/posts/edit/:id', isAuthenticated, (req, res) => {
         console.log(`Post with id ${postId} updated`);
         res.redirect(`/posts/${postId}`);
     });
-});
-
-app.get('/comment/new', isAuthenticated, (req, res) => {
-    res.render('newComment', { user: req.session.user });
 });
 
 app.post('/comment/new', isAuthenticated, (req, res) => {
