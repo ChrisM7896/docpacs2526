@@ -22,7 +22,7 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
 const PORT = process.env.port || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'employment';
 const AUTH_URL = process.env.AUTH_URL || 'https://formbeta.yorktechapps.com/oauth'
-const THIS_URL = process.env.THIS_URL || 'http://172.16.3.179:3000'
+const THIS_URL = process.env.THIS_URL || 'http://172.16.3.179:3000/login'
 const API_KEY = process.env.API_KEY || 'craigslist'
 
 // Middleware
@@ -44,15 +44,25 @@ function isAuthenticated(req, res, next) {
 };
 
 // Routes
-app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', {user: req.session.user})
+app.get('/index', isAuthenticated, (req, res) => {
+    try {
+        console.log(`User ${req.session.user} accessed the home page.`);
+    } catch (error) {
+        console.error('Error accessing session data:', error);
+    }
 });
 
 app.get('/login', (req, res) => {
+    // debugging to see what i'm receiving
+    console.log('Query Parameters:', req.query);
+    console.log('Request body:', req.body);
+    console.log('Full URL:', req.url);
+
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
         req.session.user = tokenData.displayName;
+        console.log(`User ${tokenData.displayName} logged in.`);
 
         //save user to database if not exists
         db.run('INSERT OR REPLACE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
@@ -61,10 +71,10 @@ app.get('/login', (req, res) => {
             }
             console.log(`User ${tokenData.displayName} saved to database.`)
         });
-        res.redirect('/');
+        res.redirect('/index');
     } else {
         console.log('No token found, redirecting to auth server.', THIS_URL);
-        res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
+        res.redirect(`${AUTH_URL}/?redirectURL=${THIS_URL}`);
     };
 });
 
