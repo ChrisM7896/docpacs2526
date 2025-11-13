@@ -13,4 +13,14 @@
         <% }); %>
     </ul>
 </body>
+<script>
+    posts = <%- JSON.stringify(posts) %>;
+    console.log(posts);
+    jobs = posts;
+    console.log(jobs);
+    // You can now use the 'jobs' variable in your JavaScript code
+    jobs.forEach(function(job) {
+        console.log("Job Title: " + job.title + ", Description: " + job.description + ", Posted by: " + job.postedBy);
+    });
+</script>
 </html>

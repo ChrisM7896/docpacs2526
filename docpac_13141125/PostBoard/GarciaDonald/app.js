@@ -11,7 +11,7 @@ const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
 
 // Database setup
-const db = new sqlite3.Database('./db/database.db', (err) => {
+const db = new sqlite3.Database('./db/jobboard.db', (err) => {
     if (err) {
         console.error('Error connecting to database:', err);
     } else {
@@ -44,9 +44,10 @@ function isAuthenticated(req, res, next) {
 };
 
 // Routes
-app.get('/index', isAuthenticated, (req, res) => {
+app.get('/', isAuthenticated, (req, res) => {
     try {
         console.log(`User ${req.session.user} accessed the home page.`);
+        res.render('index', { user: req.session.user });
     } catch (error) {
         console.error('Error accessing session data:', error);
     }
@@ -71,10 +72,13 @@ app.get('/login', (req, res) => {
             }
             console.log(`User ${tokenData.displayName} saved to database.`)
         });
-        res.redirect('/index');
+        res.redirect('/');
     } else {
-        console.log('No token found, redirecting to auth server.', THIS_URL);
-        res.redirect(`${AUTH_URL}/?redirectURL=${THIS_URL}`);
+        const redirectURL = `${AUTH_URL}/?redirectURL=${THIS_URL}`;
+        console.log(`Redirecting to:`, redirectURL);
+        console.log('AUTH_URL value:', AUTH_URL);
+        console.log('THIS_URL value:', THIS_URL);
+        res.redirect(redirectURL);
     };
 });
 
@@ -84,12 +88,16 @@ app.get('/logout', (req, res) => {
 
 });
 app.get('/theboard', isAuthenticated, (req, res) => {
-    db.all('SELECT * FROM jobs', [], (err, rows) => {
+    console.log(`User ${req.session.user} accessed the job board.`);
+    console.log('Data being passed to EJS:')
+    console.log('jobs:', jobs);
+    console.log('posts:', posts);
+    db.all('SELECT * FROM posts', [], (err, rows) => {
         if (err) {
             console.error(err.message);
             res.status(500).send('Internal Server Error');
         } else {
-            res.render('theboard', { jobs: rows });
+            res.render('theboard', { posts: rows });
         }
     });
 });
