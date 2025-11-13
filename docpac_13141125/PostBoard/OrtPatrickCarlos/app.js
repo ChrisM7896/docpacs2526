@@ -80,7 +80,7 @@ app.get('/login', (req, res) => {
 
 app.get('/postBoard', isAuthenticated, (req, res) => {
     db.all(`
-        SELECT posts.*, users.username 
+        SELECT posts.*, users.username, users.id AS user_id
         FROM posts 
         JOIN users ON posts.user_id = users.id 
         ORDER BY created_at DESC
@@ -127,7 +127,7 @@ app.get('/posts/:id', isAuthenticated, (req, res) => {
 
     // Query to get the post details
     db.get(
-        `SELECT posts.*, users.username 
+        `SELECT posts.*, users.username, users.id AS user_id
          FROM posts 
          JOIN users ON posts.user_id = users.id 
          WHERE posts.id = ?`,
@@ -139,7 +139,7 @@ app.get('/posts/:id', isAuthenticated, (req, res) => {
             if (post) {
                 // Query to get comments for the post
                 db.all(
-                    `SELECT comments.content, comments.created_at, users.username 
+                    `SELECT comments.id, comments.comment, comments.created_at, users.username, users.id AS user_id 
                      FROM comments 
                      JOIN users ON comments.user_id = users.id 
                      WHERE comments.post_id = ? 
@@ -162,66 +162,120 @@ app.get('/posts/:id', isAuthenticated, (req, res) => {
 
 app.get('/user/:id', isAuthenticated, (req, res) => {
     const userId = req.params.id;
-    db.get(`SELECT * FROM users WHERE id = ?`, [userId], (err, row) => {
+    db.all(`SELECT posts.*, users.username 
+            FROM posts 
+            JOIN users ON posts.user_id = users.id 
+            WHERE users.id = ? 
+            ORDER BY created_at DESC`, [userId], (err, posts) => {
         if (err) {
             return console.log(err.message);
         }
-        if (row) {
-            res.render('viewUser', { userProfile: row, user: req.session.user });
-        } else {
-            res.status(404).send('User not found');
-        }
+        res.render('viewUser', { posts, user: req.session.user, message: posts.length > 0 ? null : 'No posts found for this user' });
     });
 });
 
 app.post('/posts/delete/:id', isAuthenticated, (req, res) => {
     const postId = req.params.id;
-    db.get(`SELECT * FROM posts WHERE id = ?`, [postId], (err, row) => {
+    const username = req.session.user; // Get username from session
+
+    // First, get the current user's ID
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], (err, userRow) => {
         if (err) {
             return console.log(err.message);
         }
-        if (!row) {
-            return res.status(404).send('Post not found');
+        if (!userRow) {
+            return res.status(404).send('User not found');
         }
-        db.run(`DELETE FROM posts WHERE id = ?`, [postId], function(err) {
+
+        const userId = userRow.id;
+
+        // Then get the post's owner
+        db.get(`SELECT user_id FROM posts WHERE id = ?`, [postId], (err, postRow) => {
             if (err) {
                 return console.log(err.message);
             }
-            console.log(`Post with id ${postId} deleted`);
-            res.redirect('/postBoard');
+            if (!postRow) {
+                return res.status(404).send('Post not found');
+            }
+            
+            // Check ownership
+            if (userId === postRow.user_id) {
+                db.run(`DELETE FROM posts WHERE id = ?`, [postId], function(err) {
+                    if (err) {
+                        return console.log(err.message);
+                    }
+                    console.log(`Post with id ${postId} deleted`);
+                    res.redirect('/postBoard');
+                });
+            } else {
+                res.status(403).send('You are not authorized to delete this post');
+            }
         });
     });
 });
 
+
 app.get('/posts/edit/:id', isAuthenticated, (req, res) => {
     const postId = req.params.id;
-    db.get(`SELECT * FROM posts WHERE id = ?`, [postId], (err, row) => {
+    const username = req.session.user;
+
+    // Get user ID from the database
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], (err, userRow) => {
         if (err) {
             return console.log(err.message);
         }
-        if (row) {
-            res.render('editPost', { post: row, user: req.session.user });
-        } else {
-            res.status(404).send('Post not found');
+        if (!userRow) {
+            return res.status(404).send('User not found');
         }
+
+        const userId = userRow.id;
+
+        // Check if the post belongs to the user
+        db.get(`SELECT * FROM posts WHERE id = ? AND user_id = ?`, [postId, userId], (err, row) => {
+            if (err) {
+                return console.log(err.message);
+            }
+            if (row) {
+                res.render('editPost', { post: row, user: req.session.user });
+            } else {
+                res.status(403).send('You are not authorized to edit this post');
+            }
+        });
     });
 });
 
 app.post('/posts/edit/:id', isAuthenticated, (req, res) => {
     const postId = req.params.id;
     const { title, content } = req.body;
+    const username = req.session.user;
 
-    db.run(`UPDATE posts SET title = ?, content = ? WHERE id = ?`, [title, content, postId], function(err) {
+    // Get user ID from the database
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], (err, userRow) => {
         if (err) {
             return console.log(err.message);
         }
-        console.log(`Post with id ${postId} updated`);
-        res.redirect(`/posts/${postId}`);
+        if (!userRow) {
+            return res.status(404).send('User not found');
+        }
+
+        const userId = userRow.id;
+
+        // Check if the post belongs to the user
+        db.run(`UPDATE posts SET title = ?, content = ? WHERE id = ? AND user_id = ?`, [title, content, postId, userId], function(err) {
+            if (err) {
+                return console.log(err.message);
+            }
+            if (this.changes === 0) {
+                return res.status(403).send('You are not authorized to edit this post');
+            }
+            console.log(`Post with id ${postId} updated`);
+            res.redirect(`/posts/${postId}`);
+        });
     });
 });
 
 app.post('/comment/new', isAuthenticated, (req, res) => {
-    const { postId, content } = req.body;
+    const { postId, comment } = req.body;
     const username = req.session.user;
 
     // Get user ID from the database
@@ -232,7 +286,7 @@ app.post('/comment/new', isAuthenticated, (req, res) => {
         if (row) {
             const userId = row.id;
 
-            db.run(`INSERT INTO comments (content, user_id, post_id) VALUES (?, ?, ?)`, [content, userId, postId], function(err) {
+            db.run(`INSERT INTO comments (comment, user_id, post_id) VALUES (?, ?, ?)`, [comment, userId, postId], function(err) {
                 if (err) {
                     return console.log(err.message);
                 }
@@ -243,6 +297,56 @@ app.post('/comment/new', isAuthenticated, (req, res) => {
             console.log('User not found');
             res.status(404).send('User not found');
         }
+    });
+});
+
+app.post('/comment/delete/:id', isAuthenticated, (req, res) => {
+    const commentId = req.params.id;
+    const username = req.session.user; // Get username from session
+
+    // First, get the current user's ID
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], (err, userRow) => {
+        if (err) {
+            return console.log(err.message);
+        }
+        if (!userRow) {
+            return res.status(404).send('User not found');
+        }
+
+        const userId = userRow.id;
+
+        // Then get the comment's owner and associated post
+        db.get(`SELECT user_id, post_id FROM comments WHERE id = ?`, [commentId], (err, commentRow) => {
+            if (err) {
+                return console.log(err.message);
+            }
+            if (!commentRow) {
+                return res.status(404).send('Comment not found');
+            }
+
+            // Check if the user is the owner of the post
+            db.get(`SELECT user_id FROM posts WHERE id = ?`, [commentRow.post_id], (err, postRow) => {
+                if (err) {
+                    return console.log(err.message);
+                }
+                if (!postRow) {
+                    return res.status(404).send('Post not found');
+                }
+
+                // Check ownership
+                if (userId === postRow.user_id) {
+                    db.run(`DELETE FROM comments WHERE id = ?`, [commentId], function(err) {
+                        if (err) {
+                            return console.log(err.message);
+                        }
+                        console.log(`Comment with id ${commentId} deleted`);
+                        res.redirect(`/posts/${commentRow.post_id}`);
+                    });
+                } else {
+                    res.status(403).send('You are not authorized to delete this comment');
+                }
+            });
+        });
     });
 });
 
