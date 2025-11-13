@@ -25,9 +25,9 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
 // Constants
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
-const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
-const API_KEY = process.env.API_KEY || 'your_api_key';
+const AUTH_URL = process.env.AUTH_URL || 'https://formbeta.yorktechapps.com';
+const THIS_URL = process.env.THIS_URL || `http://172.16.3.196:${PORT}/login`;
+const API_KEY = process.env.API_KEY || '1f6261c98f4c84d099d6694ac3fb67e7207715c7a58a9723bd72749ad67cfd23';
 
 // Middleware
 app.set('view engine', 'ejs');
