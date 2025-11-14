@@ -21,8 +21,8 @@ const db = new sqlite3.Database('./db/jobboard.db', (err) => {
 // Constants
 const PORT = process.env.port || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'employment';
-const AUTH_URL = process.env.AUTH_URL || 'https://formbeta.yorktechapps.com/oauth'
-const THIS_URL = process.env.THIS_URL || 'http://172.16.3.179:3000/login'
+const AUTH_URL = process.env.AUTH_URL || 'https://formbeta.yorktechapps.com'
+const THIS_URL = process.env.THIS_URL || 'http://localhost:3000/index'
 const API_KEY = process.env.API_KEY || 'craigslist'
 
 // Middleware
@@ -40,7 +40,7 @@ app.use(session({
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
-    else res.redirect('http://172.16.3.179:3000/login')
+    else res.redirect('http://localhost:3000/login')
 };
 
 // Routes
@@ -117,5 +117,5 @@ app.get('/postjob', isAuthenticated, (req, res) => {
 
 // Start Server
 server.listen(PORT, () => {
-    console.log(`Server is running at http://172.16.3.179:${PORT}`);
+    console.log(`Server is running at http://localhost:${PORT}`);
 });
