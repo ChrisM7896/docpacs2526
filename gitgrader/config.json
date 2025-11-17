@@ -1,0 +1,17 @@
+{
+  "rubric": {
+    "issueAssigned": 10,
+    "commitsMade": 10,
+    "prCreated": 10,
+    "issueCompleted": 40,
+    "prMerged": 20,
+    "projectBoardWorkflow": 10
+  },
+  "projectBoardColumns": {
+    "todo": "To Do",
+    "inProgress": "In Progress",
+    "done": "Done"
+  },
+  "aiProvider": "openai"
+}
+
