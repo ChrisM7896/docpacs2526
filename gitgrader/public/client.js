@@ -1,8 +1,6 @@
 // State management
 let currentResults = null;
 let currentTeamName = null;
-let currentReportPath = null;
-let currentTeamId = null;
 let teams = [];
 
 // DOM Elements
@@ -372,13 +370,11 @@ async function performGrading(data, teamName) {
         if (result.success) {
             currentResults = result.data.results;
             currentTeamName = result.data.teamName || teamName;
-            currentReportPath = result.data.reportPath || null;
-            currentTeamId = result.data.teamId || null;
             
             progressDiv.style.display = 'none';
             switchTab('results');
             renderResults(currentResults, currentTeamName);
-            showSuccess('Grading completed successfully! Report saved locally.');
+            showSuccess('Grading completed successfully!');
         } else {
             progressDiv.style.display = 'none';
             showError('Grading failed: ' + result.error);
@@ -394,7 +390,7 @@ async function performGrading(data, teamName) {
 function renderResults(results, teamName) {
     const exportBtn = document.getElementById('export-html-btn');
     exportBtn.style.display = 'block';
-    exportBtn.onclick = () => exportHTML();
+    exportBtn.onclick = () => exportHTML(results, teamName);
 
     resultsContainer.innerHTML = `
         <div class="results-summary">
@@ -472,24 +468,12 @@ function renderStudent(student) {
     `;
 }
 
-async function exportHTML() {
+async function exportHTML(results, teamName) {
     try {
-        const requestBody = {};
-        
-        // Prefer teamId if available, otherwise use reportPath
-        if (currentTeamId) {
-            requestBody.teamId = currentTeamId;
-        } else if (currentReportPath) {
-            requestBody.reportPath = currentReportPath;
-        } else {
-            showError('No report available. Please re-grade the team.');
-            return;
-        }
-
         const response = await fetch('/export', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify({ results, teamName }),
         });
 
         if (response.ok) {
@@ -497,27 +481,15 @@ async function exportHTML() {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            
-            // Extract filename from Content-Disposition header or use default
-            const contentDisposition = response.headers.get('Content-Disposition');
-            let filename = `grading-report-${Date.now()}.html`;
-            if (contentDisposition) {
-                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-                if (filenameMatch) {
-                    filename = filenameMatch[1];
-                }
-            }
-            
-            a.download = filename;
+            a.download = `grading-report-${Date.now()}.html`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
             
-            showSuccess('Report downloaded successfully!');
+            showSuccess('Report exported successfully!');
         } else {
-            const errorData = await response.json();
-            showError('Failed to export report: ' + (errorData.error || 'Unknown error'));
+            showError('Failed to export report');
         }
     } catch (error) {
         showError('Error exporting report: ' + error.message);
