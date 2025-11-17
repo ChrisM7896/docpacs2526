@@ -103,17 +103,11 @@ class DataService {
   /**
    * Save grading results for a team
    */
-  async saveGradingResults(id, results, reportPath = null) {
-    const updates = {
+  async saveGradingResults(id, results) {
+    return await this.updateTeam(id, {
       lastGradingDate: new Date().toISOString(),
       lastGradingResults: results,
-    };
-    
-    if (reportPath) {
-      updates.lastReportPath = reportPath;
-    }
-    
-    return await this.updateTeam(id, updates);
+    });
   }
 
   /**
