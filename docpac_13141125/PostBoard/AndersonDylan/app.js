@@ -53,25 +53,40 @@ app.get('/login', (req, res) => {
         req.session.token = tokenData;
         req.session.user = tokenData.displayName;
 
-        // Save user to database if not exists, then get their UID
-        db.run('INSERT OR IGNORE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
+// In your /login route, replace the database section with:
+console.log('Token displayName:', tokenData.displayName);
+
+// First check if user already exists
+db.get('SELECT uid, username FROM users WHERE username = ?', [tokenData.displayName], (err, existingUser) => {
+    if (err) {
+        console.error('Error checking existing user:', err);
+        return;
+    }
+    
+    console.log('Existing user found:', existingUser);
+    
+    if (existingUser) {
+        // User exists, use their existing UID
+        req.session.user = tokenData.displayName;
+        req.session.userUID = existingUser.uid;
+        console.log(`Existing user ${tokenData.displayName} (UID: ${existingUser.uid}) logged in.`);
+        res.redirect('/');
+    } else {
+        // User doesn't exist, create new one
+        db.run('INSERT INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
             if (err) {
-                return console.error(err.message);
+                console.error('Error creating user:', err);
+                return;
             }
             
-            // Now get the user's UID (whether just inserted or already existed)
-            db.get('SELECT uid FROM users WHERE username = ?', [tokenData.displayName], (err, row) => {
-                if (err) {
-                    console.error('Error getting user UID:', err);
-                } else {
-                    // Store both username and UID in session
-                    req.session.user = tokenData.displayName;
-                    req.session.userUID = row.uid;
-                    console.log(`User ${tokenData.displayName} (UID: ${row.uid}) logged in.`);
-                }
-                res.redirect('/');
-            });
+            req.session.user = tokenData.displayName;
+            req.session.userUID = this.lastID;
+            console.log(`New user ${tokenData.displayName} (UID: ${this.lastID}) created and logged in.`);
+            res.redirect('/');
         });
+    }
+});
+
 
 
     } else {
@@ -103,6 +118,298 @@ app.post('/api/posts', isAuthenticated, (req, res) => {
             res.json({ success: true, postId: this.lastID });
         }
     );
+});
+
+// Get all posts with creator usernames and ownership info
+app.get('/api/posts', isAuthenticated, (req, res) => {
+    const currentUserUID = req.session.userUID;
+    
+    const query = `
+        SELECT 
+            p.uid, 
+            p.title, 
+            p.description, 
+            p.timestamp, 
+            p.edited_timestamp,
+            u.username,
+            CASE WHEN p.creator_uid = ? THEN 1 ELSE 0 END as canEdit
+        FROM posts p 
+        JOIN users u ON p.creator_uid = u.uid 
+        ORDER BY p.timestamp DESC
+    `;
+    
+    db.all(query, [currentUserUID], (err, rows) => {
+        if (err) {
+            console.error('Error fetching posts:', err);
+            return res.status(500).json({ error: 'Failed to fetch posts' });
+        }
+        
+        res.json(rows);
+    });
+});
+
+
+
+// Create new comment
+app.post('/api/posts/:postId/comments', isAuthenticated, (req, res) => {
+    const { content } = req.body;
+    const post_uid = req.params.postId;
+    const creator_uid = req.session.userUID;
+    
+    // First check if post exists
+    db.get('SELECT uid FROM posts WHERE uid = ?', [post_uid], (err, post) => {
+        if (err) {
+            console.error('Error checking post:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        
+        // Insert comment
+        db.run(
+            'INSERT INTO comments (content, post_uid, creator_uid) VALUES (?, ?, ?)',
+            [content, post_uid, creator_uid],
+            function(err) {
+                if (err) {
+                    console.error('Error creating comment:', err);
+                    return res.status(500).json({ error: 'Failed to create comment' });
+                }
+                
+                console.log('Comment created with ID:', this.lastID);
+                res.json({ success: true, commentId: this.lastID });
+            }
+        );
+    });
+});
+
+// Get comments for a specific post
+// Get comments for a specific post
+app.get('/api/posts/:postId/comments', isAuthenticated, (req, res) => {
+    const post_uid = req.params.postId;
+    const currentUserUID = req.session.userUID;
+    
+    const query = `
+        SELECT 
+            c.uid, 
+            c.content, 
+            c.timestamp, 
+            c.edited_timestamp,
+            u.username,
+            CASE WHEN c.creator_uid = ? THEN 1 ELSE 0 END as canEdit,
+            CASE WHEN c.creator_uid = ? OR p.creator_uid = ? THEN 1 ELSE 0 END as canDelete
+        FROM comments c 
+        JOIN users u ON c.creator_uid = u.uid 
+        JOIN posts p ON c.post_uid = p.uid
+        WHERE c.post_uid = ? 
+        ORDER BY c.timestamp ASC
+    `;
+    
+    db.all(query, [currentUserUID, currentUserUID, currentUserUID, post_uid], (err, rows) => {
+        if (err) {
+            console.error('Error fetching comments:', err);
+            return res.status(500).json({ error: 'Failed to fetch comments' });
+        }
+        
+        res.json(rows);
+    });
+});
+
+
+
+// Helper function to check if user owns a post
+function checkPostOwnership(postId, userUID, callback) {
+    db.get('SELECT creator_uid FROM posts WHERE uid = ?', [postId], (err, row) => {
+        if (err) {
+            return callback(err, false);
+        }
+        callback(null, row && row.creator_uid === userUID);
+    });
+}
+
+// Helper function to check if user can delete comment (comment owner OR post owner)
+function checkCommentPermissions(commentId, userUID, callback) {
+    const query = `
+        SELECT 
+            c.creator_uid as comment_creator,
+            p.creator_uid as post_creator
+        FROM comments c 
+        JOIN posts p ON c.post_uid = p.uid 
+        WHERE c.uid = ?
+    `;
+    
+    db.get(query, [commentId], (err, row) => {
+        if (err) {
+            return callback(err, { canEdit: false, canDelete: false });
+        }
+        if (!row) {
+            return callback(null, { canEdit: false, canDelete: false });
+        }
+        
+        const canEdit = row.comment_creator === userUID;
+        const canDelete = row.comment_creator === userUID || row.post_creator === userUID;
+        
+        callback(null, { canEdit, canDelete });
+    });
+}
+
+// Update post
+app.put('/api/posts/:postId', isAuthenticated, (req, res) => {
+    const postId = req.params.postId;
+    const { title, description } = req.body;
+    const userUID = req.session.userUID;
+    
+    checkPostOwnership(postId, userUID, (err, isOwner) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (!isOwner) {
+            return res.status(403).json({ error: 'Not authorized to edit this post' });
+        }
+        
+        db.run(
+            'UPDATE posts SET title = ?, description = ?, edited_timestamp = CURRENT_TIMESTAMP WHERE uid = ?',
+            [title, description, postId],
+            function(err) {
+                if (err) {
+                    console.error('Error updating post:', err);
+                    return res.status(500).json({ error: 'Failed to update post' });
+                }
+                res.json({ success: true });
+            }
+        );
+    });
+});
+
+
+// Delete post
+app.delete('/api/posts/:postId', isAuthenticated, (req, res) => {
+    const postId = req.params.postId;
+    const userUID = req.session.userUID;
+    
+    checkPostOwnership(postId, userUID, (err, isOwner) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (!isOwner) {
+            return res.status(403).json({ error: 'Not authorized to delete this post' });
+        }
+        
+        // Delete comments first, then post
+        db.run('DELETE FROM comments WHERE post_uid = ?', [postId], (err) => {
+            if (err) {
+                console.error('Error deleting comments:', err);
+                return res.status(500).json({ error: 'Failed to delete post' });
+            }
+            
+            db.run('DELETE FROM posts WHERE uid = ?', [postId], function(err) {
+                if (err) {
+                    console.error('Error deleting post:', err);
+                    return res.status(500).json({ error: 'Failed to delete post' });
+                }
+                res.json({ success: true });
+            });
+        });
+    });
+});
+
+// Update comment
+app.put('/api/comments/:commentId', isAuthenticated, (req, res) => {
+    const commentId = req.params.commentId;
+    const { content } = req.body;
+    const userUID = req.session.userUID;
+    
+    checkCommentPermissions(commentId, userUID, (err, permissions) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (!permissions.canEdit) {
+            return res.status(403).json({ error: 'Not authorized to edit this comment' });
+        }
+        
+        db.run(
+            'UPDATE comments SET content = ?, edited_timestamp = CURRENT_TIMESTAMP WHERE uid = ?',
+            [content, commentId],
+            function(err) {
+                if (err) {
+                    console.error('Error updating comment:', err);
+                    return res.status(500).json({ error: 'Failed to update comment' });
+                }
+                res.json({ success: true });
+            }
+        );
+    });
+});
+
+// Delete comment
+app.delete('/api/comments/:commentId', isAuthenticated, (req, res) => {
+    const commentId = req.params.commentId;
+    const userUID = req.session.userUID;
+    
+    checkCommentPermissions(commentId, userUID, (err, permissions) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (!permissions.canDelete) {
+            return res.status(403).json({ error: 'Not authorized to delete this comment' });
+        }
+        
+        db.run('DELETE FROM comments WHERE uid = ?', [commentId], function(err) {
+            if (err) {
+                console.error('Error deleting comment:', err);
+                return res.status(500).json({ error: 'Failed to delete comment' });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+// User profile route
+app.get('/user/:username', isAuthenticated, (req, res) => {
+    const username = req.params.username;
+    
+    // Get user info and their posts
+    const userQuery = 'SELECT uid, username FROM users WHERE username = ?';
+    const postsQuery = `
+        SELECT 
+            p.uid, 
+            p.title, 
+            p.description, 
+            p.timestamp, 
+            p.edited_timestamp,
+            u.username,
+            CASE WHEN p.creator_uid = ? THEN 1 ELSE 0 END as canEdit
+        FROM posts p 
+        JOIN users u ON p.creator_uid = u.uid 
+        WHERE u.username = ?
+        ORDER BY p.timestamp DESC
+    `;
+    
+    db.get(userQuery, [username], (err, user) => {
+        if (err) {
+            console.error('Error fetching user:', err);
+            return res.status(500).send('Database error');
+        }
+        
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        
+        db.all(postsQuery, [req.session.userUID, username], (err, posts) => {
+            if (err) {
+                console.error('Error fetching user posts:', err);
+                return res.status(500).send('Database error');
+            }
+            
+            res.render('profile', { 
+                profileUser: user,
+                posts: posts,
+                currentUser: req.session.user,
+                isOwnProfile: user.username === req.session.user
+            });
+        });
+    });
 });
 
 
