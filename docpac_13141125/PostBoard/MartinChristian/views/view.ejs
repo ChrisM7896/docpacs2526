@@ -5,7 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indeedbar | View Posts</title>
 </head>
+<style>
+    body {
+            font-family: Arial, sans-serif;
+            margin-left: 10px;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        #mainTitle {
+            display: inline-block;
+            width: 50%;
+        }
+        #loginInfo {
+            display: inline-block;
+            text-align: right;
+            width: 45%;
+            margin-left: 50px;
+        }
+        #logoutButton {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: solid 1px #ccc;
+            border-radius: 5px;
+            width: 100px;
+            height: 30px;
+            cursor: pointer;
+            background-color: #333;
+            color: #ffffff;
+        }
+        #backButton {
+            display: inline-flex;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+            background-color: #333;
+            color: #ffffff;
+        }
+        #header {
+            display: inline-flex;
+        }
+</style>
 <body>
-    
+    <h1 id="mainTitle">Indeedbar.com</h1>
+    <div id="loginInfo">
+        Logged in as <%- user -%>
+        <button onclick="window.location.href='/logout'" id="logoutButton">Logout</button>
+    </div>
+    <h2 id="header">Job Listings:</h2><button id="backButton" onclick="window.location.href='/'">Back</button>
+    <div id="listingsContainer">
+        <!-- Job listings will be dynamically inserted here -->
+    </div>
 </body>
+<script>
+    const posts = JSON.parse('<%- JSON.stringify(posts) %>');
+    const container = document.getElementById('listingsContainer');
+
+    posts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+        postElement.innerHTML = `
+            <h3>${post.title}</h3>
+            <p><strong>Company:</strong> ${post.company}</p>
+            <p>${post.description}</p>
+            <p><em>Posted by: ${post.username}</em></p>
+        `;
+        container.appendChild(postElement);
+    });
+</script>
 </html>

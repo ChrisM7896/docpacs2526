@@ -37,7 +37,7 @@
         background-color: #333;
         color: #ffffff;
     }
-    #createButton {
+    .buttons {
         margin-top: 20px;
         padding: 10px 20px;
         border: solid 1px #ccc;
@@ -58,7 +58,7 @@
         <button onclick="window.location.href='/logout'" id="logoutButton">Logout</button>
     </div>
     <h2>Welcome, <%- user -%>!</h2>
-    <button id="createButton" onclick="window.location.href='/create'">Create Post</button>
+    <button class="buttons" onclick="window.location.href='/create'">Create Post</button>
+    <button class="buttons" onclick="window.location.href='/view'">View Posts</button>
 </body>
-
 </html>

@@ -80,6 +80,18 @@ app.get('/submit', isAuthenticated, (req, res) => {
     res.render('submit', { user: req.session.user });
 });
 
+app.get('/view', isAuthenticated, (req, res) => {
+    db.all('SELECT * FROM posts WHERE username = ?', [req.session.user], (err, rows) => {
+        if (err) {
+            console.error('Error fetching posts:', err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            console.log('Fetched posts:', rows);
+            res.render('view', { user: req.session.user, posts: rows });
+        }
+    });
+});
+
 app.post('/submit', isAuthenticated, (req, res) => {
     const jobTitle = req.body.jobTitle;
     const company = req.body.company;
