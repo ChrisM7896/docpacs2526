@@ -30,9 +30,17 @@
 			if (e.target && e.target.nodeName == "INPUT" && e.target.type == "submit") {
 				e.preventDefault();
 				const fname = form.fname.value;
+				const email = form.email.value;
 				if (fname.length == 0) {
 					alert("Name is required to access the assignments page.");
 					return;
+				}
+				else if (!email.includes("@")) {
+					alert("Please enter a valid email address.");
+					return;
+				}
+				else {
+					window.location.href = "https://www.ciwcertified.com";
 				}
 			}
 		});
