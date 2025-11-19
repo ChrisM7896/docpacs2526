@@ -1,0 +1,1451 @@
+[
+  {
+    "id": "3317c915c73a6e6d",
+    "name": "Upper 2526",
+    "usernames": [
+      "DylanMechler",
+      "27klarosa",
+      "seawind101",
+      "DonaldG2027",
+      "StephenResch",
+      "VamyVamizy",
+      "ChrisM7896",
+      "27MOwens",
+      "27DAnderson",
+      "CarterQuickel",
+      "aajah26754",
+      "Liameggy",
+      "27lknudson",
+      "gabby11s",
+      "28lharnish",
+      "benja26584",
+      "RobertFilms",
+      "Conno26678",
+      "GEbanks",
+      "kris26658",
+      "Jan26915",
+      "bryce26550",
+      "Lynn26621",
+      "matth26676",
+      "Isaia26633",
+      "mason26611",
+      "hayde26904",
+      "pzahutdwg",
+      "jesse26603"
+    ],
+    "createdAt": "2025-11-11T18:20:15.844Z",
+    "updatedAt": "2025-11-17T19:16:03.231Z",
+    "lastGradingDate": "2025-11-17T19:16:03.229Z",
+    "lastGradingResults": {
+      "type": "class",
+      "gradedAt": "2025-11-17T19:11:10.842Z",
+      "dateRange": {
+        "startDate": "2025-11-10",
+        "endDate": "2025-11-17"
+      },
+      "students": [
+        {
+          "username": "DylanMechler",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "27klarosa",
+          "totalScore": 10,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 6 issue(s) to themselves",
+              "details": {
+                "issueCount": 6
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 0,
+              "maxPoints": 10,
+              "passed": false,
+              "feedback": "✗ No commits found for this student",
+              "details": {
+                "totalCommits": 0,
+                "issuesWithCommits": [],
+                "fromPRs": 0
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 0,
+              "maxPoints": 10,
+              "passed": false,
+              "feedback": "✗ No pull requests found for this student",
+              "details": {
+                "totalPRs": 0,
+                "issuesWithPRs": [],
+                "userPRCount": 0
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 0,
+              "maxPoints": 40,
+              "passed": false,
+              "feedback": "✗ AI could not verify that any issues were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 46,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 17,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 15,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 54,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 55,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 47,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  }
+                ],
+                "passedCount": 0,
+                "totalIssues": 6
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 0,
+              "maxPoints": 20,
+              "passed": false,
+              "feedback": "✗ No merged pull requests found for this student",
+              "details": {
+                "mergedCount": 0,
+                "mergedPRs": [],
+                "allIssuesClosed": false
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 46,
+              "title": "draw arrows on screen",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/46",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 17,
+              "title": "Formbar oauth with player names",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/17",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 15,
+              "title": "player profile / stats / records",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/15",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 54,
+              "title": "chat cooldown",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/54",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 55,
+              "title": "check warning",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/55",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 47,
+              "title": "Mate warning",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/47",
+              "repository": "csmith1188/chessbar"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 6 issue(s) to themselves",
+            "✗ No commits found for this student",
+            "✗ No pull requests found for this student",
+            "✗ AI could not verify that any issues were properly completed",
+            "✗ No merged pull requests found for this student"
+          ],
+          "repositories": [
+            "csmith1188/chessbar"
+          ],
+          "percentage": "11.1",
+          "letterGrade": "F"
+        },
+        {
+          "username": "seawind101",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "DonaldG2027",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "StephenResch",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "VamyVamizy",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "ChrisM7896",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "27MOwens",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "27DAnderson",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "CarterQuickel",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "aajah26754",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "Liameggy",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "27lknudson",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "gabby11s",
+          "totalScore": 60,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 4 issue(s) to themselves",
+              "details": {
+                "issueCount": 4
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student made 5 commit(s) across repositories",
+              "details": {
+                "totalCommits": 5,
+                "issuesWithCommits": [
+                  {
+                    "issue": 875,
+                    "repository": "csmith1188/Formbar.js",
+                    "commits": 1
+                  }
+                ],
+                "fromPRs": 4
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student created 10 pull request(s) across repositories",
+              "details": {
+                "totalPRs": 10,
+                "issuesWithPRs": [
+                  {
+                    "issue": 875,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      882,
+                      883,
+                      887
+                    ]
+                  },
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      884
+                    ]
+                  },
+                  {
+                    "issue": 876,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      879,
+                      880
+                    ]
+                  }
+                ],
+                "userPRCount": 4
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 10,
+              "maxPoints": 40,
+              "passed": true,
+              "feedback": "✓ AI verified that 1 of 4 issue(s) were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 863,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily involve renaming variables related to permissions from 'controlPolls' and 'breakAndHelp' to 'controlPoll' and 'breakHelp'. While these changes address the inconsistency in naming within the permissions table, there is no evidence that the changes relate to testing any specific feature or issue as described in the pull request. The changes do not demonstrate any testing or validation of functionality, which is a key requirement of the issue. Therefore, the pull request does not resolve the stated issue."
+                  },
+                  {
+                    "issue": 875,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 882,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily involve renaming permissions related to polls and breaks, but there are no modifications made to prevent new lines in tag creation. The issue specifically states that new lines should not be allowed in tags, which is not addressed in the provided code changes. Therefore, the pull request does not resolve the issue as described."
+                  },
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily focus on correcting the syntax of permission names from 'controlPolls' to 'controlPoll' and 'breakAndHelp' to 'breakHelp'. However, the issue specifically requests the addition of permissions for viewing and voting in polls, which is not addressed by these changes. The modifications do not implement any new functionality or permissions related to viewing or voting in polls, thus failing to resolve the core issue."
+                  },
+                  {
+                    "issue": 876,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 879,
+                    "passed": true,
+                    "confidence": 1,
+                    "explanation": "The code changes in the diff specifically modify the redirection logic in the 'controlPanel.js' file. The change from 'res.redirect(\"/manageClass\")' to 'res.redirect(\"/selectClass\")' directly addresses the issue of incorrect redirection when changing classes, ensuring that users are redirected to the new '/selectClass' endpoint instead of the old '/manageClass' endpoint. This modification is functionally relevant and appropriately resolves the issue described."
+                  }
+                ],
+                "passedCount": 1,
+                "totalIssues": 4
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 20,
+              "maxPoints": 20,
+              "passed": true,
+              "feedback": "✓ 5 pull request(s) were merged across repositories",
+              "details": {
+                "mergedCount": 5,
+                "mergedPRs": [
+                  {
+                    "issue": 875,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 883,
+                    "mergedAt": "2025-11-13T14:53:30Z"
+                  },
+                  {
+                    "issue": 875,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 887,
+                    "mergedAt": "2025-11-16T21:06:13Z"
+                  },
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "mergedAt": "2025-11-16T20:56:59Z"
+                  },
+                  {
+                    "issue": 876,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 879,
+                    "mergedAt": "2025-11-11T16:39:54Z"
+                  },
+                  {
+                    "issue": 876,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 880,
+                    "mergedAt": "2025-11-11T18:26:52Z"
+                  }
+                ],
+                "allIssuesClosed": true
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 863,
+              "title": "Test Each Issue",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/863",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 875,
+              "title": "Tags Allows for New Lines",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/875",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 795,
+              "title": "Poll Permissions Table",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/795",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 876,
+              "title": "Incorrect Redirecting for Multiple Tabs",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/876",
+              "repository": "csmith1188/Formbar.js"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 4 issue(s) to themselves",
+            "✓ Student made 5 commit(s) across repositories",
+            "✓ Student created 10 pull request(s) across repositories",
+            "✓ AI verified that 1 of 4 issue(s) were properly completed",
+            "✓ 5 pull request(s) were merged across repositories"
+          ],
+          "repositories": [
+            "csmith1188/Formbar.js"
+          ],
+          "percentage": "66.7",
+          "letterGrade": "D"
+        },
+        {
+          "username": "28lharnish",
+          "totalScore": 50,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 1 issue(s) to themselves",
+              "details": {
+                "issueCount": 1
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student made 1 commit(s) across repositories",
+              "details": {
+                "totalCommits": 1,
+                "issuesWithCommits": [],
+                "fromPRs": 1
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student created 2 pull request(s) across repositories",
+              "details": {
+                "totalPRs": 2,
+                "issuesWithPRs": [
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      884
+                    ]
+                  }
+                ],
+                "userPRCount": 1
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 0,
+              "maxPoints": 40,
+              "passed": false,
+              "feedback": "✗ AI could not verify that any issues were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily focus on correcting the syntax of permission names related to polls, specifically changing 'controlPolls' to 'controlPoll' and 'breakAndHelp' to 'breakHelp'. However, the issue at hand is about adding permissions for viewing and voting in polls, which is not addressed by these changes. The modifications do not introduce new permissions or functionality related to viewing or voting in polls, making them insufficient to resolve the stated issue."
+                  }
+                ],
+                "passedCount": 0,
+                "totalIssues": 1
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 20,
+              "maxPoints": 20,
+              "passed": true,
+              "feedback": "✓ 2 pull request(s) were merged across repositories",
+              "details": {
+                "mergedCount": 2,
+                "mergedPRs": [
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "mergedAt": "2025-11-16T20:56:59Z"
+                  },
+                  {
+                    "issue": null,
+                    "repository": "csmith1188/docpacs2526",
+                    "pr": 225,
+                    "mergedAt": "2025-11-11T12:26:43Z"
+                  }
+                ],
+                "allIssuesClosed": true
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 795,
+              "title": "Poll Permissions Table",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/795",
+              "repository": "csmith1188/Formbar.js"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 1 issue(s) to themselves",
+            "✓ Student made 1 commit(s) across repositories",
+            "✓ Student created 2 pull request(s) across repositories",
+            "✗ AI could not verify that any issues were properly completed",
+            "✓ 2 pull request(s) were merged across repositories"
+          ],
+          "repositories": [
+            "csmith1188/Formbar.js"
+          ],
+          "percentage": "55.6",
+          "letterGrade": "F"
+        },
+        {
+          "username": "benja26584",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "RobertFilms",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "Conno26678",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "GEbanks",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "kris26658",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "Jan26915",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "bryce26550",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "Lynn26621",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "matth26676",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "Isaia26633",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "mason26611",
+          "totalScore": 83,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 6 issue(s) to themselves",
+              "details": {
+                "issueCount": 6
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student made 18 commit(s) across repositories",
+              "details": {
+                "totalCommits": 18,
+                "issuesWithCommits": [],
+                "fromPRs": 7
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student created 11 pull request(s) across repositories",
+              "details": {
+                "totalPRs": 11,
+                "issuesWithPRs": [
+                  {
+                    "issue": 821,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      888
+                    ]
+                  },
+                  {
+                    "issue": 877,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      881
+                    ]
+                  },
+                  {
+                    "issue": 878,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      881
+                    ]
+                  },
+                  {
+                    "issue": 835,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      873
+                    ]
+                  },
+                  {
+                    "issue": 869,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      872
+                    ]
+                  }
+                ],
+                "userPRCount": 7
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 33,
+              "maxPoints": 40,
+              "passed": true,
+              "feedback": "✓ AI verified that 5 of 6 issue(s) were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 844,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 889,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily focus on fixing API permission issues related to user authentication and session management. However, the issue described is about students not being logged out after a specified time, which is unrelated to the changes made. The modifications do not address session expiration or user logout functionality, which are crucial for resolving the stated issue."
+                  },
+                  {
+                    "issue": 821,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 888,
+                    "passed": true,
+                    "confidence": 0.95,
+                    "explanation": "The code changes include a new migration script that hashes API keys and PINs in the users table, which directly addresses the issue of securing these sensitive pieces of information against a stolen database. The migration creates a temporary table to store hashed values and then replaces the old users table with the new one, ensuring that API keys and PINs are no longer stored in plaintext. Additionally, the login route was modified to hash the API key before storing it in the database, further enhancing security. These changes are functionally relevant and appropriately scoped to resolve the issue described."
+                  },
+                  {
+                    "issue": 877,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 881,
+                    "passed": true,
+                    "confidence": 0.9,
+                    "explanation": "The code changes directly address the issue by correcting the SQL query that updates tags. The original code attempted to update the 'tags' column in the 'users' table, which was incorrect and led to the SQLITE_ERROR. The updated code correctly updates the 'tags' column in the 'classusers' table, which resolves the error logged in the issue. Additionally, the changes to the database error handling improve future debugging by adding call stack information. Overall, the modifications are relevant and appropriate for resolving the described issue."
+                  },
+                  {
+                    "issue": 878,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 881,
+                    "passed": true,
+                    "confidence": 0.9,
+                    "explanation": "The code changes in the pull request directly address the issue of deleting tags not auto-removing them from users. The modification in 'tags.js' updates the database query to correctly reflect changes in the 'classusers' table instead of the 'users' table, ensuring that when tags are deleted from a class, they are also removed from any associated users. This change is crucial for resolving the issue as it directly targets the functionality that was failing. Additionally, the error handling improvements in 'database.js' enhance tracking of future issues, which indirectly supports maintaining the integrity of tag management."
+                  },
+                  {
+                    "issue": 835,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 873,
+                    "passed": true,
+                    "confidence": 0.9,
+                    "explanation": "The code changes in the pull request directly address the issue of unselected users being able to vote. The modifications include making the 'excludedRespondents' visible to students, which was previously hidden, and ensuring that the list of excluded respondents is correctly populated and sent with the 'startPoll' socket emission. This aligns with the issue's description about users being able to break the class state by voting when they shouldn't be able to. The changes also include sorting the excluded respondents, which ensures consistency in handling user states. Overall, the code modifications are functionally relevant and appropriately scoped to resolve the issue."
+                  },
+                  {
+                    "issue": 869,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 872,
+                    "passed": true,
+                    "confidence": 1,
+                    "explanation": "The code changes in the pull request directly address the issue described. The 'excludedRespondents' field has been added to the poll object, resolving the first part of the issue. Additionally, the 'responseCounts' field has been removed, and response counts are now calculated directly within each response object in the responses array, which addresses the second part of the issue. The modifications are functionally relevant and appropriately scoped to resolve the specified problems."
+                  }
+                ],
+                "passedCount": 5,
+                "totalIssues": 6
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 20,
+              "maxPoints": 20,
+              "passed": true,
+              "feedback": "✓ 6 pull request(s) were merged across repositories",
+              "details": {
+                "mergedCount": 6,
+                "mergedPRs": [
+                  {
+                    "issue": 877,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 881,
+                    "mergedAt": "2025-11-11T19:00:20Z"
+                  },
+                  {
+                    "issue": 835,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 873,
+                    "mergedAt": "2025-11-10T19:26:55Z"
+                  },
+                  {
+                    "issue": 869,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 872,
+                    "mergedAt": "2025-11-10T00:26:26Z"
+                  },
+                  {
+                    "issue": null,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 889,
+                    "mergedAt": "2025-11-17T11:42:42Z"
+                  },
+                  {
+                    "issue": null,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 887,
+                    "mergedAt": "2025-11-16T21:06:13Z"
+                  },
+                  {
+                    "issue": null,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 880,
+                    "mergedAt": "2025-11-11T18:26:52Z"
+                  }
+                ],
+                "allIssuesClosed": false
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 844,
+              "title": "Students not logged out by time",
+              "state": "open",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/844",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 821,
+              "title": "Hash API keys and pins in users table",
+              "state": "open",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/821",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 877,
+              "title": "Class Tags Targeting Removed Tags in Users",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/877",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 878,
+              "title": "Deleting Tags Doesn't Auto-Remove",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/878",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 835,
+              "title": "Selecting Errors",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/835",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 869,
+              "title": "Poll Object Cleanup",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/869",
+              "repository": "csmith1188/Formbar.js"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 6 issue(s) to themselves",
+            "✓ Student made 18 commit(s) across repositories",
+            "✓ Student created 11 pull request(s) across repositories",
+            "✓ AI verified that 5 of 6 issue(s) were properly completed",
+            "✓ 6 pull request(s) were merged across repositories"
+          ],
+          "repositories": [
+            "csmith1188/Formbar.js"
+          ],
+          "percentage": "92.2",
+          "letterGrade": "A"
+        },
+        {
+          "username": "hayde26904",
+          "totalScore": 0,
+          "maxScore": 90,
+          "criteria": {},
+          "issues": [],
+          "feedback": [
+            "No issues assigned to this student within the specified date range across any of your repositories."
+          ],
+          "repositories": []
+        },
+        {
+          "username": "pzahutdwg",
+          "totalScore": 10,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 10 issue(s) to themselves",
+              "details": {
+                "issueCount": 10
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 0,
+              "maxPoints": 10,
+              "passed": false,
+              "feedback": "✗ No commits found for this student",
+              "details": {
+                "totalCommits": 0,
+                "issuesWithCommits": [],
+                "fromPRs": 0
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 0,
+              "maxPoints": 10,
+              "passed": false,
+              "feedback": "✗ No pull requests found for this student",
+              "details": {
+                "totalPRs": 0,
+                "issuesWithPRs": [],
+                "userPRCount": 0
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 0,
+              "maxPoints": 40,
+              "passed": false,
+              "feedback": "✗ AI could not verify that any issues were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 18,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 68,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 72,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 74,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 75,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 67,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 61,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 60,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 17,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  },
+                  {
+                    "issue": 47,
+                    "repository": "csmith1188/chessbar",
+                    "passed": false,
+                    "explanation": "No pull request found for this issue or user"
+                  }
+                ],
+                "passedCount": 0,
+                "totalIssues": 10
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 0,
+              "maxPoints": 20,
+              "passed": false,
+              "feedback": "✗ No merged pull requests found for this student",
+              "details": {
+                "mergedCount": 0,
+                "mergedPRs": [],
+                "allIssuesClosed": false
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 18,
+              "title": "pay digipogs to play",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/18",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 68,
+              "title": "Quick pay",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/68",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 72,
+              "title": "Pay to join",
+              "state": "open",
+              "url": "https://github.com/csmith1188/chessbar/issues/72",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 74,
+              "title": "Create a chessbar pool",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/74",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 75,
+              "title": "Pay to create a game",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/75",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 67,
+              "title": "Player name shows in chat instead of player ID",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/67",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 61,
+              "title": "oauth shows player names",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/61",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 60,
+              "title": "oauth saves sessions",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/60",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 17,
+              "title": "Formbar oauth with player names",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/17",
+              "repository": "csmith1188/chessbar"
+            },
+            {
+              "number": 47,
+              "title": "Mate warning",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/chessbar/issues/47",
+              "repository": "csmith1188/chessbar"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 10 issue(s) to themselves",
+            "✗ No commits found for this student",
+            "✗ No pull requests found for this student",
+            "✗ AI could not verify that any issues were properly completed",
+            "✗ No merged pull requests found for this student"
+          ],
+          "repositories": [
+            "csmith1188/chessbar"
+          ],
+          "percentage": "11.1",
+          "letterGrade": "F"
+        },
+        {
+          "username": "jesse26603",
+          "totalScore": 66,
+          "maxScore": 90,
+          "criteria": {
+            "issueAssigned": {
+              "name": "Issue Assigned",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student assigned 5 issue(s) to themselves",
+              "details": {
+                "issueCount": 5
+              }
+            },
+            "commitsMade": {
+              "name": "Commits Made",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student made 6 commit(s) across repositories",
+              "details": {
+                "totalCommits": 6,
+                "issuesWithCommits": [],
+                "fromPRs": 1
+              }
+            },
+            "prCreated": {
+              "name": "Pull Request Created",
+              "points": 10,
+              "maxPoints": 10,
+              "passed": true,
+              "feedback": "✓ Student created 3 pull request(s) across repositories",
+              "details": {
+                "totalPRs": 3,
+                "issuesWithPRs": [
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      884
+                    ]
+                  },
+                  {
+                    "issue": 885,
+                    "repository": "csmith1188/Formbar.js",
+                    "prs": [
+                      886
+                    ]
+                  }
+                ],
+                "userPRCount": 1
+              }
+            },
+            "issueCompleted": {
+              "name": "Issue Completed (AI Verified)",
+              "points": 16,
+              "maxPoints": 40,
+              "passed": true,
+              "feedback": "✓ AI verified that 2 of 5 issue(s) were properly completed",
+              "details": {
+                "analyses": [
+                  {
+                    "issue": 863,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 886,
+                    "passed": true,
+                    "confidence": 0.9,
+                    "explanation": "The code changes primarily focus on modifying the SQL query in 'classroom.js' to allow teachers to see other teachers in the same class. This is directly relevant to the issue described, as it alters the logic to include other teachers by adjusting the JOIN conditions and ensuring that users are included based on their roles in the class. Additionally, the changes in 'tags.js' and 'config.js' improve data handling but are not directly related to the issue of visibility among teachers. Overall, the main change effectively addresses the issue of teachers not being able to see each other in classes."
+                  },
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily involve renaming permissions from 'controlPolls' to 'controlPoll' and 'breakAndHelp' to 'breakHelp'. While this addresses some syntax inconsistencies, it does not implement the requested permissions for viewing and voting in polls as described in the issue. The changes do not add any new functionality or permissions related to the viewing and voting aspects of polls, which were the main focus of the issue."
+                  },
+                  {
+                    "issue": 885,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 886,
+                    "passed": true,
+                    "confidence": 0.9,
+                    "explanation": "The code changes primarily focus on modifying the SQL query in `classroom.js` to ensure that teachers can see other teachers in the same class, except for themselves. The original query was adjusted to include a condition that allows for the retrieval of all teachers in the class while excluding the current user's ID. This directly addresses the issue described, as it ensures that the control panel will now show all teachers except the logged-in user. The changes in other files, while present, do not detract from the main fix and are likely related to other functionality improvements. Overall, the code modifications are relevant and appropriate for resolving the issue."
+                  },
+                  {
+                    "issue": 860,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 886,
+                    "passed": false,
+                    "confidence": 0.2,
+                    "explanation": "The code changes primarily involve modifications to SQL queries and database interactions, specifically regarding how users and tags are managed within classes. However, the issue at hand is about appropriately assigning HTTP requests with API calls, which is not addressed by the changes made in this pull request. There are no modifications related to HTTP methods (GET, POST, etc.) or any API call adjustments, which are central to the issue described. Therefore, the pull request does not resolve the stated issue."
+                  },
+                  {
+                    "issue": 824,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 886,
+                    "passed": false,
+                    "confidence": 0.5,
+                    "explanation": "The code changes in the pull request do not address the issue of combining the ip_blacklist and ip_whitelist tables into a single table with an additional column. The changes primarily involve modifications to user and class management functionality, such as querying class users and updating tags, which are unrelated to the database structure changes requested in the issue. Therefore, the pull request does not resolve the specified issue."
+                  }
+                ],
+                "passedCount": 2,
+                "totalIssues": 5
+              }
+            },
+            "prMerged": {
+              "name": "Pull Request Merged",
+              "points": 20,
+              "maxPoints": 20,
+              "passed": true,
+              "feedback": "✓ 2 pull request(s) were merged across repositories",
+              "details": {
+                "mergedCount": 2,
+                "mergedPRs": [
+                  {
+                    "issue": 795,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 884,
+                    "mergedAt": "2025-11-16T20:56:59Z"
+                  },
+                  {
+                    "issue": 885,
+                    "repository": "csmith1188/Formbar.js",
+                    "pr": 886,
+                    "mergedAt": "2025-11-16T17:53:48Z"
+                  }
+                ],
+                "allIssuesClosed": false
+              }
+            }
+          },
+          "issues": [
+            {
+              "number": 863,
+              "title": "Test Each Issue",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/863",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 795,
+              "title": "Poll Permissions Table",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/795",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 885,
+              "title": "Teachers cannot see other teachers in classes.",
+              "state": "closed",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/885",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 860,
+              "title": "Appropriately assign HTTP requests with API calls",
+              "state": "open",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/860",
+              "repository": "csmith1188/Formbar.js"
+            },
+            {
+              "number": 824,
+              "title": "Combine ip_blacklist and ip_whitelist",
+              "state": "open",
+              "url": "https://github.com/csmith1188/Formbar.js/issues/824",
+              "repository": "csmith1188/Formbar.js"
+            }
+          ],
+          "feedback": [
+            "✓ Student assigned 5 issue(s) to themselves",
+            "✓ Student made 6 commit(s) across repositories",
+            "✓ Student created 3 pull request(s) across repositories",
+            "✓ AI verified that 2 of 5 issue(s) were properly completed",
+            "✓ 2 pull request(s) were merged across repositories"
+          ],
+          "repositories": [
+            "csmith1188/Formbar.js"
+          ],
+          "percentage": "73.3",
+          "letterGrade": "C"
+        }
+      ],
+      "repositories": [
+        "csmith1188/docpacs2526",
+        "csmith1188/chessbar",
+        "csmith1188/Pixbar",
+        "csmith1188/Formbar.ts-client",
+        "csmith1188/Formbar.ts-server",
+        "csmith1188/Formbar.js",
+        "csmith1188/suck",
+        "csmith1188/jukebar",
+        "csmith1188/FormCritter",
+        "csmith1188/quizbank",
+        "csmith1188/GoblinToolsToGithub",
+        "csmith1188/QuizQueue",
+        "csmith1188/PollPin",
+        "csmith1188/konspiracy",
+        "csmith1188/pogipedia",
+        "csmith1188/worksforme",
+        "csmith1188/formPix",
+        "csmith1188/JSFighter-Target-",
+        "csmith1188/docpacs2425",
+        "csmith1188/formwidgeter",
+        "csmith1188/csmith1188.github.io",
+        "csmith1188/tdjs",
+        "csmith1188/IRLTech",
+        "csmith1188/OnlyPogs",
+        "csmith1188/formbar"
+      ],
+      "statistics": {
+        "averageScore": "9.6",
+        "highestScore": 83,
+        "lowestScore": 0,
+        "passingCount": 3,
+        "passingRate": "10.3",
+        "totalStudents": 29
+      }
+    },
+    "lastReportPath": "reports/grading-report-class-upper_2526-1763406963224.html"
+  }
+]
