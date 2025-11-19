@@ -25,7 +25,7 @@ function App() {
     .catch(error => {
       console.error('Error fetching username:', error);
     });
-  }
+  };
 
   return (
     <>
@@ -36,6 +36,6 @@ function App() {
       </div>
     </>
   )
-}
+};
 
 export default App
