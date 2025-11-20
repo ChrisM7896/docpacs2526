@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +9,6 @@
                 background-color: #000000;
                 text-align: center;
             }
-
             #box {
                 margin: auto;
                 margin-top: 10px;
@@ -25,14 +22,15 @@
                 padding: 50px;
                 border-radius: 5px;
             }
-
             #clickCount {
                 color: #ffffff;
                 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
                 font-size: 50px;
                 margin: 5px;
             }
-
+            #clickCount:hover {
+                animation: colorPulse 1s infinite;
+            }
             #click {
                 margin: 5px;
                 background-color: #000000;
@@ -41,17 +39,82 @@
                 border-radius: 2px;
                 box-shadow: #ffffff 1px 1px 3px;
             }
-
             #click:hover {
-                background-color: rgb(40, 40, 40);
-                transform: scale(1.10);
+                transform: scale(1.13);
                 cursor:pointer;
                 border-radius: 3px;
                 box-shadow: #afafaf 2px 2px 3px;
+                animation: shadowPulse 1s infinite;
+            }
+            @keyframes colorPulse {
+                0% {
+                    color: #ff0000;
+                    border-color: #ff0000;
+                }
+                16% {
+                    color: #ff9900;
+                    border-color: #ff9900;
+                }
+                32% {
+                    color: #ffff00;
+                    border-color: #ffff00;
+                }
+                48% {
+                    color: #00ff00;
+                    border-color: #00ff00;
+                }
+                64% {
+                    color: #0000ff;
+                    border-color: #0000ff;
+                }
+                80% {
+                    color: #bb00ff;
+                    border-color: #bb00ff;
+                }
+                100% {
+                    color: #ff0000;
+                    border-color: #ff0000;
+                }
+            }
+            @keyframes shadowPulse {
+                0% {
+                    color: #ff0000;
+                    border-color: #ff0000;
+                    box-shadow: #770000 2px 2px 3px;
+                }
+                16% {
+                    color: #ff9900;
+                    border-color: #ff9900;
+                    box-shadow: #772200 2px 2px 3px;
+                }
+                32% {
+                    color: #ffff00;
+                    border-color: #ffff00;
+                    box-shadow: #777700 2px 2px 3px;
+                }
+                48% {
+                    color: #00ff00;
+                    border-color: #00ff00;
+                    box-shadow: #007700 2px 2px 3px;
+                }
+                64% {
+                    color: #0000ff;
+                    border-color: #0000ff;
+                    box-shadow: #000077 2px 2px 3px;
+                }
+                80% {
+                    color: #bb00ff;
+                    border-color: #bb00ff;
+                    box-shadow: #330077 2px 2px 3px;
+                }
+                100% {
+                    color: #ff0000;
+                    border-color: #ff0000;
+                    box-shadow: #770000 2px 2px 3px;
+                }
             }
         </style>
     </head>
-
     <body>
         <div id="box">
             <div><b id="clickCount">0</b></div>
@@ -76,4 +139,4 @@
                     }
                 </script>
     </body>
-    </html>
+</html>
