@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const db = require('./dbManager');
 
 require('dotenv').config();
 
@@ -47,25 +46,6 @@ module.exports = (app) => {
         }
     });
 
-    app.get('/api/user', (req, res) => {
-        if (req.session.user) {
-            res.json({
-                authenticated: true,
-                username: req.session.user
-            });
-        } else {
-            res.json({
-                authenticated: false
-            });
-        }
-    });
-
-    app.get('/api/auth-url', (req, res) => {
-        const authURL = `${AUTH_URL}?redirectURL=${THIS_URL}`;
-        res.json({ authURL });
-    });
-
-
     app.get('/login', (req, res) => {
         console.log('Login route hit');
         console.log('Query params:', req.query);
@@ -78,29 +58,16 @@ module.exports = (app) => {
 
                 const username = tokenData.displayName;
 
-                // Insert or replace user in database
-                const query = `INSERT OR REPLACE INTO users (username) VALUES (?)`;
+                req.session.token = tokenData;
+                req.session.user = username;
 
-                db.run(query, [username], function (err) {
+                req.session.save((err) => {
                     if (err) {
-                        console.error('Database error:', err);
-                        return res.status(500).send('Database error');
+                        console.error('Session save error:', err);
+                        return res.status(500).send('Session save failed');
                     }
-
-                    console.log(`User ${username} saved to database with ID: ${this.lastID}`);
-
-                    // Save to session
-                    req.session.token = tokenData;
-                    req.session.user = username;
-
-                    req.session.save((err) => {
-                        if (err) {
-                            console.error('Session save error:', err);
-                            return res.status(500).send('Session save failed');
-                        }
-                        console.log('Session saved, redirecting to React');
-                        res.redirect('http://localhost:5173');
-                    });
+                    console.log('Session saved, redirecting to React');
+                    res.redirect('http://localhost:5173');
                 });
 
             } catch (error) {
@@ -111,6 +78,11 @@ module.exports = (app) => {
             console.log('No token found, redirecting to Formbar auth');
             res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
         }
+    });
+
+    app.get('/api/auth-url', (req, res) => {
+        const authURL = `${AUTH_URL}?redirectURL=${THIS_URL}`;
+        res.json({ authURL });
     });
 
 };

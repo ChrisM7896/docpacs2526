@@ -47,6 +47,21 @@ module.exports = () => {
             }
         });
     });
-};
 
-module.exports = db;
+    const getJobPosts = () => {
+        return new Promise((resolve, reject) => {
+            db.all(`SELECT * FROM posts`, (err, rows) => {
+                if (err) {
+                    console.error('Error fetching job posts:', err.message);
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    };
+
+    return {
+        getJobPosts
+    };
+};
