@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,13 +31,16 @@
 			const len = form.mySelect.length;
 			let userChoices = "";
 			// Create for loop 
-		 
-
+		 for (let i = 0; i < len; i++) {
+			 if (form.mySelect.options[i].selected) {
+			   userChoices += form.mySelect.options[i].value + "\n ";
+			 }
+		   }
 
 
 
 		   // Create the alert
-
+		   alert("You selected:\n" + userChoices);
 		  }
 
 		  document.getElementById('checkBtn').addEventListener('click', () => {

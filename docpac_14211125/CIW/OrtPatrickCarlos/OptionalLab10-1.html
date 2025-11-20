@@ -118,9 +118,14 @@
 			  return;
 
 			//Enter a validation test for the fax number below
+			} else if (!/^\d{2}/.test(fax)) {
+			  alert('The first two digits of your Fax Number must be numbers.');
+			  return;
+
 			}
 		 
 			//Add alert Form looks good!
+			alert('Form looks good!');
 		   
 		  }
 		</script>

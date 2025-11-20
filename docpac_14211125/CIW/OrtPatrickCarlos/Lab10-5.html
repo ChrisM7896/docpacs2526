@@ -50,7 +50,16 @@
 			const value = field.value;
 
 			// Complete the form field validation block
-		  
+			if ((type === 'text' || type === 'textarea') && value.trim() === '') {
+			  alert('Please fill out the ' + name.replace('_', ' ') + ' field.');
+			  isValid = false;
+			  field.focus();
+			  const flag = document.createElement('span');
+			  flag.textContent = ' ❌';
+			  flag.style.color = 'red';
+			  field.parentNode.appendChild(flag);
+			  break;
+			}
 
 			output += 'Type: ' + type + '  ';
 			output += 'Name: ' + name + '  ';

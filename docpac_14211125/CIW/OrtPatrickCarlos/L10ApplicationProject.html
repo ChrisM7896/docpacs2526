@@ -41,6 +41,19 @@
 		  }
 
 		  // Validate card number length and starting digit by card type
+		  let valid = false;
+		  if (selectedCard === 'visa') {
+			valid = (cardNumber.length === 16 && cardNumber.startsWith('4'));
+		  } else if (selectedCard === 'mc') {
+			valid = (cardNumber.length === 16 && cardNumber.startsWith('5'));
+		  } else if (selectedCard === 'amex') {
+			valid = (cardNumber.length === 15 && cardNumber.startsWith('3'));
+		  }
+		  if (!valid) {
+			alert('Invalid card number for the selected card type.');
+			form.number.focus();
+			return;
+		  }
 		
 
 		  
@@ -51,9 +64,15 @@
 		  const expiration = new Date(expYear, expMonth);
 
 		  // Validate expiration date
+		  if (expiration <= today) {
+			alert('The expiration date must be in the future.');
+			form.expMo.focus();
+			return;
+		  }
 	  
 
 		  // If all checks pass, acknowledge success
+		  alert('Credit card information is valid.');
 		  
 		}
 	  </script>
