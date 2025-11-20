@@ -51,6 +51,11 @@
 			const value = field.value;
 
 			// Complete the form field validation block
+			if ((type === 'text' || type === 'textarea') && value.trim() === '') {
+			  alert('Please fill out the ' + name + ' field.');
+			  isValid = false;
+			  break;
+			}
 		  
 
 			output += 'Type: ' + type + '  ';
