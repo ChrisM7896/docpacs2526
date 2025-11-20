@@ -45,6 +45,13 @@
         #header {
             display: inline-flex;
         }
+        .post {
+            border: solid 1px #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #222;
+        }
 </style>
 <body>
     <h1 id="mainTitle">Indeedbar.com</h1>
@@ -60,6 +67,7 @@
 <script>
     const posts = JSON.parse('<%- JSON.stringify(posts) %>');
     const container = document.getElementById('listingsContainer');
+    posts.reverse();
 
     posts.forEach(post => {
         const postElement = document.createElement('div');
