@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 
-module.exports = (dbManager) => {
+module.exports = () => {
     const db = new sqlite3.Database('./database.db', (err) => {
         if (err) {
             console.error('Error opening database:', err.message);
@@ -47,8 +47,6 @@ module.exports = (dbManager) => {
             }
         });
     });
-
-    dbManager.getDB = () => {
-        return db;
-    };
 };
+
+module.exports = db;
