@@ -24,8 +24,15 @@
 		<input type="reset" value="Reset">
 		</form>
 		<script>
-			document.getElementById('myForm').addEventListener('submit', function() {
-				var name = fname.value.trim()
+			document.getElementById('myForm').addEventListener('submit', function(event) {
+				var name = this.fname.value.trim();
+				if (name === '') {
+					alert('Name is required to access the assignments page');
+					event.preventDefault();
+				} else {
+					event.preventDefault();
+					window.location.href = 'https://ciwcertified.com/';
+				}
 			})
 		</script>
 	</body>
