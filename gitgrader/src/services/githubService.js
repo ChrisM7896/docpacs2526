@@ -239,8 +239,17 @@ class GitHubService {
           });
           
           // Filter by date range if specified
-          if (!this.dateRange || this.isWithinDateRange(pr.created_at)) {
+          // Check both created_at and merged_at/updated_at to catch PRs merged within date range
+          if (!this.dateRange) {
             prs.push(pr);
+          } else {
+            const createdInRange = this.isWithinDateRange(pr.created_at);
+            const mergedInRange = pr.merged_at ? this.isWithinDateRange(pr.merged_at) : false;
+            const updatedInRange = pr.updated_at ? this.isWithinDateRange(pr.updated_at) : false;
+            
+            if (createdInRange || mergedInRange || updatedInRange) {
+              prs.push(pr);
+            }
           }
         } catch (error) {
           console.error(`Error fetching PR #${prNumber}:`, error.message);
@@ -251,6 +260,58 @@ class GitHubService {
       return prs;
     } catch (error) {
       console.error(`Error fetching PRs for issue #${issueNumber}:`, error.message);
+      return [];
+    }
+  }
+
+  /**
+   * Get issues linked to a pull request
+   */
+  async getPullRequestLinkedIssues(owner, repo, prNumber) {
+    const cacheKey = `pr-linked-issues-${owner}-${repo}-${prNumber}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
+    }
+
+    try {
+      // Get PR details to check body for issue references
+      const { data: pr } = await this.octokit.pulls.get({
+        owner,
+        repo,
+        pull_number: prNumber,
+      });
+
+      const linkedIssues = [];
+
+      // Extract issue numbers from PR body
+      const issuePattern = /(?:closes?|fixes?|resolves?|completes?)\s*#(\d+)/gi;
+      const matches = (pr.body || '').matchAll(issuePattern);
+      const issueNumbers = Array.from(matches, m => parseInt(m[1]));
+
+      // Fetch each linked issue
+      for (const issueNumber of issueNumbers) {
+        try {
+          const { data: issue } = await this.octokit.issues.get({
+            owner,
+            repo,
+            issue_number: issueNumber,
+          });
+          linkedIssues.push({
+            number: issue.number,
+            title: issue.title,
+            body: issue.body || '',
+            state: issue.state,
+            html_url: issue.html_url,
+          });
+        } catch (error) {
+          console.error(`Error fetching issue #${issueNumber} for PR #${prNumber}:`, error.message);
+        }
+      }
+
+      this.cache.set(cacheKey, linkedIssues);
+      return linkedIssues;
+    } catch (error) {
+      console.error(`Error fetching linked issues for PR #${prNumber}:`, error.message);
       return [];
     }
   }
@@ -276,10 +337,19 @@ class GitHubService {
       });
 
       // Filter PRs by the user (including PRs from forks)
+      // Check both created_at and merged_at/updated_at to catch PRs merged within date range
       const userPRs = allPRs.filter(pr => {
         const isUserPR = pr.user.login.toLowerCase() === username.toLowerCase();
-        const inDateRange = !this.dateRange || this.isWithinDateRange(pr.created_at);
-        return isUserPR && inDateRange;
+        if (!isUserPR) return false;
+        
+        if (!this.dateRange) return true;
+        
+        // Check if PR was created, merged, or updated within the date range
+        const createdInRange = this.isWithinDateRange(pr.created_at);
+        const mergedInRange = pr.merged_at ? this.isWithinDateRange(pr.merged_at) : false;
+        const updatedInRange = pr.updated_at ? this.isWithinDateRange(pr.updated_at) : false;
+        
+        return createdInRange || mergedInRange || updatedInRange;
       });
 
       this.cache.set(cacheKey, userPRs);
