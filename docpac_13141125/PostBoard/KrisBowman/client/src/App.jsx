@@ -1,7 +1,9 @@
-import './App.css'
-import JobPostList from './hooks/JobPostList';
+import React, { useState } from 'react';
+import NewJobPostForm from './components/NewJobPostForm';
+import JobPostList from './components/JobPostList';
 
 function App() {
+  const [username, setUsername] = useState(null);
 
   const login = async () => {
     try {
@@ -20,6 +22,7 @@ function App() {
     })
       .then(response => response.json())
       .then(data => {
+        setUsername(data.username); // Update the username state
         let userDisplay = document.getElementById('userDisplay');
         userDisplay.textContent = (`Welcome ${data.username}`);
       })
@@ -28,13 +31,15 @@ function App() {
       });
   };
 
+  getUsername();
+
   return (
     <>
       <div>
         <button onClick={login}>Formbar Oauth</button>
-        <button onClick={getUsername}>Get Username</button>
         <div id="userDisplay"></div>
         <JobPostList />
+        {username && <NewJobPostForm />}
       </div>
     </>
   )

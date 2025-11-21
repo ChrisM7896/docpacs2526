@@ -1,8 +1,14 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import sqlite3 from 'sqlite3';
+import jwt from 'jsonwebtoken';
+import session from 'express-session';
 
-const auth = require('./auth.js');
-const dbManager = require('./dbManager.js');
+import auth from './auth.js';
+import dbManager from './dbManager.js';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -11,9 +17,10 @@ app.use(cors({
     credentials: true
 }));
 
-auth(app);
+auth(app, jwt, session);
+const db = dbManager(sqlite3);
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
     res.send('Hello from the server! Use API routes to view json data.');
 });
 
@@ -30,9 +37,9 @@ app.get('/api/user', (req, res) => {
     }
 });
 
-app.get('/api/job-posts', async (req, res) => {
+app.get('/api/job-posts', async (_, res) => {
     try {
-        const jobPosts = await dbManager.getJobPosts();
+        const jobPosts = await db.getJobPosts();
         res.json(jobPosts);
     } catch (error) {
         console.error('Error fetching job posts:', error);

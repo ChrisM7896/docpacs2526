@@ -1,6 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
-
-module.exports = () => {
+export default (sqlite3) => {
     const db = new sqlite3.Database('./database.db', (err) => {
         if (err) {
             console.error('Error opening database:', err.message);
@@ -48,7 +46,18 @@ module.exports = () => {
         });
     });
 
-    const getJobPosts = () => {
+    async function userExists(username) {
+        const query = 'SELECT COUNT(*) AS count FROM users WHERE username = ?';
+        const [result] = await db.execute(query, [username]);
+        return result.count > 0;
+    }
+
+    async function addUser(username) {
+        const query = 'INSERT INTO users (username) VALUES (?)';
+        await db.execute(query, [username]);
+    }
+
+    function getJobPosts() {
         return new Promise((resolve, reject) => {
             db.all(`SELECT * FROM posts`, (err, rows) => {
                 if (err) {
@@ -62,6 +71,9 @@ module.exports = () => {
     };
 
     return {
+        db,
+        userExists,
+        addUser,
         getJobPosts
     };
 };

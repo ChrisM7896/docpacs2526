@@ -1,9 +1,4 @@
-const jwt = require('jsonwebtoken');
-const session = require('express-session');
-
-require('dotenv').config();
-
-module.exports = (app) => {
+export default (app, jwt, session) => {
     const AUTH_URL = process.env.AUTH_URL;
     const THIS_URL = process.env.THIS_URL;
 
@@ -39,10 +34,9 @@ module.exports = (app) => {
 
     app.get('/', isAuthenticated, (req, res) => {
         try {
-            res.render('', { user: req.session.user })
-        }
-        catch (error) {
-            res.send(error.message)
+            res.render('', { user: req.session.user });
+        } catch (error) {
+            res.send(error.message);
         }
     });
 
@@ -80,9 +74,8 @@ module.exports = (app) => {
         }
     });
 
-    app.get('/api/auth-url', (req, res) => {
+    app.get('/api/auth-url', (_, res) => {
         const authURL = `${AUTH_URL}?redirectURL=${THIS_URL}`;
         res.json({ authURL });
     });
-
 };

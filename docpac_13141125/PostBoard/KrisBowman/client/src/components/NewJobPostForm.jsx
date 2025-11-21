@@ -12,6 +12,6 @@ function NewJobPostForm() {
             <button type="submit">Post Job</button>
         </form>
     );
-}
+};
 
 export default NewJobPostForm;
