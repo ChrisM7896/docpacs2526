@@ -4,9 +4,14 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const { io } = require('socket.io-client');
+const { Server } = require('socket.io');
+const ioClient = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
+const http = require('http');
+
+const server = http.createServer(app);
+const io = new Server(server);
 
 // DATABASE SETUP
 const db = new sqlite3.Database('./db/app.db', (err) => {
@@ -80,6 +85,16 @@ app.get('/submit', isAuthenticated, (req, res) => {
     res.render('submit', { user: req.session.user });
 });
 
+app.get('/edit/:id', isAuthenticated, (req, res) => {
+    const postId = req.params.id;
+    db.all('SELECT * FROM posts WHERE id = ?', [postId], (err, rows) => {
+        if (err) {
+            console.error('Error fetching post:', err);
+        }
+        res.render('edit', { user: req.session.user, postId: postId, posts: rows });
+    });
+});
+
 app.get('/view', isAuthenticated, (req, res) => {
     db.all('SELECT * FROM posts WHERE username = ?', [req.session.user], (err, rows) => {
         if (err) {
@@ -113,27 +128,65 @@ app.post('/submit', isAuthenticated, (req, res) => {
 });
 
 // SOCKET.IO CLIENT TO AUTH SERVER
-const socket = io(AUTH_URL, {
+const authSocket = ioClient(AUTH_URL, {
     extraHeaders: {
         api: API_KEY
     }
 });
 
-socket.on('connect', () => {
-    console.log('Connected to auth server');
-    socket.emit('getActiveClass');
-});
+io.on('connection', (socket) => {
+    console.log('A user connected');
 
-socket.on('disconnect', () => {
-    console.log('Disconnected from auth server');
-});
+    socket.on('disconnect', () => {
+        console.log('Disconnected from auth server');
+    });
 
-socket.on('setClass', (classData) => {
-    console.log('Received class data:', classData);
-    // Handle class data as needed
+    socket.on('setClass', (classData) => {
+        console.log('Received class data:', classData);
+        // Handle class data as needed
+    });
+
+    socket.on('deletePost', (postId) => {
+        db.run('DELETE FROM posts WHERE id = ?', [postId], function (err) {
+            if (err) {
+                console.error('Error deleting post:', err);
+            } else {
+                console.log(`Post ${postId} deleted successfully.`);
+            }
+        });
+    });
+
+    socket.on('deletePost', (data) => {
+        const postId = data.postId;
+        db.run('DELETE FROM posts WHERE id = ?', [postId], function (err) {
+            if (err) {
+                console.error('Error deleting post:', err);
+            } else {
+                console.log(`Post ${postId} deleted successfully.`);
+            }
+        });
+    });
+
+    socket.on('editSubmit', (data) => {
+        const postId = data.postId;
+        const newTitle = data.title;
+        const newCompany = data.company;
+        const newDescription = data.description;
+
+        db.run('UPDATE posts SET title = ?, company = ?, description = ? WHERE id = ?',
+            [newTitle, newCompany, newDescription, postId],
+            function (err) {
+                if (err) {
+                    console.error('Error updating post:', err);
+                } else {
+                    console.log(`Post ${postId} updated successfully.`);
+                }
+            });
+    });
+
 });
 
 // START SERVER
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });

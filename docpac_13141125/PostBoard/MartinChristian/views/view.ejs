@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indeedbar | View Posts</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+    </script>
 </head>
 <style>
     body {
@@ -52,6 +56,17 @@
             margin-top: 10px;
             background-color: #222;
         }
+        .delete_editButtons {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border: solid 1px #ccc;
+            border-radius: 5px;
+            width: 120px;
+            height: 30px;
+            cursor: pointer;
+            background-color: #333;
+            color: #ffffff;
+        }
 </style>
 <body>
     <h1 id="mainTitle">Indeedbar.com</h1>
@@ -65,20 +80,57 @@
     </div>
 </body>
 <script>
-    const posts = JSON.parse('<%- JSON.stringify(posts) %>');
-    const container = document.getElementById('listingsContainer');
-    posts.reverse();
+    function loop() {
+        const posts = JSON.parse('<%- JSON.stringify(posts) %>');
+        const container = document.getElementById('listingsContainer');
+        posts.reverse();
+    
+        posts.forEach(post => {
+            if (!document.getElementById(`post-${post.id}`)) {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.id = `post-${post.id}`;
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p><strong>Company:</strong> ${post.company}</p>
+                    <p>${post.description}</p>
+                    <p><em>Posted by <b>${post.username}</b> at: ${new Date(post.created_at).toLocaleString()}</em></p>
+                    `;
+                    if (post.username === '<%- user %>') {
+                        const deleteButton = document.createElement('button');
+                        const editButton = document.createElement('button');
+                        const commentsButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete Post';
+                        editButton.textContent = 'Edit Post';
+                        commentsButton.textContent = 'View Comments';
+                        deleteButton.classList.add('delete_editButtons');
+                        editButton.classList.add('delete_editButtons');
+                        commentsButton.classList.add('delete_editButtons');
+            
+                        deleteButton.onclick = () => {
+                            socket.emit('deletePost', { postId: post.id });
+                            window.location.reload();
+                        };
+            
+                        editButton.onclick = () => {
+                            window.location.href = `/edit/${post.id}`;
+                        };
+            
+                        commentsButton.onclick = () => {
+                            window.location.href = `/comments/${post.id}`;
+                        };
+            
+                        postElement.appendChild(deleteButton);
+                        postElement.appendChild(editButton);
+                        postElement.appendChild(commentsButton);
+                    }
+                    container.appendChild(postElement);
+            }
+        });
+        requestAnimationFrame(loop);
+    }
 
-    posts.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.classList.add('post');
-        postElement.innerHTML = `
-            <h3>${post.title}</h3>
-            <p><strong>Company:</strong> ${post.company}</p>
-            <p>${post.description}</p>
-            <p><em>Posted by: ${post.username}</em></p>
-        `;
-        container.appendChild(postElement);
-    });
+    loop();
+
 </script>
 </html>
