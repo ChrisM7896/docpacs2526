@@ -3,60 +3,81 @@
     <head>
         <meta charset="utf-8">
         <title>Lesson 10 Application Project</title>
-	  <script>
+	<script>
 		// Add event listener after DOM is loaded
 		window.addEventListener('DOMContentLoaded', function() {
-		  const form = document.getElementById('ccForm');
-		  const button = document.getElementById('checkButton');
-		  button.addEventListener('click', function() {
+		const form = document.getElementById('ccForm');
+		const button = document.getElementById('checkButton');
+		button.addEventListener('click', function() {
 			validate(form);
-		  });
+		});
 		});
 
 		// Validate form function
 		function validate(form) {
 		  // Get card type radio buttons
-		  const cardTypes = form.ccard;
-		  let selectedCard = null;
-		  for (let i = 0; i < cardTypes.length; i++) {
+		const cardTypes = form.ccard;
+		let selectedCard = null;
+		for (let i = 0; i < cardTypes.length; i++) {
 			if (cardTypes[i].checked) {
-			  selectedCard = cardTypes[i].value;
-			  break;
+				selectedCard = cardTypes[i].value;
+				break;
 			}
-		  }
+		}
 
 		  // If no card type selected, alert user and stop
-		  if (!selectedCard) {
+			if (!selectedCard) {
 			alert('Please select a credit card type.');
 			return;
-		  }
+			}
 
 		  // Get card number and clean spaces
-		  const cardNumber = form.number.value.replace(/\s+/g, '');
+		const cardNumber = form.number.value.replace(/\s+/g, '');
 		  // Check if card number contains only digits
-		  if (!/^\d+$/.test(cardNumber)) {
+		if (!/^\d+$/.test(cardNumber)) {
 			alert('Card number must contain only digits.');
 			form.number.focus();
 			return;
-		  }
+		}
 
 		  // Validate card number length and starting digit by card type
+		let validNumber = false;
+		switch (selectedCard) {
+			case 'visa':
+				validNumber = (cardNumber.length === 13 || cardNumber.length === 16) && cardNumber.startsWith('4');
+				break;
+			case 'mc':
+				validNumber = cardNumber.length === 16 && /^5[1-5]/.test(cardNumber);
+				break;
+			case 'amex':
+				validNumber = cardNumber.length === 15 && /^(34|37)/.test(cardNumber);
+				break;
+		}
+
 		
+		const expMonth = parseInt(form.expMo.value, 10);
+		const expYear = parseInt(form.expYr.value, 10);
 
-		  
-		  const expMonth = parseInt(form.expMo.value, 10);
-		  const expYear = parseInt(form.expYr.value, 10);
-
-		  const today = new Date();
-		  const expiration = new Date(expYear, expMonth);
+		const today = new Date();
+		const expiration = new Date(expYear, expMonth);
 
 		  // Validate expiration date
-	  
+		if (expiration <= today) {
+			alert('The expiration date must be in the future.');
+			form.expMo.focus();
+			return;
+		}
 
 		  // If all checks pass, acknowledge success
-		  
+		if (validNumber) {
+			alert('The form is valid. Thank you!');
+		} else {
+			alert('The card number is invalid for the selected card type.');
+			form.number.focus();
 		}
-	  </script>
+		
+		}
+	</script>
     </head>
 	
 	<body>
