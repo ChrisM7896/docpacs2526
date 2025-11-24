@@ -107,11 +107,68 @@ app.get('/view', isAuthenticated, (req, res) => {
     });
 });
 
+app.get('/comments/:id', isAuthenticated, (req, res) => {
+    const postId = req.params.id;
+    db.all('SELECT * FROM comments WHERE post_id = ?', [postId], (err, rows) => {
+        db.all('SELECT * FROM posts WHERE id = ?', [postId], (err2, postRows) => {
+            if (err2) {
+                console.error('Error fetching post for comments:', err2);
+            }
+            if (err) {
+                console.error('Error fetching comments:', err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                console.log('Fetched comments:', rows);
+                res.render('comments', { user: req.session.user, comments: rows, post: postRows[0] });
+            }
+        });
+    });
+});
+
+app.get('/addComment/:id', isAuthenticated, (req, res) => {
+    const postId = req.params.id;
+    db.all('SELECT * FROM comments WHERE post_id = ?', [postId], (err, rows) => {
+        db.all('SELECT * FROM posts WHERE id = ?', [postId], (err2, postRows) => {
+            if (err2) {
+                console.error('Error fetching post for comments:', err2);
+            }
+            if (err) {
+                console.error('Error fetching comments:', err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                console.log('Fetched comments:', rows);
+                res.render('addComment', { user: req.session.user, comments: rows, post: postRows[0] });
+            }
+        });
+    });
+});
+
+app.get('/profile/:username', isAuthenticated, (req, res) => {
+    const username = req.params.username;
+    db.all('SELECT * FROM posts WHERE username = ?', [username], (err, rows) => {
+        if (err) {
+            console.error('Error fetching posts:', err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            console.log('Fetched posts:', rows);
+            res.render('profile', { user: req.session.user, profileUser: username, posts: rows });
+        }
+    });
+});
+
 app.post('/submit', isAuthenticated, (req, res) => {
+    const invalidchars = ['<', '>', '/', '\\', '{', '}', '(', ')', ';', '"', "'"];
+
     const jobTitle = req.body.jobTitle;
     const company = req.body.company;
-    const description = req.body.description;
+    var description = req.body.description;
     const username = req.session.user;
+
+    for (let char of description) {
+        if (invalidchars.includes(char)) {
+            description = description.replaceAll(char, '');
+        }
+    }
 
     // INSERT POST INTO DATABASE
 
@@ -122,7 +179,24 @@ app.post('/submit', isAuthenticated, (req, res) => {
                 console.error('Error inserting post:', err);
                 res.status(500).send('Internal Server Error');
             } else {
-                res.redirect('/');
+                res.redirect('/view');
+            }
+        });
+});
+
+app.post('/submitComment', (req, res) => {
+    const postId = req.body.postId;
+    const comment = req.body.comment;
+    const username = req.session.user;
+
+    db.run('INSERT INTO comments (post_id, content, username) VALUES (?, ?, ?)',
+        [postId, comment, username],
+        function (err) {
+            if (err) {
+                console.error('Error inserting comment:', err);
+            } else {
+                console.log(`Comment added to post ${postId} by ${username}.`);
+                res.redirect(`/comments/${postId}`);
             }
         });
 });
@@ -135,25 +209,15 @@ const authSocket = ioClient(AUTH_URL, {
 });
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log(`User: ${socket.id} connected`);
 
     socket.on('disconnect', () => {
-        console.log('Disconnected from auth server');
+        console.log(`User: ${socket.id} disconnected`);
     });
 
     socket.on('setClass', (classData) => {
         console.log('Received class data:', classData);
         // Handle class data as needed
-    });
-
-    socket.on('deletePost', (postId) => {
-        db.run('DELETE FROM posts WHERE id = ?', [postId], function (err) {
-            if (err) {
-                console.error('Error deleting post:', err);
-            } else {
-                console.log(`Post ${postId} deleted successfully.`);
-            }
-        });
     });
 
     socket.on('deletePost', (data) => {
@@ -167,8 +231,19 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('deleteComment', (data) => {
+        const commentId = parseInt(data.commentId);
+        db.run('DELETE FROM comments WHERE id = ?', [commentId], function (err) {
+            if (err) {
+                console.error('Error deleting comment:', err);
+            } else {
+                console.log(`Comment ${commentId} deleted successfully.`);
+            }
+        });
+    });
+
     socket.on('editSubmit', (data) => {
-        const postId = data.postId;
+        const postId = data.id;
         const newTitle = data.title;
         const newCompany = data.company;
         const newDescription = data.description;
@@ -183,7 +258,6 @@ io.on('connection', (socket) => {
                 }
             });
     });
-
 });
 
 // START SERVER

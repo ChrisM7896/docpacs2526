@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indeedbar | View Posts</title>
+    <title>Indeedbar | User Profile</title>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -74,34 +74,32 @@
             margin-left: 77%;
         }
 </style>
+</head>
 <body>
-    <h1 id="mainTitle">Indeedbar.com</h1>
-    <div id="loginInfo">
-        Logged in as <%- user -%>
-        <button onclick="window.location.href='/logout'" id="logoutButton">Logout</button>
-    </div>
-    <h2 id="header">Job Listings:</h2><button id="backButton" onclick="window.location.href='/'">Back</button>
-    <div id="listingsContainer">
-        <!-- Job listings will be dynamically inserted here -->
+    <p>Posts made by: <%- profileUser -%></p>
+    <div id=listingContainer>
+
     </div>
 </body>
 <script>
     function loop() {
         const posts = JSON.parse('<%- JSON.stringify(posts) %>');
         const container = document.getElementById('listingsContainer');
+        const username = window.location.pathname.split('/').pop();
         posts.reverse();
     
         posts.forEach(post => {
             if (!document.getElementById(`post-${post.id}`)) {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
-                postElement.id = `post-${post.id}`;
-                postElement.innerHTML = `
-                    <h3>${post.title}</h3>
-                    <p><strong>Company:</strong> ${post.company}</p>
-                    <p>${post.description}</p>
-                    <p><em>Posted by <b><a href='/profile/${post.username}'>${post.username}</a></b> at: ${new Date(post.created_at).toLocaleString()}</em></p>
-                    `;
+                if (post.username === username) {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('post');
+                    postElement.id = `post-${post.id}`;
+                        postElement.innerHTML = `
+                            <h3>${post.title}</h3>
+                            <p><strong>Company:</strong> ${post.company}</p>
+                            <p>${post.description}</p>
+                            <p><em>Posted by <b>${post.username}</b> at: ${new Date(post.created_at).toLocaleString()}</em></p>
+                            `;
                     if (post.username === `<%- user %>`) {
                         const deleteButton = document.createElement('button');
                         const editButton = document.createElement('button');
@@ -123,11 +121,12 @@
                         postElement.appendChild(deleteButton);
                         postElement.appendChild(editButton);
                     }
-                    
-                    const commentsButton = document.createElement('button');
-                    commentsButton.textContent = 'View Comments';
-                    commentsButton.classList.add('delete_editButtons');
-                    commentsButton.onclick = () => {
+                }
+
+                const commentsButton = document.createElement('button');
+                commentsButton.textContent = 'View Comments';
+                commentsButton.classList.add('delete_editButtons');
+                commentsButton.onclick = () => {
                         window.location.href = `/comments/${post.id}`;
                     };
                     postElement.appendChild(commentsButton);
@@ -143,6 +142,5 @@
     }
 
     loop();
-
 </script>
 </html>

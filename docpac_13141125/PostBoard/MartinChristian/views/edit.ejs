@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indeedbar | Create Post</title>
+    <title>Indeedbar | Edit Post</title>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -93,13 +93,14 @@
             <br>
             <input class="inputFields" type="text" id="description" name="description" placeholder="Job Description" required>
             <br>
-            <button type="submit" id="submitButton">Submit</button><button id="backButton" onclick="window.location.href='/'">Back</button>
+            <button type="submit" id="submitButton">Submit</button><button id="backButton" onclick="window.location.href='/view'">Back</button>
         </form>
 </body>
 <script>
     const posts = JSON.parse('<%- JSON.stringify(posts) %>');
     const container = document.getElementById('listingsContainer');
     const postId = window.location.pathname.split('/').pop();
+    console.log(postId);
     posts.reverse();
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -115,13 +116,14 @@
     formEdit.addEventListener('submit', (e) => {
         e.preventDefault();
         const updatedPost = {
-            id: postId,
+            id: parseInt(postId),
             title: document.getElementById('jobTitle').value,
             company: document.getElementById('company').value,
             description: document.getElementById('description').value
         };
+        console.log(updatedPost);
         socket.emit('editSubmit', updatedPost);
-        window.location.href = '/';
+        window.location.href = '/view';
     });
 
 </script>
