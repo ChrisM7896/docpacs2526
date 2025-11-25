@@ -115,6 +115,7 @@
     </div>
 </body>
 <script>
+    const post = JSON.parse('<%- JSON.stringify(post) %>');
     const postId = window.location.pathname.split('/').pop();
     const commentText = document.getElementById('comment').value;
 

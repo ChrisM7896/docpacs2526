@@ -73,6 +73,12 @@
             color: #888;
             margin-left: 77%;
         }
+
+        .link {
+            color: #ffffff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
 </style>
 <body>
     <h1 id="mainTitle">Indeedbar.com</h1>
@@ -100,7 +106,7 @@
                     <h3>${post.title}</h3>
                     <p><strong>Company:</strong> ${post.company}</p>
                     <p>${post.description}</p>
-                    <p><em>Posted by <b><a href='/profile/${post.username}'>${post.username}</a></b> at: ${new Date(post.created_at).toLocaleString()}</em></p>
+                    <p><em>Posted by <b><a class='link' href='/profile/${post.username}'>${post.username}</a></b> at: ${new Date(post.created_at).toLocaleString()}</em></p>
                     `;
                     if (post.username === `<%- user %>`) {
                         const deleteButton = document.createElement('button');

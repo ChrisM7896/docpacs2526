@@ -49,6 +49,11 @@
         background-color: #333;
         color: #ffffff;
     }
+    .link {
+        color: #ffffff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 </style>
 
 <body>
@@ -57,7 +62,7 @@
         Logged in as <%- user -%>
         <button onclick="window.location.href='/logout'" id="logoutButton">Logout</button>
     </div>
-    <h2>Welcome, <%- user -%>!</h2>
+    <h2>Welcome, <a class='link' href='/profile/<%- user -%>'><%- user -%></a></h2>
     <button class="buttons" onclick="window.location.href='/create'">Create Post</button>
     <button class="buttons" onclick="window.location.href='/view'">View Posts</button>
 </body>

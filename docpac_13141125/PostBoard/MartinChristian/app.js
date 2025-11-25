@@ -26,7 +26,7 @@ const db = new sqlite3.Database('./db/app.db', (err) => {
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
 const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
+const THIS_URL = process.env.THIS_URL || `http://172.16.3.172:${PORT}/login`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
 // MIDDLEWARE
@@ -96,7 +96,7 @@ app.get('/edit/:id', isAuthenticated, (req, res) => {
 });
 
 app.get('/view', isAuthenticated, (req, res) => {
-    db.all('SELECT * FROM posts WHERE username = ?', [req.session.user], (err, rows) => {
+    db.all('SELECT * FROM posts', (err, rows) => {
         if (err) {
             console.error('Error fetching posts:', err);
             res.status(500).send('Internal Server Error');
