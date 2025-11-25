@@ -19,9 +19,10 @@ export default (sqlite3) => {
 
         db.run(`CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
+            poster TEXT NOT NULL,
+            title TEXT NOT NULL,
             content TEXT NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES users(id)
+            time TEXT NOT NULL
         )`, (err) => {
             if (err) {
                 console.error('Error creating table:', err.message);
@@ -32,11 +33,9 @@ export default (sqlite3) => {
 
         db.run(`CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id INTEGER,
-            user_id INTEGER,
-            comment TEXT NOT NULL,
-            FOREIGN KEY(post_id) REFERENCES posts(id),
-            FOREIGN KEY(user_id) REFERENCES users(id)
+            commenter TEXT NOT NULL,
+            content TEXT NOT NULL,
+            time TEXT NOT NULL
         )`, (err) => {
             if (err) {
                 console.error('Error creating table:', err.message);
@@ -46,34 +45,91 @@ export default (sqlite3) => {
         });
     });
 
-    async function userExists(username) {
-        const query = 'SELECT COUNT(*) AS count FROM users WHERE username = ?';
-        const [result] = await db.execute(query, [username]);
-        return result.count > 0;
-    }
-
-    async function addUser(username) {
-        const query = 'INSERT INTO users (username) VALUES (?)';
-        await db.execute(query, [username]);
+    function updateUser(username) {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `INSERT OR IGNORE INTO users (username) VALUES (?)`
+                , [username], function (err) {
+                    if (err) {
+                        console.error('Error updating user:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(username);
+                    }
+                });
+        });
     }
 
     function getJobPosts() {
         return new Promise((resolve, reject) => {
-            db.all(`SELECT * FROM posts`, (err, rows) => {
-                if (err) {
-                    console.error('Error fetching job posts:', err.message);
-                    reject(err);
-                } else {
-                    resolve(rows);
-                }
-            });
+            db.all(
+                `SELECT * FROM posts ORDER BY time`
+                , (err, rows) => {
+                    if (err) {
+                        console.error('Error fetching job posts:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
         });
     };
 
+    function createJobPost(poster, title, content, time) {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `INSERT INTO posts (poster, title, content, time) VALUES (?, ?, ?, ?)`,
+                [poster, title, content, time],
+                function (err) {
+                    if (err) {
+                        console.error('Error creating job post:', err.message);
+                        reject(err);
+                    } else {
+                        resolve({ id: this.lastID });
+                    }
+                }
+            );
+        });
+    }
+
+    function getComments() {
+        return new Promise((resolve, reject) => {
+            db.all(
+                `SELECT * FROM comments ORDER BY id`
+                , (err, rows) => {
+                    if (err) {
+                        console.error('Error fetching comments:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+        });
+    }
+
+    function createComment(commenter, content, time) {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `INSERT INTO comments (commenter, content, time) VALUES (?, ?, ?)`,
+                [commenter, content, time],
+                function (err) {
+                    if (err) {
+                        console.error('Error creating comment:', err.message);
+                        reject(err);
+                    } else {
+                        resolve({ id: this.lastID });
+                    }
+                }
+            );
+        });
+    }
+
     return {
         db,
-        userExists,
-        addUser,
-        getJobPosts
+        updateUser,
+        getJobPosts,
+        createJobPost,
+        getComments,
+        createComment
     };
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import NewJobPostForm from './components/NewJobPostForm';
 import JobPostList from './components/JobPostList';
+import NewJobPostForm from './components/NewJobPostForm';
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -38,7 +38,7 @@ function App() {
       <div>
         <button onClick={login}>Formbar Oauth</button>
         <div id="userDisplay"></div>
-        <JobPostList />
+        <JobPostList username={username}/>
         {username && <NewJobPostForm />}
       </div>
     </>

@@ -24,12 +24,15 @@ app.get('/', (_, res) => {
     res.send('Hello from the server! Use API routes to view json data.');
 });
 
-app.get('/api/user', (req, res) => {
+app.get('/api/user', async (req, res) => {
     if (req.session.user) {
+        const username = await db.updateUser(req.session.user);
+        req.session.user = username;
         res.json({
             authenticated: true,
-            username: req.session.user
+            username: username
         });
+
     } else {
         res.json({
             authenticated: false
@@ -44,6 +47,51 @@ app.get('/api/job-posts', async (_, res) => {
     } catch (error) {
         console.error('Error fetching job posts:', error);
         res.status(500).json({ error: 'Failed to fetch job posts' });
+    }
+});
+
+app.post('/api/job-posts', express.json(), async (req, res) => {
+    try {
+        const poster = req.session.user;
+        const title = req.body.title;
+        const content = req.body.description;
+        const time = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
+
+        console.log('Creating job post:', { poster, title, content, time });
+
+        const newJobPost = await db.createJobPost(poster, title, content, time);
+
+        res.status(201).json(newJobPost.poster);
+    } catch (error) {
+        console.error('Error creating job post:', error);
+        res.status(500).json({ error: 'Failed to create job post' });
+    }
+});
+
+app.get('/api/comments', async (_, res) => {
+    try {
+        const comments = await db.getComments();
+        res.json(comments);
+    } catch (error) {
+        console.error('Error fetching job posts:', error);
+        res.status(500).json({ error: 'Failed to fetch job posts' });
+    }
+});
+
+app.post('/api/comments', express.json(), async (req, res) => {
+    try {
+        const commenter = req.session.user;
+        const content = req.body.comment;
+        const time = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
+
+        console.log('Creating comment:', {commenter, content, time });
+
+        const newComment = await db.createComment(commenter, content, time);
+
+        res.status(201).json(newComment.commenter);
+    } catch (error) {
+        console.error('Error creating comment:', error);
+        res.status(500).json({ error: 'Failed to create comment' });
     }
 });
 
