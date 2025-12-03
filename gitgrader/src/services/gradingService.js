@@ -197,7 +197,7 @@ class GradingService {
    * Criterion 1: Issue Assigned (10 points)
    * For repos starting with "docpacs", assignment is not required
    */
-  async gradeIssueAssigned(issues, repo = null) {
+  async gradeIssueAssigned(issues, repo = null, scannedRepos = null) {
     // Check if repo starts with "docpacs" (for single repo grading)
     const isDocpacsRepo = repo && repo.toLowerCase().startsWith('docpacs');
     
@@ -209,8 +209,14 @@ class GradingService {
       return repoName && repoName.toLowerCase().startsWith('docpacs');
     });
     
+    // Check if any scanned repo is a docpacs repo (for multi-repo grading when no issues found)
+    const hasDocpacsScannedRepo = scannedRepos && scannedRepos.some(repoFull => {
+      const repoName = repoFull.includes('/') ? repoFull.split('/')[1] : repoFull;
+      return repoName && repoName.toLowerCase().startsWith('docpacs');
+    });
+    
     // Auto-pass if repo starts with "docpacs"
-    if (isDocpacsRepo || hasDocpacsIssue) {
+    if (isDocpacsRepo || hasDocpacsIssue || hasDocpacsScannedRepo) {
       return {
         name: 'Issue Assigned',
         points: this.rubric.issueAssigned,
@@ -463,14 +469,36 @@ class GradingService {
       ? Math.round((passedCount / issues.length) * this.rubric.issueCompleted)
       : 0;
 
+    // Build detailed feedback with AI explanations
+    let feedback = '';
+    if (passed) {
+      feedback = `✓ AI verified that ${passedCount} of ${issues.length} issue(s) were properly completed`;
+      // Add details for failed issues even when some passed
+      const failedAnalyses = analyses.filter(a => !a.passed);
+      if (failedAnalyses.length > 0) {
+        feedback += `\n\n✗ ${failedAnalyses.length} issue(s) did not pass AI verification:`;
+        failedAnalyses.forEach((analysis, idx) => {
+          feedback += `\n  ${idx + 1}. Issue #${analysis.issue}${analysis.pr ? ` (PR #${analysis.pr})` : ''}: ${analysis.explanation || 'No explanation provided'}`;
+        });
+      }
+    } else {
+      // When all failed, provide detailed feedback for each
+      if (analyses.length === 0) {
+        feedback = '✗ No issues or PRs found for AI verification';
+      } else {
+        feedback = `✗ AI could not verify that any of ${issues.length} issue(s) were properly completed:\n`;
+        analyses.forEach((analysis, idx) => {
+          feedback += `\n  ${idx + 1}. Issue #${analysis.issue}${analysis.pr ? ` (PR #${analysis.pr})` : ''}: ${analysis.explanation || 'No explanation provided'}`;
+        });
+      }
+    }
+
     return {
       name: 'Issue Completed (AI Verified)',
       points,
       maxPoints: this.rubric.issueCompleted,
       passed,
-      feedback: passed
-        ? `✓ AI verified that ${passedCount} of ${issues.length} issue(s) were properly completed`
-        : '✗ AI could not verify that any issues were properly completed',
+      feedback,
       details: {
         analyses,
         passedCount,
@@ -645,6 +673,11 @@ class GradingService {
     };
 
     try {
+      // Get list of all owned repos first (needed for tracking scanned repos)
+      const allRepos = await this.githubService.getUserRepositories();
+      const reposScanned = allRepos.map(r => `${r.owner.login}/${r.name}`);
+      result.repositories = reposScanned;
+      
       // Get all issues across repos
       console.log(`\nFetching issues assigned to ${username} across all repos...`);
       const issues = await this.githubService.getUserIssuesAcrossRepos(username);
@@ -656,11 +689,15 @@ class GradingService {
         });
       }
 
-      // Track which repos were scanned
-      const reposScanned = [...new Set(issues.map(i => i.repository))];
-      result.repositories = reposScanned;
+      // Check if any repo is a docpacs repo (issue assignment waived)
+      const hasDocpacsRepo = reposScanned.some(repo => {
+        const repoName = repo.includes('/') ? repo.split('/')[1] : repo;
+        return repoName && repoName.toLowerCase().startsWith('docpacs');
+      });
 
-      if (issues.length === 0) {
+      // For docpacs repos, continue grading even if no issues found
+      // The system will still check for PRs and commits
+      if (issues.length === 0 && !hasDocpacsRepo) {
         console.log(`   ✗ No issues found for ${username}`);
         result.feedback.push('No issues assigned to this student within the specified date range across any of your repositories.');
         
@@ -670,6 +707,11 @@ class GradingService {
         console.log(`${'='.repeat(60)}\n`);
         
         return result;
+      }
+
+      if (issues.length === 0 && hasDocpacsRepo) {
+        console.log(`   ⚠️  No issues found, but docpacs repos detected - continuing grading (issue assignment waived)`);
+        result.feedback.push('No issues assigned, but continuing grading for docpacs repositories (issue assignment not required).');
       }
 
       result.issues = issues.map(i => ({
@@ -682,7 +724,7 @@ class GradingService {
 
       // Grade each criterion (project board workflow excluded for individual grading)
       console.log(`\n[1/5] Grading: Issue Assigned...`);
-      result.criteria.issueAssigned = await this.gradeIssueAssigned(issues);
+      result.criteria.issueAssigned = await this.gradeIssueAssigned(issues, null, reposScanned);
       console.log(`   → ${result.criteria.issueAssigned.points}/${result.criteria.issueAssigned.maxPoints} points`);
       
       console.log(`\n[2/5] Grading: Commits Made...`);
@@ -927,6 +969,16 @@ class GradingService {
   }
 
   /**
+   * Extract issue numbers from PR body/description
+   */
+  extractIssueNumbers(prBody) {
+    if (!prBody) return [];
+    const issuePattern = /(?:closes?|fixes?|resolves?|completes?)\s*#(\d+)/gi;
+    const matches = prBody.matchAll(issuePattern);
+    return Array.from(matches, m => parseInt(m[1]));
+  }
+
+  /**
    * Grade issue completion across multiple repos
    */
   async gradeIssueCompletedAcrossRepos(issues, username) {
@@ -939,6 +991,103 @@ class GradingService {
     const userPRs = await this.githubService.getUserPullRequestsAcrossRepos(username);
     console.log(`      Found ${userPRs.length} PR(s) by ${username} across all repos`);
 
+    // If no issues assigned but PRs exist, analyze PRs directly
+    if (issues.length === 0 && userPRs.length > 0) {
+      console.log(`   ⚠️  No assigned issues found, but ${userPRs.length} PR(s) exist - analyzing PRs directly`);
+      
+      for (const pr of userPRs) {
+        console.log(`\n   🔍 Analyzing ${pr.repository} PR #${pr.number}: ${pr.title}`);
+        
+        // Get linked issues from PR (using GitHub API to find all linked issues)
+        const linkedIssues = await this.githubService.getPullRequestLinkedIssues(
+          pr.repoOwner,
+          pr.repoName,
+          pr.number
+        );
+        console.log(`      Found ${linkedIssues.length} linked issue(s) via GitHub API: ${linkedIssues.map(i => `#${i.number}`).join(', ')}`);
+        
+        let issueTitle = 'No issue description available';
+        let issueBody = '';
+        let issueNumber = null;
+        
+        // Use the first linked issue if available
+        if (linkedIssues.length > 0) {
+          const issue = linkedIssues[0];
+          issueNumber = issue.number;
+          issueTitle = issue.title;
+          issueBody = issue.body || '';
+          console.log(`      ✓ Using linked issue #${issueNumber}: "${issueTitle}"`);
+        } else {
+          // Fallback: Try to extract issue numbers from PR body
+          const issueNumbers = this.extractIssueNumbers(pr.body || '');
+          console.log(`      No linked issues found via API, checking PR body: Found ${issueNumbers.length} reference(s): ${issueNumbers.map(n => `#${n}`).join(', ')}`);
+          
+          if (issueNumbers.length > 0) {
+            issueNumber = issueNumbers[0];
+            try {
+              const { data: issue } = await this.githubService.octokit.issues.get({
+                owner: pr.repoOwner,
+                repo: pr.repoName,
+                issue_number: issueNumber,
+              });
+              issueTitle = issue.title;
+              issueBody = issue.body || '';
+              console.log(`      ✓ Fetched issue #${issueNumber} from PR body: "${issueTitle}"`);
+            } catch (error) {
+              console.log(`      ⚠️  Could not fetch issue #${issueNumber}: ${error.message}`);
+              issueNumber = null;
+            }
+          }
+        }
+        
+        // Analyze the PR
+        const diff = await this.githubService.getPullRequestDiffForRepo(
+          pr.repoOwner,
+          pr.repoName,
+          pr.number
+        );
+        console.log(`      Diff size: ${diff.length} characters`);
+
+        if (diff.length === 0) {
+          console.log(`      ⚠️  Warning: Diff is empty - cannot perform AI analysis!`);
+          analyses.push({
+            issue: issueNumber || 'unknown',
+            repository: pr.repository,
+            pr: pr.number,
+            passed: false,
+            confidence: 0,
+            explanation: 'PR diff is empty - no code changes to analyze',
+          });
+          continue;
+        }
+
+        console.log(`      🔍 Sending to AI for code analysis...`);
+        const analysis = await this.aiService.analyzeIssueCompletion(
+          issueTitle,
+          issueBody,
+          pr.title,
+          pr.body || '',
+          diff
+        );
+
+        console.log(`      AI Result: ${analysis.passed ? '✓ PASSED' : '✗ FAILED'} (confidence: ${Math.round(analysis.confidence * 100)}%)`);
+
+        analyses.push({
+          issue: issueNumber || 'unknown',
+          repository: pr.repository,
+          pr: pr.number,
+          passed: analysis.passed,
+          confidence: analysis.confidence,
+          explanation: analysis.explanation,
+        });
+
+        if (analysis.passed) {
+          passedCount++;
+        }
+      }
+    }
+
+    // Process assigned issues (if any)
     for (const issue of issues) {
       console.log(`\n   🔍 Checking ${issue.repository} Issue #${issue.number}: ${issue.title}`);
       
@@ -1022,24 +1171,56 @@ class GradingService {
       }
     }
 
-    // Scale points proportionally based on percentage of issues that passed
+    // Calculate points based on analyses (may be from issues or PRs)
+    const totalAnalyzed = analyses.length;
     const passed = passedCount > 0;
-    const points = issues.length > 0 
-      ? Math.round((passedCount / issues.length) * this.rubric.issueCompleted)
+    const points = totalAnalyzed > 0 
+      ? Math.round((passedCount / totalAnalyzed) * this.rubric.issueCompleted)
       : 0;
+
+    // Build detailed feedback with AI explanations
+    let feedback = '';
+    if (passed) {
+      const analyzedType = issues.length > 0 ? 'issue(s)' : 'PR(s)';
+      const totalCount = issues.length > 0 ? issues.length : totalAnalyzed;
+      feedback = `✓ AI verified that ${passedCount} of ${totalCount} ${analyzedType} were properly completed`;
+      // Add details for failed analyses even when some passed
+      const failedAnalyses = analyses.filter(a => !a.passed);
+      if (failedAnalyses.length > 0) {
+        feedback += `\n\n✗ ${failedAnalyses.length} ${analyzedType} did not pass AI verification:`;
+        failedAnalyses.forEach((analysis, idx) => {
+          const repoInfo = analysis.repository ? `${analysis.repository} ` : '';
+          const issueInfo = analysis.issue && analysis.issue !== 'unknown' ? `Issue #${analysis.issue} ` : '';
+          feedback += `\n  ${idx + 1}. ${repoInfo}${issueInfo}${analysis.pr ? `PR #${analysis.pr}` : ''}: ${analysis.explanation || 'No explanation provided'}`;
+        });
+      }
+    } else {
+      // When all failed, provide detailed feedback for each
+      if (analyses.length === 0) {
+        feedback = '✗ No issues or PRs found for AI verification';
+      } else {
+        const analyzedType = issues.length > 0 ? 'issue(s)' : 'PR(s)';
+        const totalCount = issues.length > 0 ? issues.length : totalAnalyzed;
+        feedback = `✗ AI could not verify that any of ${totalCount} ${analyzedType} were properly completed:\n`;
+        analyses.forEach((analysis, idx) => {
+          const repoInfo = analysis.repository ? `${analysis.repository} ` : '';
+          const issueInfo = analysis.issue && analysis.issue !== 'unknown' ? `Issue #${analysis.issue} ` : '';
+          feedback += `\n  ${idx + 1}. ${repoInfo}${issueInfo}${analysis.pr ? `PR #${analysis.pr}` : ''}: ${analysis.explanation || 'No explanation provided'}`;
+        });
+      }
+    }
 
     return {
       name: 'Issue Completed (AI Verified)',
       points,
       maxPoints: this.rubric.issueCompleted,
       passed,
-      feedback: passed
-        ? `✓ AI verified that ${passedCount} of ${issues.length} issue(s) were properly completed`
-        : '✗ AI could not verify that any issues were properly completed',
+      feedback,
       details: {
         analyses,
         passedCount,
         totalIssues: issues.length,
+        totalAnalyzed: analyses.length,
       },
     };
   }
