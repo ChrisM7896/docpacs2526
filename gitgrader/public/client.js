@@ -377,7 +377,7 @@ async function deleteClass(id) {
 
 function initTeamModal() {
     const addTeamBtn = document.getElementById('add-team-btn');
-    const closeBtn = document.querySelector('.close');
+    const closeBtn = teamModal.querySelector('.close');
     const cancelBtn = document.getElementById('cancel-team-btn');
 
     addTeamBtn.addEventListener('click', () => openTeamModal());
