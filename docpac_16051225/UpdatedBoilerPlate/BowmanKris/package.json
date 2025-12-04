@@ -1,0 +1,15 @@
+{
+    "name": "updatedboilerplate",
+    "description": "copy for all new projects",
+    "main": "app.js",
+    "author": "kris26658",
+    "license": "The Unlicense",
+    "dependencies": {
+        "dotenv": "^17.2.3",
+        "ejs": "^3.1.10",
+        "express": "^5.2.1",
+        "express-session": "^1.18.2",
+        "socket.io": "^4.8.1",
+        "sqlite3": "^5.1.7"
+    }
+}

@@ -1,0 +1,28 @@
+# Installation Guide
+## Modules
+To install the project's required dependencies, paste the following command in the terminal:
+> npm install express ejs sqlite3 express-session socket.io dotenv
+This should create package.json and package-lock.json files. Edit the package.json file to include the corret name, description, main, author, and license.
+It should look something like this:
+> {
+>    "name": "your_project_name",
+>    "description": "your_description",
+>    "main": "app.js",
+>    "author": "your_name",
+>    "license": "your_license" ,
+>    "dependencies": {
+>        "dotenv": "^17.2.3",
+>       "ejs": "^3.1.10",
+>       "express": "^5.2.1",
+>        "express-session": "^1.18.2",
+>        "socket.io": "^4.8.1",
+>       "sqlite3": "^5.1.7"
+>    }
+> }
+
+## Templates
+### Environment Variables
+Copy the .env_template file. Rename it to .env. Configure your port, session secret, formbar API key and redirect path, and your data directories.
+
+### gitignore
+Copy the .gitignore_template file. Rename it to .gitignore. Configure your data directories, and add any additional files you'd like to ignore.
