@@ -25,6 +25,7 @@
 		  const keepCookie = confirm("A cookie will be set. Delete cookie?") ? "delete" : "keep";
 
 		  // Expiration date for cookie: June 8, 2038 23:59:59 GMT
+		  const expiresDate = new Date(Date.UTC(2025, 5, 8, 23, 59, 59)).toUTCString();
 
 
 

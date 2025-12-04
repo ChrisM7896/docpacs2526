@@ -19,6 +19,14 @@
 		  }
 
 		  // Check if the browser supports plugins and list them if available
+		  if (navigator.plugins && navigator.plugins.length > 0) {
+			console.log('Pluins supported. Installed plugins:');
+			for (let i = 0; i < navigator.plugins.length; i++) {
+			console.log(navigator.plugins[i].name);
+			}
+		} else {
+			console.log('No plugins supported or no plugins installed.');
+		}
 
 		</script>
 

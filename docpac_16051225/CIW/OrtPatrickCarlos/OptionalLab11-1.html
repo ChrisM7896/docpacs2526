@@ -50,6 +50,12 @@
 				document.getElementById("welcome").textContent = "Hello, visitor!";
 			  }
 			});
+
+			document.getElementById('clearCookiesBtn').addEventListener('click', () => {
+				setCookie('userName', '', -1);
+				setCookie('favColor', '', -1);
+				alert('Cookies cleared! Reload the page to enter new information.');
+			});
 		  </script>
 		  
 	</body>
