@@ -1,8 +1,22 @@
 {
   "dependencies": {
+    "connect-sqlite3": "^0.9.16",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
     "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2",
     "node": "^20.19.6",
+    "nodemon": "^3.1.11",
     "socket-io": "^1.0.0",
-    "sqlite3": "^5.1.7"
-  }
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.19.0"
+  },
+  "scripts": {
+  "init-database": "node scripts/initDatabase.js",
+  "dev": "nodemon app.js",
+  "run": "node app.js"
+}
+
 }
