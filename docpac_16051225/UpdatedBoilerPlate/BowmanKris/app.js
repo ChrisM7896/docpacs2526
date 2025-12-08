@@ -6,6 +6,14 @@ const jwt = require('jsonwebtoken');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
 const path = require('path');
+
+//import custom middleware and route handlers
+const isAuthenticated = require('./middleware/isAuthenticated');
+const homeRoute = require('./routes/home');
+const loginRoute = require('./routes/login');
+const logoutRoute = require('./routes/logout');
+
+//load environment variables from .env file
 require('dotenv').config();
 
 // retrieve environment variables
@@ -32,19 +40,25 @@ app.set('views', path.join(__dirname, 'views'));
 
 //set up session management
 app.use(session({
+    //store: new SQLiteStore({ dir: DATABASE_DIR }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false }
 }));
 
-//authentication middleware
-const { isAuthenticated } = require('./middleware/isAuthenticated');
+// Apply middleware globally
+app.use((req, res, next) => {
+    console.log('Session data:', req.session); // Debugging log
+    next();
+});
 
 //route handlers
-const loginRoute = require('./routes/login');
+homeRoute(app, isAuthenticated);
+
 loginRoute(app, jwt, FORMBAR_AUTH_URL, REDIRECT_URL);
-const homeRoute = require('./routes/home');
-homeRoute(app, isAuthenticated, FORMBAR_API_KEY, FORMBAR_AUTH_URL);
+
+logoutRoute(app);
 
 //api route
 const usersRoute = require('./routes/api/users');

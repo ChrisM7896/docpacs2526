@@ -9,7 +9,8 @@
 
 <body>
     <%- include('partials/header.ejs') %>
-        <h1>Welcome, <%= user.email %>!</h1>
+        <h1>Welcome, <%= user %>!</h1>
+        <a href="/logout">Logout</a>
     <%- include('partials/footer.ejs') %>
 </body>
 
