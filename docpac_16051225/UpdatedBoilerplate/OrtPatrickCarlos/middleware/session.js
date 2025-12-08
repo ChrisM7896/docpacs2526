@@ -2,7 +2,7 @@ const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const path = require('path');
 const logger = require('../modules/logger');
-const dbPath = path.resolve(__dirname, '../database/sessions.db');
+const dbPath = path.resolve(__dirname, '../database/data.sqlite');
 
 // Configure session middleware
 const sessionMiddleware = session({
@@ -10,7 +10,7 @@ const sessionMiddleware = session({
         db: dbPath,
         table: 'sessions'
     }),
-    secret: SESSION_SECRET, // Replace with your own secret
+    secret: process.env.SESSION_SECRET, // Replace with your own secret
     resave: false,
     saveUninitialized: false,
     cookie: {

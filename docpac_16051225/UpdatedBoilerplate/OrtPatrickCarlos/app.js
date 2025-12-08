@@ -6,6 +6,9 @@ const sessionMiddleware = require('./middleware/session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 let db;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 // Middleware to parse JSON requests
 app.use(express.json());
 // Use session middleware
@@ -26,16 +29,16 @@ initializeDatabase()
 
 // Routes
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+    res.render('home', { user: req.session.user  });
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    res.render('login');
 });
 
 app.get('/profile', (req, res) => {
     if (req.session && req.session.user) {
-        res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+        res.render('profile', { user: req.session.user });
     } else {
         res.redirect('/login');
     }

@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const logger = require('../modules/logger');
 const fs = require('fs');
-const dbPath = path.resolve(__dirname, '../database/app.db');
+const dbPath = path.resolve(__dirname, '../database/database.sqlite');
 const initSqlPath = path.resolve(__dirname, 'init.sql');
 
 function initializeDatabase() {

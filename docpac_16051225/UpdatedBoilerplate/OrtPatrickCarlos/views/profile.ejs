@@ -1,11 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<%- include('partials/header') %>
+
+<main>
+    <h1>Profile</h1>
     
-</body>
-</html>
+    <!-- User Information -->
+    <section class="user-info">
+        <h2>Your Information</h2>
+        <p>Username: <%= user.username %></p>
+        <!-- Other user details -->
+    </section>
+
+    <!-- File Upload with Profile Picture Option -->
+    <section class="file-upload">
+        <h2>Upload File</h2>
+        <form action="/profile/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="upload" required>
+            <label>
+                <input type="checkbox" name="setAsProfilePicture"> Set as profile picture (if image)
+            </label>
+            <button type="submit">Upload</button>
+        </form>
+    </section>
+    
+    <!-- Previous Uploads -->
+    <section class="uploads">
+        <h2>Your Files</h2>
+        <!-- List of uploaded files -->
+    </section>
+</main>
+
+<%- include('partials/footer') %>

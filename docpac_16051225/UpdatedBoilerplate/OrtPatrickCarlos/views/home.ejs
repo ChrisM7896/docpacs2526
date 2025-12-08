@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>HELLO </h1>
-</body>
-</html>
-<% if (user) { %>
-    <p>Welcome, <%= user.username %>!</p>
-    <a href="/profile">Go to your profile</a>
-<% } else { %>
-    <p>Welcome, guest!</p>
-    <a href="/login">Log in</a>
-<% } %>
+<%- include('partials/header') %>
+
+<main>
+    <h1>Welcome</h1>
+    
+    <% if (user) { %>
+        <p>Welcome back, <%= user.username %>!</p>
+        <a href="/profile">Go to your profile</a>
+    <% } else { %>
+        <p>Welcome, guest!</p>
+        <a href="/login">Log in to get started</a>
+    <% } %>
+</main>
+
+<%- include('partials/footer') %>
