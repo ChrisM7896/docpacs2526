@@ -4,6 +4,10 @@
     "main": "app.js",
     "author": "kris26658",
     "license": "The Unlicense",
+    "scripts": {
+        "init-database": "node scripts/initDatabase.js",
+        "run": "node app.js"
+    },
     "dependencies": {
         "connect-sqlite3": "^0.9.16",
         "dotenv": "^17.2.3",

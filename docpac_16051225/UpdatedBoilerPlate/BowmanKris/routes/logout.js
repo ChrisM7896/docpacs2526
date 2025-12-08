@@ -7,10 +7,10 @@ function logout(app) {
                 } else {
                     console.log('Session destroyed successfully.');
                 }
-                res.redirect('/login'); // Redirect to login page after logout
+                res.render('login');
             });
         } else {
-            res.redirect('/login');
+            res.render('login');
         }
     });
 }

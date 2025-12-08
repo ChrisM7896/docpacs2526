@@ -1,9 +1,16 @@
-function homeRoute(app, isAuthenticated) {
-    app.get('/', isAuthenticated, (req, res) => {
+// import custom middleware
+const isAuthenticated = require('../middleware/isAuthenticated');
+
+function homeRoute(app) {
+    app.get('/', (req, res) => {
         try {
-            res.render('home', {
-                user: req.session.user
-            });
+            if (!req.session.user) {
+                res.render('login');
+            } else {
+                res.render('home', {
+                    user: req.session.user
+                });
+            };
         }
         catch (error) {
             res.send(error.message)

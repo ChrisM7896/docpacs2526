@@ -1,4 +1,8 @@
-function usersRoute(app, FORMBAR_API_KEY, FORMBAR_AUTH_URL) {
+//retrive environment variables
+const FORMBAR_API_KEY = process.env.FORMBAR_API_KEY;
+const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
+
+function usersRoute(app) {
     app.get('/api/users', (req, res) => {
         try {
             if (req.session.user) {
