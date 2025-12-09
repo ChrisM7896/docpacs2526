@@ -1,140 +1,200 @@
+// imports
+require('dotenv').config();
 const express = require('express');
-const ws = require('ws');
-const http = require('http');
 const app = express();
-const server = http.createServer(app);
-const wss = new ws.WebSocketServer({ server });
+const jwt = require('jsonwebtoken');
+const session = require('express-session');
+const { io } = require('socket.io-client');
+const sqlite3 = require('sqlite3').verbose();
+const SQLiteStore = require('connect-sqlite3')(session);
 
+// database setup
+const db = new sqlite3.Database('./db/database.db', (err) => {
+  if (!err) console.log('Connected to SQLite database');
+});
+
+// constants 
+const port = process.env.PORT || 3000; 
+const SESSION_SECRET = process.env.SESSION_SECRET || "eternity benjamin"; 
+const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420';
+const THIS_URL = process.env.THIS_URL || ' http://localhost:${port}'; 
+const API_KEY = process.env.API_KEY
+
+// middleware
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.render('index');
+app.use(session({
+  store: new SQLiteStore({ db: 'sessions.db', dir: './db' }),
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+function isAuthenticated(req, res, next) {
+  if (req.session.user) next();
+  else res.redirect('/login');
+}
+
+// routes
+app.get('/', isAuthenticated, (req, res) => {
+  res.render('index', { user: req.session.user });
 });
 
-app.get('/game', (req, res) => {
-  res.render('game', { user: req.query.user }); 
+app.get('/login', (req, res) => {
+  if (req.query.token) {
+    let tokenData = jwt.decode(req.query.token);
+    req.session.token = tokenData;
+    req.session.user = tokenData.displayName;
+
+    db.run(
+      'INSERT OR IGNORE INTO users (username) VALUES (?)',
+      [tokenData.displayName]
+    );
+
+    return res.redirect('/');
+  } else {
+    res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
+  }
 });
 
-app.get('/signup', (req, res) => {
-  res.render('signup');
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login');
 });
 
-app.get('/profile', (req, res) => { 
-  res.render('profile');
-});
+app.get('/posts', isAuthenticated, (req, res) => {
+  const postsQuery = `
+      SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      ORDER BY posts.created_at DESC
+    `;
 
-server.listen(3000, () => {
-  console.log(`Server running at http://localhost:3000`);
-});
+  db.all(postsQuery, [], (err, posts) => {
+    if (err) return res.sendStatus(500);
 
-let waitingPlayer = null;
+    // gets comments for posts
+    db.all(`
+            SELECT comments.*, users.username
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            ORDER BY comments.created_at ASC
+        `, [], (err, comments) => {
+      if (err) return res.sendStatus(500);
 
-wss.on('connection', (socket) => {
-  console.log('player joined');
+      // assigns comments to posts
+      posts.forEach(post => {
+        post.comments = comments.filter(c => c.post_id === post.id);
+      });
 
-  // send and receive moves
-  socket.on('message', (data) => {
-    const msg = JSON.parse(data);
-
-    // when user sends their name
-    if (msg.type === 'setName') {
-      socket.name = msg.name;
-
-      // // this connects to the waiting player or makes current player wait
-      if (waitingPlayer) {
-        const room = { p1: waitingPlayer, p2: socket };
-        waitingPlayer.room = room;
-        socket.room = room;
-
-        const p1Name = waitingPlayer.name || 'Player 1';
-        const p2Name = socket.name || 'Player 2';
-
-        waitingPlayer.send(JSON.stringify({ type: 'message', text: `You're now playing against ${p2Name}!` }));
-        socket.send(JSON.stringify({ type: 'message', text: `You're now playing against ${p1Name}!` }));
-
-        waitingPlayer = null;
-      } else {
-        waitingPlayer = socket;
-        socket.send(JSON.stringify({ type: 'message', text: 'Waiting for another player...' }));
-      }
-      return;
-    }
-
-    // handle moves
-    if (msg.type === 'move' && socket.room) {
-      socket.move = msg.move;
-      checkMoves(socket.room);
-    }
-  });
-
-  // player disconnects
-  socket.on('close', () => {
-    console.log('player left');
-    if (waitingPlayer === socket) waitingPlayer = null;
-    if (socket.room) {
-      const opp = socket.room.p1 === socket ? socket.room.p2 : socket.room.p1;
-      if (opp.readyState === ws.OPEN) {
-        opp.send(JSON.stringify({ type: 'message', text: `${socket.name || 'Player'} left. Waiting for a new player...` }));
-
-        // reset
-        opp.room = null;
-        opp.move = null;
-        waitingPlayer = opp;
-      }
-    }
+      res.render('posts', { user: req.session.user, posts });
+    });
   });
 });
 
+app.post('/create', isAuthenticated, (req, res) => {
+  const { title, content } = req.body;
+  const username = req.session.user;
 
-// seeing if both players made moves
-function checkMoves(room) {
-  const { p1, p2 } = room;
-  if (!p1.move || !p2.move) return;
+  // get user id
+  db.get('SELECT id FROM users WHERE username = ?', [username], (err, user) => {
+    if (!user) return res.status(400).send('User not found');
 
-  const result = getResult(p1.move, p2.move);
-  const p1Name = p1.name || 'Player 1';
-  const p2Name = p2.name || 'Player 2';
+    // saves posts
+    db.run(
+      'INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)',
+      [user.id, title, content],
+      function (err) {
+        if (!err) {
+          console.log(`post "${title}" created by ${username}`);
+        }
+        res.redirect('/posts');
+      }
+    );
+  });
+});
 
-  // the results from each player's pov
-  const povP1 = result === "draw" ? "draw" : (result === "p1" ? "win" : "lose");
-  const povP2 = result === "draw" ? "draw" : (result === "p2" ? "win" : "lose");
+// comments, edits, deletes
+app.post('/posts/:id/comments', isAuthenticated, (req, res) => {
+  const postId = req.params.id;
+  const { content } = req.body;
+  const username = req.session.user;
 
-   // send one message to each player with their perspective
-  if (p1.readyState === ws.WebSocket.OPEN) {
-    p1.send(JSON.stringify({
-      type: 'result',
-      yourMove: p1.move,
-      oppMove: p2.move,
-      outcome: povP1,
-      oppName: p2Name
-    }));
-  }
+  db.get('SELECT id FROM users WHERE username = ?', [username], (err, user) => {
+    if (!user) return console.log('error');
 
-  if (p2.readyState === ws.WebSocket.OPEN) {
-    p2.send(JSON.stringify({
-      type: 'result',
-      yourMove: p2.move,
-      oppMove: p1.move,
-      outcome: povP2,
-      oppName: p1Name
-    }));
-  }
+    db.run(
+      'INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)',
+      [postId, user.id, content],
+      () => res.redirect('/posts')
+    );
+  });
+});
 
-  p1.move = null;
-  p2.move = null;
-}
+// edits and deletes
+app.post('/posts/:id/edit', isAuthenticated, (req, res) => {
+  const { title, content } = req.body;
+  const postId = req.params.id;
+  const username = req.session.user;
 
+  db.get('SELECT id FROM users WHERE username = ?', [username], (err, user) => {
+    db.run(
+      'UPDATE posts SET title = ?, content = ? WHERE id = ? AND user_id = ?',
+      [title, content, postId, user.id],
+      () => res.redirect('/posts')
+    );
+  });
+});
 
-// picks winner
-function getResult(move1, move2) {
-  if (move1 === move2) return "draw";
-  if (
-    (move1 === 'rock' && move2 === 'scissors') ||
-    (move1 === 'scissors' && move2 === 'paper') ||
-    (move1 === 'paper' && move2 === 'rock')
-  ) {
-    return "p1";
-  }
-  return "p2";
-}
+// deletes
+app.post('/posts/:id/delete', isAuthenticated, (req, res) => {
+  const postId = req.params.id;
+  const username = req.session.user;
+
+  db.get('SELECT id FROM users WHERE username = ?', [username], (err, user) => {
+    db.run(
+      'DELETE FROM posts WHERE id = ? AND user_id = ?',
+      [postId, user.id],
+      () => res.redirect('/posts')
+    );
+  });
+});
+
+// delete comments 
+app.post('/comments/:id/delete', isAuthenticated, (req, res) => {
+  const commentId = req.params.id;
+  const postId = req.body.post_id;
+  const username = req.session.user;
+
+  db.get(
+    'SELECT posts.user_id FROM posts JOIN users ON posts.user_id = users.id WHERE users.username = ?',
+    [username],
+    (err, postOwner) => {
+      db.run(
+        'DELETE FROM comments WHERE id = ? AND post_id IN (SELECT id FROM posts WHERE user_id = ?)',
+        [commentId, postOwner.user_id],
+        () => res.redirect('/posts')
+      );
+    }
+  );
+});
+
+const socket = io(AUTH_URL, {
+  extraHeaders: { api: API_KEY }
+});
+
+socket.on('connect', () => {
+  console.log('Connected to auth server');
+  socket.emit('getACtiveClass');
+});
+
+socket.on('setClass', (classData) => {
+  console.log('Active class data received:', classData);
+});
+
+// start server
+app.listen(port, () => {
+  console.log(`Running on http://localhost:${port}`);
+});
