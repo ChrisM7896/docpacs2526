@@ -18,3 +18,18 @@ const db = new sqlite3.Database('./database.sqlite', (err) => {
     logger.info('Connected to SQLite database'); 
 } 
 });   
+// session database
+const sessionStore = new connect_sqlite3({
+    db: 'sessions.sqlite',
+    dir: './',
+    table: 'sessions'
+});
+// middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    store: sessionStore,
+    secret: process.env.SESSION,
+    resave: false,
+    saveUninitialized: false
+}));
