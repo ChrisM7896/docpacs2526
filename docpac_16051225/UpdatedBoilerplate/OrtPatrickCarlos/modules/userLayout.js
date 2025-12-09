@@ -11,9 +11,21 @@ function getLayoutData(user, pageTitle = '') {
 
 // Helper functions
 function formatUserForTemplate(user) {
-    // Convert user object for safe template use
+    // Handle null/undefined user
+    if (!user) {
+        return null; // or return {}
+    }
+    
+    // Create clean user object for templates
+    const formattedUser = {
+        id: user.id,
+        username: user.username,
 
+    };
+    
+    return formattedUser;
 }
+
 
 function isUserLoggedIn(user) {
     // Handle null/undefined
@@ -30,12 +42,40 @@ function isUserLoggedIn(user) {
 }
 
 
-function getDisplayName(user) {
-    // Return formatted display name
+async function getDisplayName(user) {
+    if (!isUserLoggedIn(user)) {
+        return 'Guest';
+    }
+    
+    try {
+        // Query: SELECT username FROM users WHERE id = ?
+        // Return the username
+        const username = await queryDatabaseForUsername(user.id); // Placeholder function
+        return username;
+    } catch (error) {
+        // Handle error - return fallback
+        return `User ${user.id}`;
+    }
 }
 
+
 function getNavigationLinks(user) {
-    // Return array of nav links based on login status
+    const isLoggedIn = isUserLoggedIn(user);
+    
+    if (isLoggedIn) {
+        // Return links for logged-in users
+        return [
+            { text: 'Home', url: '/' },
+            { text: 'Profile', url: '/profile' },
+            { text: 'Logout', url: '/logout' }
+        ];
+    } else {
+        // Return links for guests
+        return [
+            { text: 'Home', url: '/' },
+            { text: 'Login', url: '/login' }
+        ];
+    }
 }
 
 module.exports = {

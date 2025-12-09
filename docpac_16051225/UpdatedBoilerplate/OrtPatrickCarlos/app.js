@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const logger = require('./modules/logger');
@@ -19,14 +20,14 @@ app.use(sessionMiddleware);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
     logger.info(`Rendering home page for user: ${req.session.user ? req.session.user.id : 'Guest'}`);
     const layoutData = userLayout.getLayoutData(req.session.user);
     res.render('home', layoutData);
 });
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', { errorMessage: null }); // Pass errorMessage as null initially
 });
 
 app.get('/profile', (req, res) => {
