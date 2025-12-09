@@ -9,7 +9,11 @@
 
 <body>
     <%- include('partials/header.ejs') %>
-        <h1>Welcome, <%= user %>!</h1>
+        <h1>Welcome, <%= displayName %>!</h1>
+        <a href="/profile">Profile</a>
+        <br>
+        <a href="/chat">Chat</a>
+        <br>
         <a href="/logout">Logout</a>
     <%- include('partials/footer.ejs') %>
 </body>

@@ -8,7 +8,6 @@ const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
 const REDIRECT_URL = `${HOST}${PORT}`;
 
 function isAuthenticated(req, res, next) {
-
     if (req.session.user) {
         const tokenData = req.session.token;
 

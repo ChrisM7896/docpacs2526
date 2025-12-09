@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+
+<body>
+    <div id="userInfo">
+        <li>Username/Email: <%= user %>
+        </li>
+        <li>Dislay Name: <%= displayName %>
+        </li>
+        <li>Avatar:
+            <img id="avatar" src="<%=avatarPath %>" alt="no avatar set" />
+        </li>
+    </div>
+    <form id="avatarForm" enctype="multipart/form-data">
+        <input type="file" id="avatarInput" name="avatar" accept="image/*" />
+        <button type="submit" id="uploadButton">Upload Avatar</button>
+    </form>
+</body>
+
+<script>
+    const avatarForm = document.getElementById('avatarForm');
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarImg = document.getElementById('avatar');
+
+    avatarForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const file = avatarInput.files[0];
+        if (!file) {
+            alert('Please select a file to upload.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+            const response = await fetch('/upload-avatar', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                avatarImg.src = data.avatarPath
+                alert('Avatar uploaded successfully!');
+            } else {
+                alert('Failed to upload avatar.');
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            alert('An error occurred while uploading the avatar.');
+        }
+    });
+</script>
+
+</html>

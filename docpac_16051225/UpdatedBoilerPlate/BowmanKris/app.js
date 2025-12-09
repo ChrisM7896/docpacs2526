@@ -6,6 +6,8 @@ const path = require('path');
 
 //import custom middleware and route handlers
 const homeRoute = require('./routes/home');
+const profileRoute = require('./routes/profile');
+const chatRoute = require('./routes/chat');
 const loginRoute = require('./routes/login');
 const logoutRoute = require('./routes/logout');
 const usersRoute = require('./routes/api/users');
@@ -15,7 +17,6 @@ const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const DATABASE_DIR = process.env.DATABASE_DIR;
-const UPLOADS_DIR = process.env.UPLOAD_DIR;
 
 //initialize express application
 const app = express();
@@ -35,11 +36,10 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-//views path
-app.set('views', path.join(__dirname, 'views'));
-
 //set up routes
 homeRoute(app);
+profileRoute(app);
+chatRoute(app);
 loginRoute(app);
 logoutRoute(app);
 usersRoute(app);

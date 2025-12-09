@@ -6,9 +6,9 @@ function homeRoute(app) {
         try {
             if (!req.session.user) {
                 res.render('login');
-            } else {
+            } else if (req.session.user && isAuthenticated) {
                 res.render('home', {
-                    user: req.session.user
+                    displayName: req.session.displayName
                 });
             };
         }

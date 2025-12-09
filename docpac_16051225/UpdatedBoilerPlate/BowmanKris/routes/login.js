@@ -13,7 +13,8 @@ function loginRoute(app) {
             console
             let tokenData = jwt.decode(req.query.token)
             req.session.token = tokenData
-            req.session.user = tokenData.displayName
+            req.session.user = tokenData.email;
+            req.session.displayName = tokenData.displayName;
             req.session.permission = tokenData.permissions;
             console.log(`User ${tokenData.displayName} logged in.`)
             res.redirect('/')
@@ -30,7 +31,7 @@ function loginRoute(app) {
             console.log(`Username: ${username}, Password: ${password}`);
             //refer to database to validate credentials
 
-            //if user does not exist, display "User does not exist. Would you like to create a new account?" create a new account
+            //if user does not exist, display "User does not exist. Would you like to create a new account?" And if the user hits yes, create a new account
             
 
             //if user exists and credentials are valid, set session
