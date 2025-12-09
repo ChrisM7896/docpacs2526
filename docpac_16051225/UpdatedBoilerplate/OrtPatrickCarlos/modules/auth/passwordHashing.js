@@ -1,19 +1,30 @@
 const bcrypt = require('bcrypt');
 
 // Configuration
-const SALT_ROUNDS = 12; // Higher = more secure but slower
+const SALT_ROUNDS = 12;
 
 // Function to hash a plaintext password
 async function hashPassword(plaintext) {
-    // Your implementation here
+    // Input validation
+    if (!plaintext || typeof plaintext !== 'string' || plaintext.trim().length === 0) {
+        throw new Error('Password cannot be empty');
+    }
+    
     return await bcrypt.hash(plaintext, SALT_ROUNDS);
 }
 
-// Function to compare plaintext to hash
 async function comparePassword(plaintext, hash) {
-    // Your implementation here
+    // Input validation
+    if (!plaintext || typeof plaintext !== 'string' || plaintext.trim().length === 0) {
+        throw new Error('Password cannot be empty');
+    }
+    if (!hash || typeof hash !== 'string') {
+        throw new Error('Hash cannot be empty');
+    }
+    
     return await bcrypt.compare(plaintext, hash);
 }
+
 
 module.exports = {
     hashPassword,

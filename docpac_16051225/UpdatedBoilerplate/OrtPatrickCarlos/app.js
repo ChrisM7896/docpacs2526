@@ -5,6 +5,8 @@ const initializeDatabase = require('./scripts/initDatabase');
 const sessionMiddleware = require('./middleware/session');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const userLayout = require('./modules/userLayout');
+const { log } = require('console');
 let db;
 
 app.set('view engine', 'ejs');
@@ -15,21 +17,12 @@ app.use(express.json());
 app.use(sessionMiddleware);
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
-// Initialize the database and start the server
-initializeDatabase()
-    .then((database) => {
-        db = database;
-        app.listen(PORT, () => {
-            logger.info(`Server is running on http://localhost:${PORT}`);
-        });
-    })
-    .catch((err) => {
-        logger.error(`Failed to start server: ${err.message}`);
-    });
 
 // Routes
 app.get('/home', (req, res) => {
-    res.render('home', { user: req.session.user  });
+    logger.info(`Rendering home page for user: ${req.session.user ? req.session.user.id : 'Guest'}`);
+    const layoutData = userLayout.getLayoutData(req.session.user);
+    res.render('home', layoutData);
 });
 
 app.get('/login', (req, res) => {
@@ -41,5 +34,14 @@ app.get('/profile', (req, res) => {
         res.render('profile', { user: req.session.user });
     } else {
         res.redirect('/login');
+    }
+});
+
+app.listen(PORT, async () => {
+    try {
+        db = await initializeDatabase();
+        logger.info(`Server is running on http://localhost:${PORT}`);
+    } catch (err) {
+        logger.error(`Failed to start server: ${err.message}`);
     }
 });
