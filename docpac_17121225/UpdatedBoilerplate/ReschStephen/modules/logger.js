@@ -14,4 +14,4 @@ function logging(level, message) {
     console.log(getDate(), "["+level+"]", message);
 }
 
-logging('INFO', 'test');
+export { logging };
