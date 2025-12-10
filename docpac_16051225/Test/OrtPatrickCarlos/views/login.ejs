@@ -1,0 +1,20 @@
+<%- include('partials/header', { title: 'Login', loggedIn: false }) %>
+<main>
+  <h1>Login</h1>
+  <% if (errorMessage) { %>
+    <p style="color:red"><%= errorMessage %></p>
+  <% } %>
+  <form method="post" action="/login">
+    <div>
+      <label>Username <input name="username" required></label>
+    </div>
+    <div>
+      <label>Password <input name="password" type="password" required></label>
+    </div>
+    <button type="submit">Login</button>
+  </form>
+
+  <p>Or use Formbar OAuth:</p>
+  <a href="/auth/formbar"><button>Login with Formbar</button></a>
+</main>
+<%- include('partials/footer') %>

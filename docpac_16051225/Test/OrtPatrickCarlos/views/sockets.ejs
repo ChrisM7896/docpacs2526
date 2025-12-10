@@ -1,0 +1,38 @@
+<%- include('partials/header', { title: 'Sockets demo', loggedIn: !!user }) %>
+<main>
+  <h1>Socket.IO Demo</h1>
+  <div>
+    <label>Room: <input id="roomInput" /></label>
+    <button id="joinBtn">Join</button>
+  </div>
+  <div>
+    <textarea id="chatLog" rows="10" cols="80" readonly></textarea>
+  </div>
+  <div>
+    <input id="msg" placeholder="Message" />
+    <button id="sendBtn">Send</button>
+  </div>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const chatLog = document.getElementById('chatLog');
+  let currentRoom = null;
+  socket.on('welcome', d => console.log(d));
+  socket.on('systemMessage', m => chatLog.value += `[SYS] ${m.message}\n`);
+  socket.on('chatMessage', (m) => chatLog.value += `[${new Date(m.ts).toLocaleTimeString()}] ${m.username}: ${m.message}\n`);
+
+  document.getElementById('joinBtn').addEventListener('click', () => {
+    const room = document.getElementById('roomInput').value || 'main';
+    currentRoom = room;
+    socket.emit('joinRoom', room);
+  });
+  document.getElementById('sendBtn').addEventListener('click', () => {
+    const text = document.getElementById('msg').value;
+    if (!currentRoom) return alert('Join a room first');
+    socket.emit('chatMessage', { room: currentRoom, message: text });
+  });
+</script>
+
+<%- include('partials/footer') %>

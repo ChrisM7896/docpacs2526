@@ -1,0 +1,13 @@
+node_modules/
+data/uploads/
+data/*.sqlite
+.env
+logs/
+*.log
+/.vscode/
+dist/
+npm-debug.log
+/.env
+/node_modules
+/data/uploads
+/data/*.sqlite
