@@ -2,7 +2,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
 //import custom modules
-const passwordHashing = require('./passwordHashing');
+const { hashPassword, verifyPassword } = require('./passwordHashing');
 
 //retrive environment variables
 const DATABASE_DIR = process.env.DATABASE_DIR;
@@ -20,40 +20,55 @@ const db = new sqlite3.Database(DATABASE_DIR, (err) => {
     }
 });
 
-function authenticateUser(username, password) {
+function authenticateUser(username, password, req, res) {
+    console.log(`Authenticating user: ${username}`);
+
+    db.get(
+        `SELECT * FROM users WHERE username = ?`,
+        [username],
+        (err, row) => {
+            if (err) {
+                console.error('Error querying database:', err.message);
+            }
+
+            if (!row) {
+                console.log(`User ${username} not found.`);
+                console.log('Authentication failed for user ' + username);
+            }
+
+            const hashedPassword = row.password;;
+
+            console.log(`User ${username} found. Verifying password...`);
+
+            //compare hashed passwords
+            if (verifyPassword(password, hashedPassword)) {
+                console.log(`Authentication successful for user ${username}`);
+                req.session.user = username;
+                getDisplayName(username).then((displayName) => {
+                    req.session.displayName = displayName;
+                });
+                res.redirect('/');
+            } else {
+                console.log(`Authentication failed for user ${username}`);
+            }
+        }
+    );
+};
+
+function getDisplayName(username) {
     return new Promise((resolve, reject) => {
         db.get(
-            `SELECT * FROM users WHERE username = ?`,
+            `SELECT display_name FROM users WHERE username = ?`,
             [username],
             (err, row) => {
                 if (err) {
-                    console.error('Error querying database:', err.message);
-                    return reject(new Error('Error querying database: ' + err.message));
+                    console.error('Error querying database for display name:', err.message);
+                    reject(err);
+                } else if (row) {
+                    resolve(row.display_name);
+                } else {
+                    resolve(null);
                 }
-
-                if (!row) {
-                    console.log(`User ${username} not found.`);
-                    return resolve(false);
-                }
-
-                const hashedPassword = row.password;
-
-                //compare hashed passwords
-                const bcrypt = require('bcrypt');
-                bcrypt.compare(password, hashedPassword, (err, result) => {
-                    if (err) {
-                        console.error('Error comparing passwords:', err.message);
-                        return reject(new Error('Error comparing passwords: ' + err.message));
-                    }
-
-                    if (result) {
-                        console.log(`User ${username} authenticated successfully.`);
-                        resolve(true);
-                    } else {
-                        console.log(`Authentication failed for user ${username}.`);
-                        resolve(false);
-                    }
-                });
             }
         );
     });
@@ -61,32 +76,29 @@ function authenticateUser(username, password) {
 
 //save user data to database
 function saveUserData({ username, displayName, permissions, password }) {
-    return new Promise((resolve, reject) => {
-        if (!password) {
-            console.error('Password is required for hashing.');
-            return;
-        }
+    if (!password) {
+        console.error('Password is required for hashing.');
+        return;
+    }
 
-        //hash the password before saving
-        const hashedPassword = passwordHashing(password)
+    //hash the password before saving
+    const hashedPassword = hashPassword(password)
 
-        db.run(
-            `INSERT INTO users (username, display_name, permissions, password) VALUES (?, ?, ?, ?)`,
-            [username, displayName, permissions, hashedPassword],
-            (err) => {
-                if (err) {
-                    console.error('Error saving user to database:', err.message);
-                    return reject(new Error('Error saving user to database: ' + err.message));
-                } else {
-                    console.log(`User ${username} saved to database.`);
-                    resolve();
-                }
+    db.run(
+        `INSERT INTO users (username, display_name, permissions, password) VALUES (?, ?, ?, ?)`,
+        [username, displayName, permissions, hashedPassword],
+        (err) => {
+            if (err) {
+                console.error('Error saving user to database:', err.message);
+            } else {
+                console.log(`User ${username} saved to database.`)
             }
-        );
-    });
+        }
+    );
 };
 
 module.exports = {
     authenticateUser,
     saveUserData,
+    getDisplayName
 };

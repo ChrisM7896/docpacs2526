@@ -3,9 +3,18 @@ const bcrypt = require('bcrypt');
 
 const salt = bcrypt.genSaltSync(10);
 
-function passwordHashing(password) {
+function hashPassword(password) {
     const hashedPassword = bcrypt.hashSync(password, salt);
     return hashedPassword;
 }
 
-module.exports = passwordHashing;
+function verifyPassword(password, hashedPassword) {
+    const compare = bcrypt.compareSync(password, hashedPassword);
+    console.log(`Password verification result: ${compare}`);
+    return compare;
+}
+
+module.exports = {
+    hashPassword,
+    verifyPassword
+};

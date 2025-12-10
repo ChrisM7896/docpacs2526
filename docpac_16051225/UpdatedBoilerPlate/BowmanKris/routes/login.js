@@ -12,14 +12,17 @@ const REDIRECT_URL = `${HOST}${PORT}/login`;
 
 function loginRoute(app) {
     app.get('/login', (req, res) => {
-        if (req.query.token) {
+        if (req.session.user) {
+            res.redirect('/');
+            // use formbar token data
+        } else if (req.query.token) {
             let tokenData = jwt.decode(req.query.token)
             req.session.token = tokenData
             req.session.user = tokenData.email;
             req.session.displayName = tokenData.displayName;
             req.session.permission = tokenData.permissions;
             console.log(`User ${tokenData.displayName} logged in.`)
-            res.redirect('/')
+            res.redirect('/');
         } else {
             res.render('login');
         }
@@ -28,16 +31,7 @@ function loginRoute(app) {
     app.post('/login', (req, res) => {
         const { username, password } = req.body; // Retrieve username and password from form
         if (username && password) {
-            try {
-                databaseManager.authenticateUser(username, password, req, res);
-            } catch (error) {
-                console.error('Error during authentication:', error);
-                res.status(500).send('Internal Server Error');
-            }
-            req.session.user = username;
-            res.redirect('/');
-        } else {
-            res.status(400).send('Username and password are required');
+            databaseManager.authenticateUser(username, password, req, res);
         }
     });
 
