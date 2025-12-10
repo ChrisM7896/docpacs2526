@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 
 // Function to hash a plaintext password
-async function hashPassword(plaintext) {
+async function passwordHash(plaintext) {
     // Input validation
     if (!plaintext || typeof plaintext !== 'string' || plaintext.trim().length === 0) {
         throw new Error('Password cannot be empty');
@@ -27,6 +27,6 @@ async function comparePassword(plaintext, hash) {
 
 
 module.exports = {
-    hashPassword,
+    passwordHash,
     comparePassword
 };
