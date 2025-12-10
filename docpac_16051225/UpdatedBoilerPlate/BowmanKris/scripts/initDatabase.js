@@ -31,6 +31,7 @@ const db = new sqlite3.Database(`${DATABASE_DIR}`, (err) => {
             username TEXT NOT NULL UNIQUE,
             display_name TEXT NOT NULL,
             permissions INTEGER,
+            password TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) {

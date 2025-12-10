@@ -6,7 +6,7 @@ const path = require('path');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 //retrive environment variables
-const UPLOADS_DIR = process.env.UPLOADS_DIR
+const UPLOADS_DIR = process.env.UPLOADS_DIR;
 
 //configure multer for file uploads
 const storage = multer.diskStorage({
@@ -41,10 +41,17 @@ function profileRoute(app) {
 
     // Endpoint to handle avatar upload
     app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
-        // Save the file path in the session
-        const filePath = `/uploads/${req.file.filename}`;
-        req.session.avatarPath = filePath;
-        res.redirect('/profile');
+        try {
+            // Save the file path in the session
+            const filePath = `/uploads/${req.file.filename}`;
+            req.session.avatarPath = filePath;
+
+            // Respond with the updated avatar path
+            res.json({ success: true, avatarPath: filePath });
+        } catch (error) {
+            console.error('Error uploading avatar:', error.message);
+            res.status(500).json({ success: false, message: 'Failed to upload avatar' });
+        }
     });
 };
 

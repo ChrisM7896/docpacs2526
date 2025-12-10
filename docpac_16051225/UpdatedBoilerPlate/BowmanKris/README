@@ -1,7 +1,7 @@
 # Installation Guide
 ## Modules
 To install the project's required dependencies, paste the following command in the terminal:
-> npm install express ejs sqlite3 express-session socket.io dotenv
+> npm install express ejs sqlite3 express-session socket.io dotenv bcyrpt
 This should create package.json and package-lock.json files. Edit the package.json file to include the corret name, description, main, author, and license.
 It should look something like this:
 > {

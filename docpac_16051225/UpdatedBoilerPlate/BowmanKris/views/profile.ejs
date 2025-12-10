@@ -6,18 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
 </head>
+<style>
+    #avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+
+    label[for="usernameDisplay"] {
+        font-size: 0.7em;
+        color: #555;
+    }
+</style>
 
 <body>
     <div id="userInfo">
-        <li>Username/Email: <%= user %>
+        <li><img id="avatar" src="<%= avatarPath %>" alt="no avatar set" /></li>
+        <li id="usernameDisplay">
+            Username <label for="usernameDisplay">(Email if logged in with Formbar)</label>:
+            <%= user %>
         </li>
         <li>Dislay Name: <%= displayName %>
         </li>
-        <li>Avatar:
-            <img id="avatar" src="<%=avatarPath %>" alt="no avatar set" />
-        </li>
     </div>
+    <br>
     <form id="avatarForm" enctype="multipart/form-data">
+        <label for="avatarInput">Upload Avatar:</label>
+        <br>
         <input type="file" id="avatarInput" name="avatar" accept="image/*" />
         <button type="submit" id="uploadButton">Upload Avatar</button>
     </form>
@@ -46,11 +61,20 @@
                 body: formData
             });
 
+            const data = await response.json(); // Parse JSON response
             if (response.ok) {
-                const data = await response.json();
-                avatarImg.src = data.avatarPath
-                alert('Avatar uploaded successfully!');
+                console.log('Server response:', data); // Debugging
+
+                if (data.redirect) {
+                    // Redirect to the provided URL
+                    window.location.href = data.redirect;
+                } else if (data.avatarPath) {
+                    // Update the avatar image if provided
+                    avatarImg.src = data.avatarPath;
+                    alert('Avatar uploaded successfully!');
+                }
             } else {
+                console.error('Server error:', data);
                 alert('Failed to upload avatar.');
             }
         } catch (error) {

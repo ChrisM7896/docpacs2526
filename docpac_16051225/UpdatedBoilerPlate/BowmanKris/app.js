@@ -17,13 +17,17 @@ const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const DATABASE_DIR = process.env.DATABASE_DIR;
+const UPLOADS_DIR = process.env.UPLOADS_DIR;
+
+//get database folder path for SQLiteStore
+const databaseFolder = path.dirname(DATABASE_DIR);
 
 //initialize express application
 const app = express();
 
 //set up session management
 app.use(session({
-    //store: new SQLiteStore({ dir: DATABASE_DIR }),
+    store: new SQLiteStore({ dir: databaseFolder }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
@@ -35,6 +39,10 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+
+//serve uploaded files statically
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/public', express.static("./public"));
 
 //set up routes
 homeRoute(app);

@@ -1,6 +1,9 @@
 // import required modules
 const jwt = require('jsonwebtoken');
 
+//import custom modules
+const databaseManager = require('../modules/databaseManager');
+
 //retrive environment variables
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
@@ -10,7 +13,6 @@ const REDIRECT_URL = `${HOST}${PORT}/login`;
 function loginRoute(app) {
     app.get('/login', (req, res) => {
         if (req.query.token) {
-            console
             let tokenData = jwt.decode(req.query.token)
             req.session.token = tokenData
             req.session.user = tokenData.email;
@@ -18,25 +20,39 @@ function loginRoute(app) {
             req.session.permission = tokenData.permissions;
             console.log(`User ${tokenData.displayName} logged in.`)
             res.redirect('/')
-        } else if (req.session.user) {
-            res.redirect('/');
         } else {
-            res.redirect(`${FORMBAR_AUTH_URL}/oauth?redirectURL=${REDIRECT_URL}`);
+            res.render('login');
         }
     });
 
     app.post('/login', (req, res) => {
         const { username, password } = req.body; // Retrieve username and password from form
         if (username && password) {
-            console.log(`Username: ${username}, Password: ${password}`);
-            //refer to database to validate credentials
-
-            //if user does not exist, display "User does not exist. Would you like to create a new account?" And if the user hits yes, create a new account
-            
-
-            //if user exists and credentials are valid, set session
-            req.session.user = username; //set the user in session
+            try {
+                databaseManager.authenticateUser(username, password, req, res);
+            } catch (error) {
+                console.error('Error during authentication:', error);
+                res.status(500).send('Internal Server Error');
+            }
+            req.session.user = username;
             res.redirect('/');
+        } else {
+            res.status(400).send('Username and password are required');
+        }
+    });
+
+    app.post('/login/createUser', (req, res) => {
+        const { username, displayName, password } = req.body; // Retrieve username and password from form
+        if (username && displayName && password) {
+            try {
+                databaseManager.saveUserData({ username, displayName, password, permissions: 2 });
+                req.session.user = username;
+                req.session.displayName = displayName;
+                res.redirect('/');
+            } catch (error) {
+                console.error('Error saving user data:', error);
+                res.status(500).send('Internal Server Error');
+            }
         } else {
             res.status(400).send('Username and password are required');
         }
