@@ -6,62 +6,63 @@
     </head>
 	
 	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
-		  <h4>Enter Your Name</h4>
-		  <hr>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
+		<h4>Enter Your Name</h4>
+		<hr>
 
-		  <form id="nameForm">
+		<form id="nameForm">
 			<input type="text" id="userName" name="userName">
 			<br><br>
-			<button type="submit" onclick="handleFormSubmit(event)">Submit Name</button>
-			<button type="button" id="seeCookie" onclick="openWelcomeWindow()">See Cookie</button>
+			<input type="submit" value="Submit Name" id="submitName">
+			<input type="submit" value="See Cookie" id="seeCookie">
+			<br><br>
 
-		  </form>
+		</form>
 
-		  <script>
+		<script>
 			function setCookie(name, value, days) {
-			  const expires = new Date(Date.now() + days * 86400000).toUTCString();
-			  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+			  	const expires = new Date(Date.now() + days * 86400000).toUTCString();
+				document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 			}
 
 			function handleFormSubmit(event) {
-			  event.preventDefault();
+				event.preventDefault();
 
-			  const nameInput = document.getElementById('userName');
-			  const name = nameInput.value.trim();
+				const nameInput = document.getElementById('userName');
+				const name = nameInput.value.trim();
 
-			  if (name === "") {
+			if (name === "") {
 				alert("Please enter your name.");
 				return false;
-			  }
+			}
 
-			  setCookie("userName", name, 30);
-			  alert("Cookie has been set.");
-			  return false;
+			setCookie("userName", name, 30);
+			alert("Cookie has been set.");
+			return false;
 			}
 
 			function openWelcomeWindow() {
-			  const cookieVal = getCookie("userName");
-			  const welcomeWindow = window.open("", "WelcomeWindow", "width=400,height=200");
+				const cookieVal = getCookie("userName");
+				const welcomeWindow = window.open("", "WelcomeWindow", "width=400,height=200");
 
-			  welcomeWindow.document.write("<!DOCTYPE html><html><head><title>Welcome</title></head><body>");
-			  if (cookieVal) {
+				welcomeWindow.document.write("<!DOCTYPE html><html><head><title>Welcome</title></head><body>");
+			if (cookieVal) {
 				welcomeWindow.document.write(`<h3>Welcome, ${cookieVal}!</h3>`);
-			  } else {
+				} else {
 				welcomeWindow.document.write("<h3>No user name found in cookies.</h3>");
-			  }
-			  welcomeWindow.document.write("</body></html>");
-			  welcomeWindow.document.close();
+				}
+				welcomeWindow.document.write("</body></html>");
+				welcomeWindow.document.close();
 			}
 
 			//Add getCookie(name) below
 			function getCookie(name) {
-				const cookies = document.cookie.split("; ");
+				const cookies = document.cookie.split('; ');
 				for (const cookie of cookies) {
-					const [key, value] = cookie.split("=");
+					const [key, value] = cookie.split('=');
 					if (key === name) {
-					return decodeURIComponent(value);
+						return decodeURIComponent(value);
 					}
 				}
 				return null;
@@ -70,11 +71,11 @@
 
 			//Add event listeners below
 			const form = document.getElementById("nameForm");
-
+			form.addEventListener("submit", handleFormSubmit);
 
 			const seeCookieButton = document.getElementById("seeCookie");
+			seeCookieButton.addEventListener("click", openWelcomeWindow);
 
-
-		  </script>
+		</script>
 	</body>
 </html>

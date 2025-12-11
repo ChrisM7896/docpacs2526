@@ -6,8 +6,8 @@
     </head>
 	
 	<body>
-	<h2>CIW JavaScript Specialist</h2>
-	<hr>
+	  <h2>CIW JavaScript Specialist</h2>
+	  <hr>
 		<div className="container">
 			<div className="col-sm-3"></div>
 			<div id="root" className="row col-sm-6 col-offset-sm-3 text-center"></div>
@@ -84,7 +84,7 @@
 					return (
 						<div>
 							<div>&nbsp;</div>
-							<label htmlFor="myPassword" style={{ fontSize: '18px' }}>Create Password: </label><br />
+							<label htmlFor="myPassword" style={{ fontSize: '18px' }}>Create Password: </label><br>
 							<input
 								type="password"
 								name="myPassword"
@@ -92,8 +92,7 @@
 								className="form-fields"
 								id="myPassword"
 								onKeyUp={this.onPasswordChange}
-								style={{ height: '35px', width: '550px', borderRadius: 3, paddingLeft: '5px' }}
-							/>
+								style={{ height: '35px', width: '550px', borderRadius: 3, paddingLeft: '5px' }}>
 							<div style={{ width: '550px', height: '18px', border: '1px solid', borderRadius: 3, margin: '10px auto' }}>
 								<div style={{ backgroundColor: this.state.meterColor, width: this.state.meterStrength, height: '100%', transition: 'width 0.5s ease-in-out' }}></div>
 							</div>
@@ -108,20 +107,19 @@
 					);
 				}
 			}
-			
+
 			function PasswordMeter() {
 				return (
 					<div>
-						<PasswordStrength />
+						<PasswordStrength>
 					</div>
 				);
 			}
 
 			const rootElement = document.getElementById('root');
 			const root = ReactDOM.createRoot(rootElement);
-			root.render(<PasswordMeter />);
+			root.render(<PasswordMeter>);
 		</script>
 		
 	</body>
 </html>
-
