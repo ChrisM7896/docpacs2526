@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const userLayout = require('./modules/userLayout');
 const { log } = require('console');
+const isAuthenticated = require('./middleware/isAuthenticated');
 let db;
 
 app.set('view engine', 'ejs');
@@ -30,13 +31,15 @@ app.get('/login', (req, res) => {
     res.render('login', { errorMessage: null }); // Pass errorMessage as null initially
 });
 
-app.get('/profile', (req, res) => {
+app.get('/profile', isAuthenticated, (req, res) => {
     if (req.session && req.session.user) {
         res.render('profile', { user: req.session.user });
     } else {
         res.redirect('/login');
     }
 });
+
+
 
 app.listen(PORT, async () => {
     try {
