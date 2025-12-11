@@ -7,10 +7,10 @@ let subtitleAnimation;
 
 // Function to start animations
 function startAnimations() {
-  // Rotate the title continuously with default speed
+  // Rotate the title continuously with wild speed
   titleAnimation = gsap.to(title, {
-    rotation: 360,
-    duration: 5,
+    rotation: 3600,
+    duration: 1,
     ease: "linear",
     repeat: -1,
   });

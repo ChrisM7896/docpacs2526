@@ -22,7 +22,8 @@
 
 	  <button 
 		x-data 
-		  @click="document.querySelector('.divBlock').style.display == 'none' ? 'block' : 'none'">
+		@click="document.querySelector('.divBlock').style.display = 
+      document.querySelector('.divBlock').style.display === 'none' ? 'block' : 'none'">
 	   Test
 	  </button>  
 
