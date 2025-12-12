@@ -5,8 +5,7 @@
     "author": "kris26658",
     "license": "The Unlicense",
     "scripts": {
-        "init-database": "node scripts/initDatabase.js",
-        "run": "node app.js"
+        "init-database": "node scripts/initDatabase.js"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",

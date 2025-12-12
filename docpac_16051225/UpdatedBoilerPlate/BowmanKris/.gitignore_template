@@ -7,5 +7,6 @@ package-lock.json
 .env
 
 # Data Directories
-/data/your-database_directory_here
+/data/sessions
+/data/your_database_directory_here
 /data/your_user_uploads_directory_here

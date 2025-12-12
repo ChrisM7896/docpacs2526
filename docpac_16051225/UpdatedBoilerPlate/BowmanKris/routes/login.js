@@ -7,8 +7,6 @@ const databaseManager = require('../modules/databaseManager');
 //retrive environment variables
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
-const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
-const REDIRECT_URL = `${HOST}${PORT}/login`;
 
 function loginRoute(app) {
     app.get('/login', (req, res) => {

@@ -30,7 +30,6 @@ function authenticateUser(username, password, req, res) {
             if (err) {
                 console.error('Error querying database:', err.message);
             }
-
             if (!row) {
                 console.log(`User ${username} not found.`);
                 console.log('Authentication failed for user ' + username);
@@ -43,10 +42,8 @@ function authenticateUser(username, password, req, res) {
             //compare hashed passwords
             if (verifyPassword(password, hashedPassword)) {
                 console.log(`Authentication successful for user ${username}`);
-                req.session.user = username;
-                getDisplayName(username).then((displayName) => {
-                    req.session.displayName = displayName;
-                });
+                req.session.user = row.username;
+                req.session.displayName = row.display_name;
                 res.redirect('/');
             } else {
                 console.log(`Authentication failed for user ${username}`);
@@ -54,25 +51,6 @@ function authenticateUser(username, password, req, res) {
         }
     );
 };
-
-function getDisplayName(username) {
-    return new Promise((resolve, reject) => {
-        db.get(
-            `SELECT display_name FROM users WHERE username = ?`,
-            [username],
-            (err, row) => {
-                if (err) {
-                    console.error('Error querying database for display name:', err.message);
-                    reject(err);
-                } else if (row) {
-                    resolve(row.display_name);
-                } else {
-                    resolve(null);
-                }
-            }
-        );
-    });
-}
 
 //save user data to database
 function saveUserData({ username, displayName, permissions, password }) {
@@ -100,5 +78,4 @@ function saveUserData({ username, displayName, permissions, password }) {
 module.exports = {
     authenticateUser,
     saveUserData,
-    getDisplayName
 };
