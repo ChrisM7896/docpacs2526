@@ -1,31 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const native = require('../modules/auth/native')
+const native = require('../modules/auth/native');
 const logger = require('../modules/logger');
-const formbarAuth = require('../modules/auth/formbarAuth');
-const utilities = require('../shared/utilities');
+const jwt = require('jsonwebtoken');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+
+// Database setup
+const dbPath = path.resolve(__dirname, '../data/database.sqlite');
+
+// Environment variables
+const AUTH_URL = process.env.FORMBAR_REDIRECT_URI || 'http://localhost:420/oauth';  
+const THIS_URL = process.env.THIS_URL || `http://localhost:3000`;
 
 router.get('/login', (req, res) => {
-    res.render('login', { errorMessage: null }); // Pass errorMessage as null initially
+    res.render('login', { errorMessage: null });
 });
 
+// Native login - username/password
 router.post('/login', async (req, res) => {
-    const { username, password, method } = req.body;
+    const { username, password } = req.body;
 
     try {
-        let user = null;
-
-        if (method === 'native') {
-            user = await native.authenticate(username, password);
-        } else if (method === 'formbar') {
-            user = await formbarAuth.authenticate(req, res);
-        } else {
-            throw new Error('Invalid authentication method');
-        }
+        const user = await native.loginUser(username, password);
 
         if (user) {
             req.session.user = user;
-            logger.info(`User ${user.username} logged in successfully via ${method}`);
+            logger.info(`User ${user.username} logged in successfully via native`);
             res.redirect('/');
         } else {
             res.render('login', { errorMessage: 'Invalid credentials. Please try again.' });
@@ -33,6 +34,59 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         logger.error(`Login failed: ${error.message}`);
         res.render('login', { errorMessage: 'An error occurred during login. Please try again later.' });
+    }
+});
+
+// Formbar login - redirect to Formbar
+router.get('/login/formbar', (req, res) => {
+    const redirectUri = `${AUTH_URL}/oauth?redirectURL=${THIS_URL}/login/formbar/callback`;
+    logger.info(`Redirecting to Formbar login page: ${redirectUri}`);
+    res.redirect(redirectUri);
+});
+
+// Formbar callback - handle return from Formbar
+router.get('/login/formbar/callback', async (req, res) => {
+    try {
+        if (req.query.token) {
+            // Decode the JWT token from Formbar
+            let tokenData = jwt.decode(req.query.token);
+            
+            // Store token and user data in session
+            req.session.token = tokenData;
+            req.session.user = {
+                id: tokenData.id,
+                username: tokenData.displayName,
+                email: tokenData.email,
+                formbarId: tokenData.id,
+                permissions: tokenData.permissions,
+                activeClass: tokenData.activeClass
+            };
+
+            // Save user to database if not exists
+            const db = new sqlite3.Database(dbPath);
+            db.run(`INSERT OR IGNORE INTO users (username, formbarId, created_at) VALUES (?, ?, datetime('now'))`, 
+                [tokenData.displayName, tokenData.id], 
+                function(err) {
+                    db.close();
+                    if (err) {
+                        logger.error(`Database error: ${err.message}`);
+                    } else {
+                        logger.info(`User ${tokenData.displayName} saved to database.`);
+                    }
+                }
+            );
+
+            logger.info(`User ${tokenData.displayName} logged in successfully via Formbar`);
+            res.redirect('/');
+
+        } else {
+            // No token received, redirect back to Formbar
+            logger.warn('No token received from Formbar, redirecting back');
+            res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}/login/formbar/callback`);
+        }
+    } catch (error) {
+        logger.error(`Formbar callback failed: ${error.message}`);
+        res.render('login', { errorMessage: 'Formbar authentication failed. Please try again.' });
     }
 });
 

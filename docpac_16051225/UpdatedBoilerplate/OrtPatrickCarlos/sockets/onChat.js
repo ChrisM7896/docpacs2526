@@ -35,3 +35,5 @@ function onChat(socket, messageData) {
         logger.info(`User ${userId} sent message to room ${roomId}: ${message}`);
     });
 }
+
+module.exports = onChat;

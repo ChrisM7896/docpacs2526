@@ -55,7 +55,7 @@ function removeUserFromRoom(userId) {
     return true;
 }
 
-function getRoomInfo(roomId) {
+function getRoomId(roomId) {
     return rooms[roomId] || null;
 }
 
@@ -68,6 +68,6 @@ module.exports = {
     createRoom,
     addUserToRoom,
     removeUserFromRoom,
-    getRoomInfo,
+    getRoomId,
     getUserRoom
 };

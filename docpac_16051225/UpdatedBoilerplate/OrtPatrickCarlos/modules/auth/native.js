@@ -1,7 +1,7 @@
-const passwordHashing = require('passwordHashing');
+const passwordHashing = require('./passwordHashing')
 const sqlite3 = require('sqlite3').verbose();
 const dbPath = require('path').resolve(__dirname, '../data/database.sqlite');
-const path = require('path');
+
 
 
 async function findUserInDatabase(username) {
@@ -75,7 +75,7 @@ async function registerUser(username, password) {
         }
 
         // Hash password
-        const hashedPassword = await passwordHashing.hashPassword(password);
+        const hashedPassword = await passwordHashing.passwordHash(password);
 
         // Create user in database
         const newUser = await createUserInDatabase(username, hashedPassword); // Placeholder function

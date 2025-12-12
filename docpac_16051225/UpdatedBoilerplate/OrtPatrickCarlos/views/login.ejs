@@ -2,10 +2,14 @@
 <main>
     <div class="login-container">
         <h2>Login</h2>
+        
         <% if (errorMessage) { %>
-            <div class="error-message"><%= errorMessage %></div>
+            <div class="error"><%= errorMessage %></div>
         <% } %>
+
+        <!-- Native Login Form -->
         <form action="/login" method="POST">
+            <h3>Login with Username/Password</h3>
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
@@ -14,11 +18,15 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <div class="oauth-login">
-            <p>Or login with:</p>
-            <a action="formbar">Formbar OAuth</a>
+
+        <div class="divider">OR</div>
+
+        <!-- Formbar Login Button -->
+        <div>
+            <h3>Login with Formbar</h3>
+            <a href="/login/formbar" class="btn btn-formbar">Login with Formbar Account</a>
         </div>
     </div>
 </main>
