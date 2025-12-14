@@ -4,19 +4,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+a {
+    display: block;
+    margin-top: 20px;
+    font-size: 20px;
+    text-decoration: none;
+    color: #3498db;
+}
+a:hover {
+    text-decoration: underline;
+}
+</style>
 <body>
     WELCOME TO THE HOME PAGE
-    <a href="login.ejs">Login</a>
+    <a href="/login">Login</a>
 </body>
 <script>
-    // if user isn't logged in, simply display login or signup links
-    <%- if (!session.user) { %>
+    <% if (!session.user) { %>
         window.location.href == "/login";
-    <%- } %>
-    // if user is logged in, display welcome message with username and profile link
-    <%- if (session.user) { %>
+    <% } %>
+
+    <% if (session.user) { %>
         document.write('Welcome, <%= session.user.username %>! ');
         document.write('<a href="/profile">Profile</a>');
-    <%- } %>
+    <% } %>
 </script>
 </html>

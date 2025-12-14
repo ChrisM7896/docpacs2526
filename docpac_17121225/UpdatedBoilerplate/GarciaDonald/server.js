@@ -35,9 +35,10 @@ const sessionStore = new connect_sqlite3({
 app.use(express.json());
 app.use(express.static('public'));
 // app.use(express.urlencoded({ extended: true }));
+console.log('SESSION_SECRET:', process.env.CLIENT_SECRET);
 app.use(session({
     store: sessionStore,
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.CLIENT_SECRET || 'insert_session_secret_here',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -49,25 +50,82 @@ app.use(session({
 }));
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
-        next();
+        const tokenData = req.session.token;
+
+        try {
+            // Check if the token has expired
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (tokenData.exp < currentTime) {
+                throw new Error('Token has expired');
+            }
+
+            next();
+        } catch (err) {
+            res.redirect(`${AUTH_URL}/oauth?refreshToken=${tokenData.refreshToken}&redirectURL=${THIS_URL}`);
+        }
     } else {
-        res.redirect('/login');
+        res.redirect(`/login?redirectURL=${THIS_URL}`);
     }
 }
+app.set('view engine', 'ejs');
+app.set('views', './views');
+// importing routes
+const userRoutes = require('./routes/api/users');
 // routes
 // home route
 app.get('/',  (req, res) => {
-    res.render('index');
+    res.render('home', {session: req.session});
 });
 // login route
-app.get('/login', isAuthenticated, (req, res) => {
-    res.render('login');
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+        res.redirect('/');
+    } else {
+        console.log('AUTH_URL being passed:', process.env.AUTH_URL); // Debug line
+        res.render('login', {
+            session: req.session,
+            AUTH_URL: process.env.AUTH_URL || 'http://formbar.yorktechapps.com/oauth',
+            loginError: false
+        });
+    }
 });
+
 // profile route
 app.get('/profile', isAuthenticated, (req, res) => {
     res.render('profile');
 });
-// sockets
+// auth routes
+// Import and use your OAuth routes
+const formbarAuthRoutes = require('./modules/auth/formbarAuth')
+const nativeAuth = require('./modules/auth/native');
+const { AUTH } = require('sqlite3');
+//using the oauth route
+app.use('/', formbarAuthRoutes); // makes /auth/callback available
+// local authentication route using native.js
+app.post('/auth/local', (req, res) => {
+    const { username, password } = req.body;
+
+    // using authenticateUser
+    nativeAuth.authenticateUser(username, password, (err, user) => {
+        if (err) {
+            console.error('Authentication error:', err)
+            return res.status(500).send('Database error');
+        }
+        if (user) {
+            // auth successful
+            req.session.user = user;
+            res.redirect('/');
+        } else {
+            // auth failed
+            res.render('login', {
+                session: req.session,
+                AUTH_URL: process.env.AUTH_URL || 'http://formbeta.yorktechapps.com/oauth',
+                loginError: true
+            });
+        }
+    });
+});
+
 const server = http.createServer(app);
 const ioServer = require('socket.io')(server);
 // start server
