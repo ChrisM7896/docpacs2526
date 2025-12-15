@@ -15,10 +15,10 @@ const session = require('express-session');
 const logger = require('./modules/logger');
 const sqlite3 = require('sqlite3').verbose();
 const connect_sqlite3 = require('connect-sqlite3')(session);
-const { io } = require('socket.io-client');
+// const { io } = require('socket.io-client');
 const http = require('http');
 // setting up the database
-const db = new sqlite3.Database('./database.sqlite', (err) => {
+const db = new sqlite3.Database('./data/database.sqlite', (err) => {
     if (err) {
         logger.error('Could not connect to database', err);
     } else {
@@ -31,40 +31,40 @@ const sessionStore = new connect_sqlite3({
     dir: './',
     table: 'sessions'
 });
+// newer imports
+const InstanceManager = require('./modules/instanceManager');
+const UserLayout = require('./modules/userLayout');
+const FormbarClient = require('./modules/formbarClient');
+const Utilities = require('./shared/utilities');
+
+// Initializing the new modules
+const instanceManager = new InstanceManager(logger);
+const userLayout = new UserLayout(logger);
+const formbarClient = new FormbarClient(process.env.API_KEY, 'http://formbeta.yorktechapps.com/api', logger);
+
 // middleware
 app.use(express.json());
 app.use(express.static('public'));
-// app.use(express.urlencoded({ extended: true }));
-console.log('SESSION_SECRET:', process.env.CLIENT_SECRET);
-app.use(session({
+app.use(express.urlencoded({ extended: true }));
+console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
+const sessionMiddleware = session({
     store: sessionStore,
-    secret: process.env.CLIENT_SECRET || 'insert_session_secret_here',
+    secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 3.5 * 60 * 60 * 1000, // 3.5 hours
-        // secure is true for production (https) and false for development (http)
+        maxAge: 3.5 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === 'production'
-
     }
-}));
+});
+app.use(sessionMiddleware);
+
+
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
-        const tokenData = req.session.token;
-
-        try {
-            // Check if the token has expired
-            const currentTime = Math.floor(Date.now() / 1000);
-            if (tokenData.exp < currentTime) {
-                throw new Error('Token has expired');
-            }
-
             next();
-        } catch (err) {
-            res.redirect(`${AUTH_URL}/oauth?refreshToken=${tokenData.refreshToken}&redirectURL=${THIS_URL}`);
-        }
     } else {
-        res.redirect(`/login?redirectURL=${THIS_URL}`);
+        res.redirect(`/login`);
     }
 }
 app.set('view engine', 'ejs');
@@ -72,6 +72,46 @@ app.set('views', './views');
 // importing routes
 const userRoutes = require('./routes/api/users');
 // routes
+
+// test route
+app.get('/test-utils', (req, res) => {
+    const roomId = Utilities.generateRoomId();
+    const isValid = Utilities.isValidEmail('test@example.com');
+    
+    res.json({
+        roomId: roomId,
+        emailValid: isValid,
+        timestamp: Utilities.formatTimestamp(Date.now())
+    });
+});
+// testing formbar client
+app.get('/test-formbar', async (req, res) => {
+    try {
+        // Test the connection
+        const connectionTest = await formbarClient.testConnection();
+        
+        if (connectionTest.success) {
+            res.json({
+                success: true,
+                message: 'FormbarClient is working!',
+                connection: connectionTest,
+                apiKey: process.env.API_KEY ? 'Set' : 'Not set'
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: 'FormbarClient connection failed',
+                error: connectionTest.error
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'FormbarClient test failed',
+            error: error.message
+        });
+    }
+});
 // home route
 app.get('/',  (req, res) => {
     res.render('home', {session: req.session});
@@ -81,24 +121,69 @@ app.get('/login', (req, res) => {
     if (req.session.user) {
         res.redirect('/');
     } else {
-        console.log('AUTH_URL being passed:', process.env.AUTH_URL); // Debug line
+        console.log('CLIENT_ID:', process.env.CLIENT_ID);
+        console.log('REDIRECT_URL:', process.env.REDIRECT_URL);
+        
+        // Try HTTPS and redirectURL parameter
+        const authUrl = `https://formbeta.yorktechapps.com/oauth?client_id=${process.env.CLIENT_ID}&redirectURL=${process.env.REDIRECT_URL}&response_type=code`;
+        
+        console.log('Constructed AUTH_URL:', authUrl);
+        
         res.render('login', {
             session: req.session,
-            AUTH_URL: process.env.AUTH_URL || 'http://formbar.yorktechapps.com/oauth',
+            AUTH_URL: authUrl,
             loginError: false
         });
     }
 });
 
+
+
+
+const profileRoutes = require('./routes/profile');
+//profileRoute app.use statement
+app.use('/', profileRoutes);
 // profile route
 app.get('/profile', isAuthenticated, (req, res) => {
-    res.render('profile');
+    // Get user's upload count
+    const uploadCountQuery = `SELECT COUNT(*) as count FROM uploads WHERE user_id = ?`;
+    db.get(uploadCountQuery, [req.session.user.id], (err, uploadResult) => {
+        if (err) {
+            console.error('Database error:', err);
+            uploadResult = { count: 0 };
+        }
+        
+        // Get user's uploaded files
+        const uploadsQuery = `SELECT file_name, uploaded_at FROM uploads WHERE user_id = ? ORDER BY uploaded_at DESC`;
+        db.all(uploadsQuery, [req.session.user.id], (err, uploads) => {
+            if (err) {
+                console.error('Database error:', err);
+                uploads = [];
+            }
+            
+            // Pass all the data to the template
+            res.render('profile', {
+                session: req.session,
+                user: req.session.user,        // This fixes the "user is not defined" error
+                uploadCount: uploadResult.count,
+                uploads: uploads
+            });
+        });
+    });
 });
+// sockets route
+app.get('/sockets', (req, res) => {
+    res.render('sockets', {
+        session: req.session,
+        title: 'Socket.IO Magic'
+    })
+})
 // auth routes
 // Import and use your OAuth routes
 const formbarAuthRoutes = require('./modules/auth/formbarAuth')
 const nativeAuth = require('./modules/auth/native');
-const { AUTH } = require('sqlite3');
+const { title } = require('process');
+// const { AUTH } = require('sqlite3');
 //using the oauth route
 app.use('/', formbarAuthRoutes); // makes /auth/callback available
 // local authentication route using native.js
@@ -126,13 +211,18 @@ app.post('/auth/local', (req, res) => {
     });
 });
 
+// Socket.IO Setup 
+const SocketServer = require('./modules/socketServer');
 const server = http.createServer(app);
-const ioServer = require('socket.io')(server);
-// start server
+const socketServer = new SocketServer(server, sessionMiddleware, logger);
+const socketIO = socketServer.initialize();
+
+// Start server
 server.listen(PORT, () => {
     console.log(`Server is running at http://192.168.1.165:${PORT}`);
 });
-// export app for testing
+
+// Exports
 module.exports = app;
 module.exports.db = db;
-module.exports.sessionStore = sessionStore; 
+module.exports.sessionStore = sessionStore;

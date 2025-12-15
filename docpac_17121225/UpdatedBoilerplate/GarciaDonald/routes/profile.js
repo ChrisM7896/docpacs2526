@@ -1,6 +1,11 @@
+// pre imports
+const express = require('express')
+const router = express.Router();
+const { isAuthenticated } = require('../middleware/isAuthenticated');
+
 // configuring multer
 const multer = require('multer');
-const { route } = require('../server');
+// const { route } = require('../server');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'data/uploads/');
@@ -40,3 +45,7 @@ router.post('/upload', isAuthenticated, upload.single('document'), (req, res) =>
         });
     });
 });
+
+// exporting route
+
+module.exports = router;

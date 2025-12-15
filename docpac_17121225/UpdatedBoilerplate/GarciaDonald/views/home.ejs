@@ -1,38 +1,16 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin-top: 50px;
-}
-a {
-    display: block;
-    margin-top: 20px;
-    font-size: 20px;
-    text-decoration: none;
-    color: #3498db;
-}
-a:hover {
-    text-decoration: underline;
-}
-</style>
-<body>
-    WELCOME TO THE HOME PAGE
-    <a href="/login">Login</a>
-</body>
-<script>
-    <% if (!session.user) { %>
-        window.location.href == "/login";
-    <% } %>
+<%- include('partials/header', { title: 'Home - Formbar' }) %>
 
-    <% if (session.user) { %>
-        document.write('Welcome, <%= session.user.username %>! ');
-        document.write('<a href="/profile">Profile</a>');
+<div class="container">
+    <h1>WELCOME TO THE FORMBAR BOILERPLATE</h1>
+    
+    <% if (!session || !session.user) { %>
+        <p>Please log in to access your profile and upload files.</p>
+        <a href="/login" class="btn">Login</a>
+    <% } else { %>
+        <p>Welcome back, <%= session.user.username %>!</p>
+        <p>You are logged into Formbar with ID: <%= session.user.formbarId %></p>
+        <a href="/profile" class="btn">Go to Profile</a>
     <% } %>
-</script>
-</html>
+</div>
+
+<%- include('partials/footer') %>

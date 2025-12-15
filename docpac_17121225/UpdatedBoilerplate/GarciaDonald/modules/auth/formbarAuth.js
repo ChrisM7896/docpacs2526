@@ -3,54 +3,53 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./database.sqlite');
+const db = new sqlite3.Database('./data/database.sqlite');
 
 router.get('/auth/callback', (req, res) => {
-    const authCode = req.query.code;
-    if (!authCode) {
-        return res.status(400).send('Authorization code missing');
+    const token = req.query.token;
+    if (!token) {
+        return res.status(400).send('Authorization token missing');
     }
     
-    // exchange auth code for access token
-    axios.post('http://formbeta.yorktechapps.com/oauth/token', {
-        code: authCode,
-        client_id: process.env.CLIENT_ID,        // Fixed variable name
-        client_secret: process.env.CLIENT_SECRET, // Fixed - not SESSION_SECRET!
-        redirect_uri: process.env.REDIRECT_URL,   // Fixed variable name
-        grant_type: 'authorization_code'
+    console.log('API_KEY from env:', process.env.API_KEY);
+    //api stuff that was totally such fun to figure out
+    axios.get('http://formbeta.yorktechapps.com/api/me', {
+        headers: { 
+            'API': process.env.API_KEY,
+            'Content-Type': 'application/json'
+        }
     })
     .then(response => {
-        const accessToken = response.data.access_token;
-        // fetch user info from Formbar
-        return axios.get('http://formbeta.yorktechapps.com/api/user', {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-    })
-    .then(response => {
+        console.log('SUCCESS! User data:', response.data);
         const formbarUser = response.data;
-        // check if user exists in local database
-        const query = `SELECT * FROM users WHERE formbarID = ?`; // Fixed field name
+        // database stuff
+        const query = `SELECT * FROM users WHERE formbarId = ?`;
         db.get(query, [formbarUser.id], (err, row) => {
             if (err) {
+                console.error('Database error:', err);
                 return res.status(500).send('Database error');
             }
+            
             if (row) {
                 // user exists, set session
                 req.session.user = row;
                 res.redirect('/');
             } else {
-                // user does not exist, create new user
-                const insertQuery = `INSERT INTO users (username, formbarID, passwordHash, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`;
-                const now = Date.now();
-                db.run(insertQuery, [formbarUser.username, formbarUser.id, null, now, now], function(err) {
+                // Fixed: use formbarId (lowercase d) in INSERT as well
+                const insertQuery = `INSERT INTO users (username, formbarId, passwordHash, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`;
+                const now = Date.now().toString(); // Convert to string since your DB expects TEXT
+                
+                db.run(insertQuery, [formbarUser.displayName || formbarUser.email, formbarUser.id, null, now, now], function(err) {
                     if (err) {
+                        console.error('Database insert error:', err);
                         return res.status(500).send('Database error');
                     }
+                    
                     // set session for new user
                     req.session.user = {
                         id: this.lastID,
-                        username: formbarUser.username,
-                        formbarID: formbarUser.id // Fixed field name
+                        username: formbarUser.displayName || formbarUser.email,
+                        formbarId: formbarUser.id  // Fixed: lowercase d here too
                     };
                     res.redirect('/');
                 });
@@ -58,7 +57,7 @@ router.get('/auth/callback', (req, res) => {
         });
     })
     .catch(error => {
-        console.error('Error during authentication', error);
+        console.error('Error during authentication', error.response?.data || error.message);
         res.status(500).send('Authentication error');
     });
 });
