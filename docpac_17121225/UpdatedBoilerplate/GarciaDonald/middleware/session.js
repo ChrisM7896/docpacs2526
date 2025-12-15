@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 // configure session store
 db = require('sqlite3').verbose();
@@ -29,6 +32,9 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }));
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 // creating and exporting session middleware configured with express-session and connect-sqlite3
@@ -63,6 +69,10 @@ io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
 });
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes
 =======
 >>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
 >>>>>>> Stashed changes

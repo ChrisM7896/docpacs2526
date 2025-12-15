@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 // session middleware
 const db = require('sqlite3').verbose();
@@ -16,6 +19,9 @@ module.exports = function sessionMiddleware(options) {
         ...options
     });
 }
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 // Socket.IO server setup and management
@@ -241,6 +247,10 @@ class SocketServer {
 module.exports = SocketServer;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes
 =======
 >>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
 >>>>>>> Stashed changes

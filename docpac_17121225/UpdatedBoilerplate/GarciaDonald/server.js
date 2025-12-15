@@ -52,11 +52,17 @@ const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
     saveUninitialized: false
 }));
 app.use(sessionMiddleware({ secret: process.env.SESSION, resave: false, saveUninitialized: false }));
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     saveUninitialized: false,
@@ -195,7 +201,12 @@ server.listen(PORT, () => {
 module.exports = app;
 module.exports.db = db;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 module.exports.sessionStore = sessionStore;
+=======
+module.exports.sessionStore = sessionStore;
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes
 =======
 module.exports.sessionStore = sessionStore;
 >>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c

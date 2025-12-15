@@ -1,8 +1,14 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 
 
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 //imports
@@ -247,6 +253,10 @@ if (require.main === module) {
 
 module.exports = DatabaseInitializer;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes
 =======
 >>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
 >>>>>>> Stashed changes
