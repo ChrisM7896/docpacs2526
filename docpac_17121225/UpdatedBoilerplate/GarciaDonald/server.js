@@ -73,45 +73,6 @@ app.set('views', './views');
 const userRoutes = require('./routes/api/users');
 // routes
 
-// test route
-app.get('/test-utils', (req, res) => {
-    const roomId = Utilities.generateRoomId();
-    const isValid = Utilities.isValidEmail('test@example.com');
-    
-    res.json({
-        roomId: roomId,
-        emailValid: isValid,
-        timestamp: Utilities.formatTimestamp(Date.now())
-    });
-});
-// testing formbar client
-app.get('/test-formbar', async (req, res) => {
-    try {
-        // Test the connection
-        const connectionTest = await formbarClient.testConnection();
-        
-        if (connectionTest.success) {
-            res.json({
-                success: true,
-                message: 'FormbarClient is working!',
-                connection: connectionTest,
-                apiKey: process.env.API_KEY ? 'Set' : 'Not set'
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                message: 'FormbarClient connection failed',
-                error: connectionTest.error
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'FormbarClient test failed',
-            error: error.message
-        });
-    }
-});
 // home route
 app.get('/',  (req, res) => {
     res.render('home', {session: req.session});

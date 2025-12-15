@@ -10,7 +10,7 @@ A 2nd version to a boilerplate for Formbar intended to support more modules than
 
 ## THE FOLDER STRUCTURE
 ### Root (in my case, the GarciaDonald folder)
-This is the folder that contains all the upcoming folders, as well as other files that may be of good use to you as well. This includes the server.js file for running your application/server for your project, and a test-integration.js file to make sure all your modules work properly.
+This is the folder that contains all the upcoming folders, as well as other files that may be of good use to you as well. This includes a .env_template for you to make an env file from, as well as the server.js file for running your application/server for your project.
 ### Data / Uploads:
 This is where you would put your databases, such as the database for users and their current sessions, and the uploads folder is for the files you upload to your profile.
 ### Logs
