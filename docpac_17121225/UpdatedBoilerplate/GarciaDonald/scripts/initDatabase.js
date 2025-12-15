@@ -1,3 +1,10 @@
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> Stashed changes
 //imports
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
@@ -239,3 +246,7 @@ if (require.main === module) {
 }
 
 module.exports = DatabaseInitializer;
+<<<<<<< Updated upstream
+=======
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes

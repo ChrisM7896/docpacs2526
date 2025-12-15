@@ -1,3 +1,23 @@
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+// session middleware
+const db = require('sqlite3').verbose();
+const session = require('express-session');
+const connect_sqlite3 = require('connect-sqlite3')(session);
+const sessionStore = new connect_sqlite3({
+    db: 'session.db',
+    dir: './',
+    table: 'sessions'
+});
+module.exports = function sessionMiddleware(options) {
+    return session({
+        store: sessionStore,
+        ...options
+    });
+}
+=======
+>>>>>>> Stashed changes
 // Socket.IO server setup and management
 const { Server } = require('socket.io');
 const fs = require('fs');
@@ -220,3 +240,7 @@ class SocketServer {
 
 module.exports = SocketServer;
 
+<<<<<<< Updated upstream
+=======
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes

@@ -27,7 +27,7 @@ const db = new sqlite3.Database('./data/database.sqlite', (err) => {
 });   
 // session database
 const sessionStore = new connect_sqlite3({
-    db: 'sessions.sqlite',
+    db: 'session.db',
     dir: './',
     table: 'sessions'
 });
@@ -51,6 +51,14 @@ const sessionMiddleware = session({
     store: sessionStore,
     secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    saveUninitialized: false
+}));
+app.use(sessionMiddleware({ secret: process.env.SESSION, resave: false, saveUninitialized: false }));
+=======
+>>>>>>> Stashed changes
     saveUninitialized: false,
     cookie: {
         maxAge: 3.5 * 60 * 60 * 1000,
@@ -186,4 +194,9 @@ server.listen(PORT, () => {
 // Exports
 module.exports = app;
 module.exports.db = db;
+<<<<<<< Updated upstream
 module.exports.sessionStore = sessionStore;
+=======
+module.exports.sessionStore = sessionStore;
+>>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
+>>>>>>> Stashed changes
