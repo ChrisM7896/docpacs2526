@@ -1,18 +1,5 @@
 # EJS Partials Assignment - Grading Report
 
-## Grading Scale
-- A (90-100%)
-- B+ (87-89%)
-- B (83-86%)
-- B- (80-82%)
-- C+ (77-79%)
-- C (73-76%)
-- C- (70-72%)
-- D+ (67-69%)
-- D (63-66%)
-- D- (60-62%)
-- F (Below 60%)
-
 ## Error Categories
 - **Critical Error**: Causes crash during normal operation or prevents core functionality (-3 letter grades each)
 - **Serious Error**: Major requirement not met or significant code issues (-1 letter grade each)
