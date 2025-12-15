@@ -6,12 +6,12 @@
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
-        <button onclick="/modules/auth/formbarAuth.js">Login with Formbar</button>
-        if (error) {
-        <p style="color: red;">
-            <%= error %>
-        </p>
-        }
+        <button type="button" onclick="window.location.href='/login'">Login with Formbar</button>
+        <% if (error) { %>
+            <p style="color: red;">
+                <%= error %>
+            </p>
+            <% } %>
     </body>
 
     <%- include('partials/footer.ejs') %>

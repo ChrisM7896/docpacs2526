@@ -26,6 +26,46 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+app.get('/', (req, res) => {
+    res.render('home.ejs', {
+        user: req.session.user || null,
+        loggedIn: req.session.user ? true : false
+    });
+});
+
+app.get('/login', (req, res) => {
+    res.render('login.ejs', {
+        user: req.session.user || null,
+        loggedIn: req.session.user ? true : false,
+        error: null
+    });
+});
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === 'user' && password === 'pass') {
+        req.session.user = { username };
+        res.redirect('/profile');
+    } else {
+        res.render('login.ejs', {
+            user: null,
+            loggedIn: false,
+            error: 'Invalid credentials'
+        });
+    }
+});
+
+app.get('/profile', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('profile.ejs', {
+        user: req.session.user,
+        loggedIn: true
+    });
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
