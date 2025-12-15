@@ -1,12 +1,14 @@
 // import custom middleware
 const isAuthenticated = require('../middleware/isAuthenticated');
 
-function chatRoute(app) {
-    app.get('/chat', (req, res) => {
+function socketRoute(app) {
+    app.get('/socket', (req, res) => {
         try {
             if (req.session.user && isAuthenticated) {
-                res.render('sockets', {
-                    user: req.session.user
+                res.render('socket', {
+                    user: req.session.user,
+                    displayName: req.session.displayName,
+                    avatarPath: req.session.avatarPath
                 });
             } else {
                 res.render('login');
@@ -18,4 +20,4 @@ function chatRoute(app) {
     });
 };
 
-module.exports = chatRoute;
+module.exports = socketRoute;

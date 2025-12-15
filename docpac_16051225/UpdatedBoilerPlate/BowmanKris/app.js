@@ -7,7 +7,7 @@ const path = require('path');
 //import custom middleware and route handlers
 const homeRoute = require('./routes/home');
 const profileRoute = require('./routes/profile');
-const chatRoute = require('./routes/chat');
+const socketRoute = require('./routes/socket');
 const loginRoute = require('./routes/login');
 const logoutRoute = require('./routes/logout');
 const usersRoute = require('./routes/api/users');
@@ -47,7 +47,7 @@ app.use('/public', express.static("./public"));
 //set up routes
 homeRoute(app);
 profileRoute(app);
-chatRoute(app);
+socketRoute(app);
 loginRoute(app);
 logoutRoute(app);
 usersRoute(app);
