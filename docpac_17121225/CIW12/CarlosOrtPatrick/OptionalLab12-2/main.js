@@ -1,3 +1,5 @@
+// something is here E
+
 // Select the title and subtitle elements
 const title = document.querySelector('.header-container .title');
 const subtitle = document.querySelector('.header-container h2');

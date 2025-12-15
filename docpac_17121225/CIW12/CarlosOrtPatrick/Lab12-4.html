@@ -4,6 +4,9 @@
         <meta charset="utf-8">
         <title>React Library Search</title>
  
+		<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 
 	  <style>
@@ -84,7 +87,13 @@
 			  <p className="explanation">
 				JavaScript libraries are pre-written code that help developers build web applications faster. They provide useful tools and functions so you do not have to write everything from scratch. Use the search box below to find popular modern JavaScript libraries.
 			  </p>
-		//Create search
+		<input
+type="text"
+placeholder="Type to search libraries"
+value={filter}
+onChange={e => setFilter(e.target.value)}
+aria-label="Search JavaScript libraries"
+/>
 			
 
 
@@ -93,7 +102,7 @@
 			  <ul>
 				{filteredLibraries.map(lib => (
 				  <li key={lib.name}>
-					{lib.name} <br>
+					{lib.name} <br />
 					<a href={lib.url} target="_blank" rel="noopener noreferrer">{lib.url}</a>
 				  </li>
 				))}
@@ -102,6 +111,7 @@
 		  );
 		}
 		//Insert ReactDOM.render here
+		ReactDOM.render(<LibrarySearch />, document.getElementById('root'));
 	 
 	  </script>
 	</body>
