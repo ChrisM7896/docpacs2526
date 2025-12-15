@@ -4,7 +4,8 @@
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "node": "^20.19.6",
-    "socket-io": "^1.0.0"
+    "socket-io": "^1.0.0",
+    "socket.io-client": "^4.8.1"
   },
   "scripts": {
     "init-database": "node scripts/initDatabase.js",

@@ -1,23 +1,16 @@
 const logger = require('../modules/logger');
 const utilities = require('../shared/utilities');
-const sessionMiddleware = require('../middleware/session');
-const socketAuth = require('../middleware/socketAuth');
 const instanceManager = require('../modules/instanceManager');
 
 function onChat(socket, messageData) {
-    socketAuth(socket, (err) => {
-        if (err) {
-            logger.warn('Socket authentication failed on chat: ', err);
-            socket.emit('error', 'Unauthorized');
-            return;
-        }
-
+    try {
         const session = socket.request.session;
-        const userId = session.user.id;
+        const userId = session && session.user ? session.user.id : socket.id;
+        const username = session && session.user ? session.user.username : 'Guest';
         const roomId = messageData.roomId;
         const message = messageData.message;
 
-        // Check if the room exists
+        // Validate room exists
         const room = instanceManager.getRoomById(roomId);
         if (!room) {
             logger.warn(`User ${userId} attempted to send message to non-existent room: ${roomId}`);
@@ -25,15 +18,23 @@ function onChat(socket, messageData) {
             return;
         }
 
-        // Broadcast the message to the room
+        // Broadcast the message to the entire room (including sender)
+        socket.emit('chatMessage', {
+            username,
+            message,
+            timestamp: utilities.getCurrentTimestamp()
+        });
         socket.to(roomId).emit('chatMessage', {
-            userId,
+            username,
             message,
             timestamp: utilities.getCurrentTimestamp()
         });
 
-        logger.info(`User ${userId} sent message to room ${roomId}: ${message}`);
-    });
+        logger.info(`User ${username} sent message in room ${roomId}: ${message}`);
+    } catch (err) {
+        logger.error('Error in onChat: ' + err.message);
+        socket.emit('error', 'Failed to send message');
+    }
 }
 
 module.exports = onChat;

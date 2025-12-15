@@ -3,13 +3,12 @@ const rooms = {}
 const userRoomMap = {}
 
 function createRoom(roomId, roomName = '', maxUsers = 50) {
-    // Check if room already exists - what should you do?
+    // Check if room already exists
     if (rooms[roomId]) {
-        return null;
-        // Return error? Overwrite? Your choice
+        return rooms[roomId];
     }
     
-    // Create the room object - what properties should it have?
+    // Create the room object
     rooms[roomId] = {
         id: roomId,
         name: roomName,
@@ -55,7 +54,7 @@ function removeUserFromRoom(userId) {
     return true;
 }
 
-function getRoomId(roomId) {
+function getRoomById(roomId) {
     return rooms[roomId] || null;
 }
 
@@ -68,6 +67,6 @@ module.exports = {
     createRoom,
     addUserToRoom,
     removeUserFromRoom,
-    getRoomId,
+    getRoomById,
     getUserRoom
 };

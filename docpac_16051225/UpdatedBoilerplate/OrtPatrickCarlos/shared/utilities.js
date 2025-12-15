@@ -1,28 +1,5 @@
-const express = require('express');
-const router = express.Router();
-const logger = require('../modules/logger');
-const path = require('path');
-const fs = require('fs');
+const crypto = require('crypto');
 
-// Utility function to read JSON files
-function readJSONFile(filePath) {
-    try {
-        const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        logger.error(`Error reading JSON file at ${filePath}: ${error.message}`);
-        return null;
-    }
-}
-// Utility function to write JSON files
-function writeJSONFile(filePath, data) {
-    try {
-        fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(data, null, 2), 'utf-8');
-        logger.info(`Successfully wrote to JSON file at ${filePath}`);
-    } catch (error) {
-        logger.error(`Error writing JSON file at ${filePath}: ${error.message}`);
-    }
-}
 // String sanitization utility
 function sanitizeString(input) {
     return input.replace(/[<>&'"]/g, function (char) {
@@ -36,15 +13,17 @@ function sanitizeString(input) {
         return charMap[char] || char;
     });
 }
+
 // Room ID or Token generator
 function generateToken(length = 16) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let token = '';
-    for (let i = 0; i < length; i++) {
-        token += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return token;
+    return crypto.randomBytes(length).toString('hex').slice(0, length);
 }
+
+// Get current timestamp
+function getCurrentTimestamp() {
+    return Date.now();
+}
+
 // Validation Helper
 function isValidPassword(password) {
     const minLength = 8;
@@ -61,10 +40,9 @@ function isValidUsername(username) {
 }
 
 module.exports = {
-    readJSONFile,
-    writeJSONFile,
     sanitizeString,
     generateToken,
+    getCurrentTimestamp,
     isValidPassword,
     isValidUsername
 };

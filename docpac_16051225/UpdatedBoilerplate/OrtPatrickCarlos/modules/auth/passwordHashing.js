@@ -27,6 +27,6 @@ async function comparePassword(plaintext, hash) {
 
 
 module.exports = {
-    passwordHash,
+    hashPassword: passwordHash,
     comparePassword
 };

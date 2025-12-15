@@ -106,4 +106,41 @@ router.get('/logout', (req, res) => {
     }
 });
 
+// Register route - show registration form
+router.get('/register', (req, res) => {
+    res.render('register', { errorMessage: null, successMessage: null });
+});
+
+// Register POST - handle user registration
+router.post('/register', async (req, res) => {
+    const { username, password, passwordConfirm } = req.body;
+
+    try {
+        // Validate input
+        if (!username || !password || !passwordConfirm) {
+            return res.render('register', { errorMessage: 'All fields are required', successMessage: null });
+        }
+
+        if (password !== passwordConfirm) {
+            return res.render('register', { errorMessage: 'Passwords do not match', successMessage: null });
+        }
+
+        if (password.length < 6) {
+            return res.render('register', { errorMessage: 'Password must be at least 6 characters', successMessage: null });
+        }
+
+        // Register user
+        const user = await native.registerUser(username, password);
+        
+        if (user) {
+            logger.info(`New user registered: ${user.username}`);
+            return res.render('register', { errorMessage: null, successMessage: 'Registration successful! You can now login.' });
+        }
+    } catch (error) {
+        logger.error(`Registration failed: ${error.message}`);
+        const errorMsg = error.message.includes('already exists') ? 'Username already exists' : 'Registration failed. Please try again.';
+        res.render('register', { errorMessage: errorMsg, successMessage: null });
+    }
+});
+
 module.exports = router;

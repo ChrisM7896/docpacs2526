@@ -1,19 +1,18 @@
 const passwordHashing = require('./passwordHashing')
 const sqlite3 = require('sqlite3').verbose();
-const dbPath = require('path').resolve(__dirname, '../data/database.sqlite');
-
-
+const path = require('path');
+const dbPath = path.resolve(__dirname, '../../data/database.sqlite');
 
 async function findUserInDatabase(username) {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(dbPath);
-        const query = `SELECT id, username, passwordHash, formbarId, created_at FROM users WHERE username = ?`; // Verify column name
+        const query = `SELECT id, username, passwordHash, formbarId, createdAt FROM users WHERE username = ?`;
         db.get(query, [username], (err, row) => {
             db.close();
             if (err) {
                 return reject(err);
             }
-            resolve(row || null); // Return null if no user is found
+            resolve(row || null);
         });
     });
 }
@@ -21,14 +20,14 @@ async function findUserInDatabase(username) {
 async function createUserInDatabase(username, passwordHash) {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(dbPath);
-        const query = `INSERT INTO users (username, passwordHash, created_at) VALUES (?, ?, datetime('now'))`;
+        const query = `INSERT INTO users (username, passwordHash) VALUES (?, ?)`;
         db.run(query, [username, passwordHash], function(err) {
             if (err) {
                 db.close();
                 return reject(err);
             }
             const newUserId = this.lastID;
-            const selectQuery = `SELECT id, username, formbarId, created_at FROM users WHERE id = ?`;
+            const selectQuery = `SELECT id, username, formbarId, createdAt FROM users WHERE id = ?`;
             db.get(selectQuery, [newUserId], (err, row) => {
                 db.close();
                 if (err) {
@@ -40,52 +39,42 @@ async function createUserInDatabase(username, passwordHash) {
     });
 }
 
-
-
-
 async function loginUser(username, password) {
     try {
-        const user = await findUserInDatabase(username); // Placeholder function
+        const user = await findUserInDatabase(username);
         if (!user) {
-            return null; // User not found
+            return null;
         }
         const isPasswordValid = await passwordHashing.comparePassword(password, user.passwordHash);
         if (!isPasswordValid) {
-            return null; // Invalid password
+            return null;
         }
 
         return {
             id: user.id,
             username: user.username,
             formbarId: user.formbarId,
-            created_at: user.created_at
-        }; 
+            createdAt: user.createdAt
+        };
     } catch (error) {
-        // Handle error
         return null;
     }
 }
 
 async function registerUser(username, password) {
     try {
-        // Check if user already exists
         const existingUser = await findUserInDatabase(username);
         if (existingUser) {
             throw new Error('Username already exists');
         }
 
-        // Hash password
-        const hashedPassword = await passwordHashing.passwordHash(password);
-
-        // Create user in database
-        const newUser = await createUserInDatabase(username, hashedPassword); // Placeholder function
-
-        return newUser; // Return clean user object
+        const passwordHash = await passwordHashing.hashPassword(password);
+        const newUser = await createUserInDatabase(username, passwordHash);
+        return newUser;
     } catch (error) {
-        throw error; // Let the route handle the error
+        throw error;
     }
 }
-
 
 module.exports = {
     loginUser,
