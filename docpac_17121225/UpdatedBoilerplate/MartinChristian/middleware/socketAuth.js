@@ -4,3 +4,5 @@ const socket = io(AUTH_URL, {
         api: API_KEY
     }
 });
+
+module.exports = { socket };

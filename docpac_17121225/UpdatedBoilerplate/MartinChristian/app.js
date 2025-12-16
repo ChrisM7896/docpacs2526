@@ -41,6 +41,8 @@ function isAuthenticated(req, res, next) {
     if (req.session.user) next()
     else res.redirect('/login');
 };
+// IMPORT SOCKET SERVER
+const { socketServer } = require('./modules/socketServer');
 
 // SOCKET.IO CLIENT TO AUTH SERVER
 const socket = io(AUTH_URL, {
@@ -77,20 +79,6 @@ app.get('/login', (req, res) => {
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login');
-});
-
-app.get('/sendpogs', isAuthenticated, (req, res) => {
-    const data = {
-        from: 110,
-        to: 40,
-        amount: 5,
-        pin: 7896,
-        reason: "guh"
-    }
-
-    socket.emit('transferDigipogs', data);
-    
-    res.send('Pogs sent!');
 });
 
 socket.on('connect', () => {
