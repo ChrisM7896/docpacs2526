@@ -10,3 +10,5 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+module.exports = session
