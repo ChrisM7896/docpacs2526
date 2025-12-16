@@ -2,14 +2,13 @@
 
     <body>
         <h1>User Profile</h1>
-        <p>Name: <%= user.name %>
-        </p>
-        <p>Password: <%= user.password %>
+        <a href="/">Back to home</a>
+        <p>Name: <%= user.username %>
         </p>
         <!--form that allows user to upload files-->
         <form action="/upload" method="post" enctype="multipart/form-data">
             <input type="file" name="profilePic" />
-            <button type="submit">Upload Profile Picture</button>
+            <button type="submit">Upload File</button>
         </form>
         <!--Show a list of previously uploaded files-->
         <h2>Uploaded Files</h2>

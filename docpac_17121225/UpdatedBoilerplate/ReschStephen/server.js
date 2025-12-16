@@ -9,6 +9,8 @@ import sqlite3Package from 'sqlite3';
 const sqlite3 = sqlite3Package.verbose();
 import connectSqlite3 from 'connect-sqlite3';
 const SQLiteStore = connectSqlite3(session);
+import fs from 'fs';
+import multer from 'multer';
 
 app.use(sessionMiddleware);
 
@@ -24,8 +26,33 @@ const db = new sqlite3.Database('./data/database.db', (err) => {
 // Middleware
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use('/uploads', express.static('./data/uploads'));
 app.use(express.urlencoded({ extended: true }));
 
+// Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './data/uploads/')
+    },
+    filename: function (req, file, cb) {
+        const uniqueName = Date.now() + '-' + file.originalname;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'));
+        }
+    }
+});
 // Routes
 app.get('/', (req, res) => {
     res.render('home.ejs', {
@@ -44,6 +71,11 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+
+    console.log('Received username:', username);
+    console.log('Received password:', password);
+    console.log('Expected: user / pass');
+
     if (username === 'user' && password === 'pass') {
         req.session.user = { username };
         res.redirect('/profile');
@@ -60,9 +92,45 @@ app.get('/profile', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }
+
+    // Debug what's in the session
+    console.log('Session user:', req.session.user);
+
+    // Read files from uploads directory
+    const uploadsDir = './data/uploads';
+    let files = [];
+    try {
+        files = fs.readdirSync(uploadsDir);
+        console.log('Files found:', files);
+    } catch (err) {
+        console.log('No uploads directory or error reading files:', err.message);
+    }
+
     res.render('profile.ejs', {
         user: req.session.user,
-        loggedIn: true
+        loggedIn: true,
+        files: files
+    });
+});
+
+app.post('/upload', upload.single('profilePic'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.redirect('/profile?error=No file selected');
+        }
+
+        console.log('File uploaded:', req.file.filename);
+        res.redirect('/profile?success=File uploaded successfully');
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.redirect('/profile?error=Upload failed');
+    }
+});
+
+app.get('/sockets', (req, res) => {
+    res.render('sockets.ejs', {
+        user: req.session.user || null,
+        loggedIn: req.session.user ? true : false
     });
 });
 

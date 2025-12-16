@@ -43,7 +43,7 @@
                 }
             });
 
-            socket.on('message', (msg) => {
+            socket.on('chatMessage', (msg) => {
                 const msgElem = document.createElement('div');
                 msgElem.textContent = msg;
                 messagesDiv.appendChild(msgElem);
