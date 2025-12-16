@@ -7,13 +7,15 @@ const session = require('express-session');
 const { io } = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
+const logger = require('./modules/logger');
+
 
 // Database setup
 const db = new sqlite3.Database('./db/database.db', (err) => {
     if (err) {
-        console.error('Could not connect to database', err);
+        logger.error('Could not connect to database', { error: err.message });
     } else {
-        console.log('Connected to database');
+        logger.info('Connected to database');
     }
 });
 
@@ -56,9 +58,9 @@ app.get('/login', (req, res) => {
         //Save use to database if not exists
         db.run('INSERT OR IGNORE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
             if (err) {
-                return console.error(err.message);
+                return logger.error('Error saving user to database', { error: err.message });
             }
-            console.log(`User ${tokenData.displayName} saved to database.`);
+            logger.info('User saved to database', { username: tokenData.displayName });
         });
 
         res.redirect('/');
@@ -94,22 +96,22 @@ const socket = io(AUTH_URL, {
 });
 
 socket.on('connect', () => {
-    console.log('Connected to auth server');
+    logger.info('Connected to auth server');
 });
 
 socket.on('disconnect', () => {
-    console.log('Disconnected from auth server');
+    logger.info('Disconnected from auth server');
 });
 
 socket.on('setClass', (classData) => {
-    console.log('Received class data:', classData);
+    logger.info('Received class data', { classData });
     socket.emit('classUpdate');
 });
 
 socket.on('classUpdate', (classroomData) => {
-    console.log(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
-    console.log(`Responses: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
-    console.log(classroomData.poll.responses)
+    logger.info(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
+    logger.info(`Responses: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
+    logger.info(classroomData.poll.responses);
 
     
 });
@@ -120,5 +122,5 @@ socket.on('connect', () => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    logger.info('Server started', { port: PORT, url: `http://localhost:${PORT}` });
 });
