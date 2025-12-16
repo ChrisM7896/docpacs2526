@@ -5,7 +5,7 @@
 ## Package Configuration
 ### Modules
 To install the project's required dependencies, copy the following command and paste it in the terminal:
-> npm install bcrypt connect-sqlite3 dotenv ejs express express-session jsonwebtoken multer path socket.io sqlite3
+> npm install bcrypt connect-sqlite3 dotenv ejs express express-session jsonwebtoken multer path socket.io socket.io-client sqlite3
 This should create package.json and package-lock.json files. 
 
 ### Initializing the Database
@@ -42,6 +42,7 @@ Once you have completed all the steps outlined above, your package.json file sho
 >        "multer": "^2.0.2",
 >        "path": "^0.12.7",
 >        "socket.io": "^4.8.1",
+>        "socket.io-client": "^4.8.1",
 >        "sqlite3": "^5.1.7"
 >    },
 > }

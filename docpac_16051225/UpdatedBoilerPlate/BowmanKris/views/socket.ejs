@@ -7,29 +7,10 @@
     <title>Chat</title>
 </head>
 <style>
-    #chatLog {
-        display: inline-block;
-        margin: 20px;
-        width: 75%;
-        height: 500px;
-        border: 1px solid black;
-    }
-
-    #roomList {
-        display: inline-block;
-        margin: 20px;
-        width: 15%;
-        height: 500px;
-        border: 1px solid black;
-    }
-
-    #messageInput {
-        display: inline-block;
-    }
 </style>
 
 <body>
-    <div id="Room ID:">
+    <div id="roomName">
         <!--Room ID here-->
     </div>
     <div id="chatLog">
@@ -38,15 +19,64 @@
     <div id="roomList">
         <!--Room list here-->
     </div>
-    <div>
+    <form>
         <label for="messageInput">Message:</label>
         <input id="messageInput" name="messageInput" type="text" placeholder="Type your message here...">
-    </div>
+        <button id="sendButton">Send</button>
+    </form>
+
     <a href="/">Back to Home</a>
 </body>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+    let rooms = ['general', 'room 1', 'room 2']
+    let currentRoom = 'general'
+
+    const roomName = document.getElementById('roomName')
+    const chatLog = document.getElementById('chatLog');
+    const roomListDiv = document.getElementById('roomList');
+    const messageInput = document.getElementById('messageInput');
+    const form = document.querySelector('form');
+    const sendButton = document.getElementById('sendButton');
+
+    const socket = io();
+
+    socket.emit('joinRoom', currentRoom);
+
+    // Receive chat messages from server
+    socket.on('chatMessage', (msg) => {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = msg;
+        chatLog.appendChild(messageElement);
+    });
+
+    // Receive updated room list from server
+    socket.on('roomList', () => {
+        roomListDiv.innerHTML = '<h3>Available Rooms:</h3>';
+        rooms.forEach((room) => {
+            const roomElement = document.createElement('div');
+            roomElement.textContent = `Room Name: ${room}`;
+            roomElement.style.cursor = 'pointer';
+            roomElement.onclick = () => {
+                socket.emit('joinRoom', room);
+                roomName.textContent = `Current Room: ${room}`;
+            };
+            roomListDiv.appendChild(roomElement);
+        });
+    });
+
+    // Handle form submission to send messages
     
+    // Handle button click to send messages
+    sendButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        if (message) {
+            socket.emit('chatMessage', { message: message });
+            messageInput.value = '';
+        }
+    });
+
 </script>
 
 </html>

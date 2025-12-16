@@ -1,3 +1,21 @@
 //import required modules
-const io = require(socket.io)
+const onChat = require('../sockets/onChat');
+const onJoinRoom = require('../sockets/onJoinRoom')
 
+function onConnect(io) {
+    //handle socket connection
+    io.on('connection', (socket) => {
+        console.log('A user connected:', socket.id); // Debug log
+
+        socket.emit('joinRoom', { room: 'general'})
+        
+        onChat(io, socket)
+        onJoinRoom(io, socket)
+
+        socket.on('disconnect', () => {
+            console.log('A user disconnected:', socket.id);
+        });
+    });
+};
+
+module.exports = onConnect;

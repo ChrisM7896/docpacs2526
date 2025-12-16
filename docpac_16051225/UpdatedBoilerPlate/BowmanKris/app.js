@@ -2,6 +2,8 @@
 const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
+const { Server } = require('socket.io');
+const http = require('http')
 const path = require('path');
 
 //import custom middleware and route handlers
@@ -12,7 +14,9 @@ const loginRoute = require('./routes/login');
 const logoutRoute = require('./routes/logout');
 const usersRoute = require('./routes/api/users');
 
-// retrieve environment variables
+const onConnect = require('./sockets/onConnect')
+
+//retrieve environment variables
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const SESSION_SECRET = process.env.SESSION_SECRET;
@@ -24,6 +28,10 @@ const databaseFolder = path.dirname(DATABASE_DIR);
 
 //initialize express application
 const app = express();
+
+//initialize socket.io server
+const server = http.createServer(app);
+const io = new Server(server);
 
 //set up session management
 app.use(session({
@@ -44,6 +52,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/public', express.static("./public"));
 
+//socket.io events
+onConnect(io)
+
 //set up routes
 homeRoute(app);
 profileRoute(app);
@@ -53,6 +64,6 @@ logoutRoute(app);
 usersRoute(app);
 
 //start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running at ${HOST}${PORT}`);
 });
