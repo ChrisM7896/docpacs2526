@@ -6,12 +6,12 @@ import jwt from 'jsonwebtoken';
 import e from 'express';
 
 // Handle OAuth redirect flow
-app.get('/login', (req, res) => {
+app.get('/auth/formbar', (req, res) => {
     logging('INFO', `Login request received with query: ${JSON.stringify(req.query)}`);
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
-        req.session.user = tokenData.displayName;
+        req.session.user = { username: tokenData.displayName };
         logging('INFO', `User ${tokenData.displayName} logged in successfully.`);
         res.redirect('/profile');
     } else {
@@ -96,7 +96,7 @@ app.get('/callback', (req, res) => {
             if (data.access_token) {
                 const tokenData = jwt.decode(data.access_token);
                 req.session.token = tokenData;
-                req.session.user = tokenData.displayName;
+                req.session.user = { username: tokenData.displayName };
                 logging('INFO', `User ${tokenData.displayName} authenticated successfully.`);
                 res.redirect('/profile');
             } else {

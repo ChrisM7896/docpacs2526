@@ -142,6 +142,8 @@ const server = app.listen(PORT, () => {
 // Socket.io setup
 import { Server } from 'socket.io';
 const io = new Server(server);
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+io.use(wrap(sessionMiddleware));
 import onConnect from './sockets/onConnect.js';
 import onJoinRoom from './sockets/onJoinRoom.js';
 onConnect(io);
