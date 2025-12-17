@@ -18,13 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(sessionMiddleware);
 // Serve static files
-app.use('/css', express.static(path.join(__dirname, '/css'), {
-  setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css');
-      }
-  }
-}));
+app.use(express.static('public'))
 app.use('/uploads', express.static(path.join(__dirname, 'data/uploads')));
 // Mount routes
 const homeRouter = require('./routes/home');
