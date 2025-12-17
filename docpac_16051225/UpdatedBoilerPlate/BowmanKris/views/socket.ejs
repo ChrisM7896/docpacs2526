@@ -10,9 +10,9 @@
 </style>
 
 <body>
-    <div id="roomName">
+    <h2 id="roomName">
         <!--Room ID here-->
-    </div>
+    </h2>
     <div id="chatLog">
         <!--Messages outputted here-->
     </div>
@@ -22,7 +22,7 @@
     <form>
         <label for="messageInput">Message:</label>
         <input id="messageInput" name="messageInput" type="text" placeholder="Type your message here...">
-        <button id="sendButton">Send</button>
+        <button id="sendButton" type="button">Send</button>
     </form>
 
     <a href="/">Back to Home</a>
@@ -32,7 +32,7 @@
 <script>
     let rooms = ['general', 'room 1', 'room 2']
     let currentRoom = 'general'
-
+    const displayName = "<%= displayName %>";
     const roomName = document.getElementById('roomName')
     const chatLog = document.getElementById('chatLog');
     const roomListDiv = document.getElementById('roomList');
@@ -45,14 +45,15 @@
     socket.emit('joinRoom', currentRoom);
 
     // Receive chat messages from server
-    socket.on('chatMessage', (msg) => {
+    socket.on('chatMessage', (data) => {
         const messageElement = document.createElement('div');
-        messageElement.textContent = msg;
+        messageElement.textContent = `${data.sender}: ${data.message}, ${data.timestamp}`;
         chatLog.appendChild(messageElement);
     });
 
     // Receive updated room list from server
     socket.on('roomList', () => {
+        roomName.textContent = `Current Room: ${currentRoom}`;
         roomListDiv.innerHTML = '<h3>Available Rooms:</h3>';
         rooms.forEach((room) => {
             const roomElement = document.createElement('div');
@@ -65,14 +66,12 @@
             roomListDiv.appendChild(roomElement);
         });
     });
-
-    // Handle form submission to send messages
     
     // Handle button click to send messages
     sendButton.addEventListener('click', () => {
         const message = messageInput.value;
         if (message) {
-            socket.emit('chatMessage', { message: message });
+            socket.emit('chatMessage', { sender: displayName, message: message });
             messageInput.value = '';
         }
     });

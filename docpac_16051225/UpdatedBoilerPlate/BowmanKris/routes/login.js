@@ -4,15 +4,14 @@ const jwt = require('jsonwebtoken');
 //import custom modules
 const databaseManager = require('../modules/databaseManager');
 
-//retrive environment variables
-const PORT = process.env.PORT;
-const HOST = process.env.HOST;
+//retrieve environment variables
+const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
+const REDIRECT_URL = process.env.REDIRECT_URL;
 
 function loginRoute(app) {
     app.get('/login', (req, res) => {
         if (req.session.user) {
             res.redirect('/');
-            // use formbar token data
         } else if (req.query.token) {
             let tokenData = jwt.decode(req.query.token)
             req.session.token = tokenData
@@ -22,7 +21,7 @@ function loginRoute(app) {
             console.log(`User ${tokenData.displayName} logged in.`)
             res.redirect('/');
         } else {
-            res.render('login');
+            res.redirect(`${FORMBAR_AUTH_URL}?redirectURL=${REDIRECT_URL}`);
         }
     });
 
@@ -34,12 +33,12 @@ function loginRoute(app) {
     });
 
     app.post('/login/createUser', (req, res) => {
-        const { username, displayName, password } = req.body; // Retrieve username and password from form
-        if (username && displayName && password) {
+        const { createUsername, createDisplayName, createPassword } = req.body; // Retrieve username and password from form
+        if (createUsername && createDisplayName && createPassword) {
             try {
-                databaseManager.saveUserData({ username, displayName, password, permissions: 2 });
-                req.session.user = username;
-                req.session.displayName = displayName;
+                databaseManager.saveUserData({ createUsername, createDisplayName, createPassword, permissions: 2 });
+                req.session.user = createUsername;
+                req.session.displayName = createDisplayName;
                 res.redirect('/');
             } catch (error) {
                 console.error('Error saving user data:', error);

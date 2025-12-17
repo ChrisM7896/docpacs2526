@@ -53,23 +53,23 @@ function authenticateUser(username, password, req, res) {
 };
 
 //save user data to database
-function saveUserData({ username, displayName, permissions, password }) {
-    if (!password) {
+function saveUserData({ createUsername, createDisplayName, permissions, createPassword }) {
+    if (!createPassword) {
         console.error('Password is required for hashing.');
         return;
     }
 
     //hash the password before saving
-    const hashedPassword = hashPassword(password)
+    const hashedPassword = hashPassword(createPassword)
 
     db.run(
         `INSERT INTO users (username, display_name, permissions, password) VALUES (?, ?, ?, ?)`,
-        [username, displayName, permissions, hashedPassword],
+        [createUsername, createDisplayName, permissions, hashedPassword],
         (err) => {
             if (err) {
                 console.error('Error saving user to database:', err.message);
             } else {
-                console.log(`User ${username} saved to database.`)
+                console.log(`User ${createUsername} saved to database.`)
             }
         }
     );
