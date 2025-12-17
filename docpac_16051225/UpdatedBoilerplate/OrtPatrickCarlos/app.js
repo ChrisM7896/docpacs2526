@@ -17,9 +17,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(sessionMiddleware);
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files
+app.use('/css', express.static(path.join(__dirname, '/css'), {
+  setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+      }
+  }
+}));
 app.use('/uploads', express.static(path.join(__dirname, 'data/uploads')));
-
 // Mount routes
 const homeRouter = require('./routes/home');
 const loginRouter = require('./routes/login');
