@@ -3,15 +3,16 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
-const session = require('express-session');
-const { io } = require('socket.io-client');
+const homeRoutes = require('./routes/home');
+const loginRoutes = require('./routes/login');
+const { initializeSocketServer } = require('./modules/socketServer');
 const sqlite3 = require('sqlite3').verbose();
-const SQLiteStore = require('connect-sqlite3')(session);
 const logger = require('./modules/logger');
-
+const sessionMiddleware = require('./middleware/session');
+const isAuthenticated = require('./middleware/isAuthenticated');
 
 // Database setup
-const db = new sqlite3.Database('./db/database.db', (err) => {
+const db = new sqlite3.Database('./data/database.sqlite', (err) => {
     if (err) {
         logger.error('Could not connect to database', { error: err.message });
     } else {
@@ -23,57 +24,20 @@ const db = new sqlite3.Database('./db/database.db', (err) => {
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
 const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
 // Middleware
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-    store: new SQLiteStore({ db: 'sessions.db', dir: './db' }),
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}))
-
-function isAuthenticated(req, res, next) {
-    if (req.session.user) next()
-    else res.redirect('/login')
-};
+app.use(sessionMiddleware);
 
 // Routes
-app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', { user: req.session.user });
-});
+app.use('/', homeRoutes);
 
-app.get('/login', (req, res) => {
-    if (req.query.token) {
-        let tokenData = jwt.decode(req.query.token);
-        req.session.token = tokenData;
-        req.session.user = tokenData.displayName;
-
-        //Save use to database if not exists
-        db.run('INSERT OR IGNORE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
-            if (err) {
-                return logger.error('Error saving user to database', { error: err.message });
-            }
-            logger.info('User saved to database', { username: tokenData.displayName });
-        });
-
-        res.redirect('/');
-
-    } else {
-        res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
-    };
-});
-
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/login');
-});
+app.use('/', loginRoutes);
 
 /*app.get('sendpogs'), isAuthenticated, (req, res) => {
     const data = {
@@ -89,38 +53,10 @@ app.get('/logout', (req, res) => {
     res.send('Pogs sent!');
 };*/
 
-const socket = io(AUTH_URL, {
-    extraHeaders: {
-        api: API_KEY
-    }
-});
-
-socket.on('connect', () => {
-    logger.info('Connected to auth server');
-});
-
-socket.on('disconnect', () => {
-    logger.info('Disconnected from auth server');
-});
-
-socket.on('setClass', (classData) => {
-    logger.info('Received class data', { classData });
-    socket.emit('classUpdate');
-});
-
-socket.on('classUpdate', (classroomData) => {
-    logger.info(`Classroom id: ${classroomData.id}, Name: ${classroomData.className}, Active: ${classroomData.isActive}`);
-    logger.info(`Responses: ${classroomData.poll.totalResponses} / ${classroomData.poll.totalResponders}`);
-    logger.info(classroomData.poll.responses);
-
-    
-});
-
-socket.on('connect', () => {
-    socket.emit('getActiveClass');
-});
-
 // Start server
-app.listen(PORT, () => {
+const server = require('http').createServer(app);
+initializeSocketServer(server, sessionMiddleware);
+
+server.listen(PORT, () => {
     logger.info('Server started', { port: PORT, url: `http://localhost:${PORT}` });
 });
