@@ -10,6 +10,8 @@ const sqlite3 = require('sqlite3').verbose();
 const logger = require('./modules/logger');
 const sessionMiddleware = require('./middleware/session');
 const isAuthenticated = require('./middleware/isAuthenticated');
+const profileRoutes = require('./routes/profile')
+const apiRoutes = require('./routes/api/users');
 
 // Database setup
 const db = new sqlite3.Database('./data/database.sqlite', (err) => {
@@ -31,13 +33,13 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(sessionMiddleware);
 
 // Routes
 app.use('/', homeRoutes);
-
 app.use('/', loginRoutes);
+app.use('/', profileRoutes);
+app.use('/api', apiRoutes);
 
 /*app.get('sendpogs'), isAuthenticated, (req, res) => {
     const data = {

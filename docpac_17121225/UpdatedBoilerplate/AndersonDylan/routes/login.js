@@ -1,4 +1,4 @@
-// routes/login.js
+// routes/login.js - Final version
 const express = require('express');
 const router = express.Router();
 const logger = require('../modules/logger');
@@ -6,6 +6,11 @@ const { loginUser } = require('../modules/auth/native');
 const { getAuthorizationUrl, handleCallback } = require('../modules/auth/formbarAuth');
 
 router.get('/login', async (req, res) => {
+    // If user is already logged in, redirect to home
+    if (req.session.user) {
+        return res.redirect('/');
+    }
+
     if (req.query.token) {
         // Handle Formbar OAuth callback
         try {
@@ -17,7 +22,7 @@ router.get('/login', async (req, res) => {
             res.redirect('/');
         } catch (error) {
             logger.error('Formbar login failed', { error: error.message });
-            res.render('login', { error: 'Login failed. Please try again.' });
+            res.render('login', { error: 'Formbar login failed. Please try again.' });
         }
     } else {
         // Show login page
@@ -66,23 +71,6 @@ router.get('/logout', (req, res) => {
     });
 });
 
-// Add this route to routes/login.js (should be after your other routes)
-router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-        return res.render('login', { error: 'Username and password are required' });
-    }
-    
-    try {
-        const { registerUser } = require('../modules/auth/native');
-        const user = await registerUser(username, password);
-        logger.info('User registered for testing', { username });
-        res.render('login', { error: null, success: 'Account created! You can now log in.' });
-    } catch (error) {
-        logger.error('Registration failed', { error: error.message });
-        res.render('login', { error: error.message });
-    }
-});
+// REMOVE the temporary /register route completely
 
 module.exports = router;
