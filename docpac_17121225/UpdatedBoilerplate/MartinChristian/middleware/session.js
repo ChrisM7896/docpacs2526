@@ -11,4 +11,4 @@ app.use(session({
     saveUninitialized: true
 }));
 
-module.exports = session
+module.exports = session;
