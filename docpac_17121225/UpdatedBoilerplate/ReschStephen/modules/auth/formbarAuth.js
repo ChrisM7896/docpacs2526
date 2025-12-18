@@ -1,62 +1,8 @@
 // Imports
 import express from 'express';
-const app = express();
-import { logging } from './modules/logger.js';
+const router = express.Router();
+import { logging } from '../logger.js';
 import jwt from 'jsonwebtoken';
-import e from 'express';
-
-// Handle OAuth redirect flow
-app.get('/auth/formbar', (req, res) => {
-    logging('INFO', `Login request received with query: ${JSON.stringify(req.query)}`);
-    if (req.query.token) {
-        let tokenData = jwt.decode(req.query.token);
-        req.session.token = tokenData;
-        req.session.user = { username: tokenData.displayName };
-        logging('INFO', `User ${tokenData.displayName} logged in successfully.`);
-        res.redirect('/profile');
-    } else {
-        res.redirect(`${AUTH_URL}/oauth?redirectURL=${THIS_URL}`);
-    }
-});
-
-app.get('/home', (req, res) => {
-    try {
-        res.render('home', { user: req.session.user });
-    } catch (error) {
-        logging('ERROR', `Error rendering home page: ${error.message}`);
-        res.send(error.message);
-    }
-    const loggedIn = req.session.user ? true : false;
-    res.render('home', { user: req.session.user, loggedIn: loggedIn });
-});
-
-app.get('/profile', (req, res) => {
-    if (req.session.token) {
-        db.get('SELECT * FROM users WHERE fb_name = ?', [req.session.user], (err, row) => {
-            if (err) {
-                logging('ERROR', `Database error: ${err.message}`);
-                return console.error(err.message);
-            }
-            if (!row) {
-                db.run('INSERT INTO users(fb_name, profile_checked) VALUES(?, ?)', [req.session.user, 0], function (err) {
-                    if (err) {
-                        logging('ERROR', `Error inserting new user: ${err.message}`);
-                        return console.error(err.message);
-                    }
-                    logging('INFO', `New user ${req.session.user} inserted with rowid ${this.lastID}`);
-                    res.render('profile', { user: req.session.token, check: JSON.stringify(0) });
-                });
-            } else {
-                res.render('profile', { user: req.session.token, check: JSON.stringify(row) });
-            }
-        });
-    } else {
-        logging('WARN', 'Unauthorized access to profile page.');
-        res.send('Unauthorized access.');
-    }
-});
-
-export default app;
 
 // Build authorization URL
 function buildAuthURL() {
@@ -65,55 +11,46 @@ function buildAuthURL() {
         redirect_uri: process.env.FB_REDIRECT_URI,
         response_type: 'code',
     });
-    return `https://www.formbar.yorktechapps.com/oauth?${params.toString()}`;
+    return `https://formbeta.yorktechapps.com/oauth?${params.toString()}`;
 }
 const AUTH_URL = buildAuthURL();
 const THIS_URL = process.env.FB_REDIRECT_URI;
 
 export { AUTH_URL, THIS_URL };
+// Handle OAuth redirect flow
+router.get('/auth/formbar', (req, res) => {
+    logging('INFO', `Login request received with query: ${JSON.stringify(req.query)}`);
+    if (req.query.token) {
+        let tokenData = jwt.decode(req.query.token);
+        req.session.token = tokenData;
+        req.session.user = { username: tokenData.displayName };
+        logging('INFO', `User ${tokenData.displayName} logged in successfully.`);
+        res.redirect('/profile');
+    } else {
+        res.redirect(`${AUTH_URL}&redirectURL=${THIS_URL}`);
+    }
+});
+
 
 // Handle callback route
-app.get('/callback', (req, res) => {
-    const authCode = req.query.code;
-    if (!authCode) {
-        logging('ERROR', 'No authorization code received in callback.');
-        return res.status(400).send('Authorization code is missing.');
+router.get('/callback', (req, res) => {
+    const authToken = req.query.token;
+    if (!authToken) {
+        logging('ERROR', 'No authorization token received in callback.');
+        return res.status(400).send('Authorization token is missing.');
     }
     // Exchange auth code for access token
-    fetch(`${AUTH_URL}/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            client_id: process.env.FB_CLIENT_ID,
-            client_secret: process.env.FB_CLIENT_SECRET,
-            redirect_uri: THIS_URL,
-            code: authCode,
-            grant_type: 'authorization_code',
-        }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.access_token) {
-                const tokenData = jwt.decode(data.access_token);
-                req.session.token = tokenData;
-                req.session.user = { username: tokenData.displayName };
-                logging('INFO', `User ${tokenData.displayName} authenticated successfully.`);
-                res.redirect('/profile');
-            } else {
-                logging('ERROR', 'Failed to obtain access token.');
-                res.status(500).send('Failed to obtain access token.');
-            }
-        })
-        .catch(error => {
-            logging('ERROR', `Error during token exchange: ${error.message}`);
-            res.status(500).send('Error during authentication process.');
-        });
+    let tokenData = jwt.decode(authToken);
+    req.session.token = tokenData;
+    req.session.user = { username: tokenData.displayName };
+    logging('INFO', `User ${tokenData.displayName} logged in successfully.`);
+    res.redirect('/profile');
 });
 
 // Exchange authorization code for tokens and user info
 async function exchangeAuthCodeForToken(authCode) {
     try {
-        const response = await fetch(`${AUTH_URL}/token`, {
+        const response = await fetch(`https://formbeta.yorktechapps.com/token`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -165,3 +102,4 @@ export function linkFormbarUserToLocalDB(db, fbName, callback) {
     });
 }
 
+export default router;

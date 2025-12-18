@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { logging } from './modules/logger.js';
+import { logging } from '../logger.js';
 const SALT_ROUNDS = 10;
 const passwordText = 's0/\/\P4$$w0rD';
 const otherPasswordText = 'not_bacon';

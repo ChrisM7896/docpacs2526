@@ -2,7 +2,7 @@ import fs from 'fs';
 import sqlite3Package from 'sqlite3';
 const sqlite3 = sqlite3Package.verbose();
 
-const sql = fs.readFileSync('./data/database.sqlite', 'utf-8');
+const sql = fs.readFileSync('./data/database.sql', 'utf-8');
 const db = new sqlite3.Database('./data/database.db');
 
 db.exec(sql, (err) => {

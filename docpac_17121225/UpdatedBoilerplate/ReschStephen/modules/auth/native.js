@@ -1,6 +1,6 @@
 // Handle native user registration 
 import bcrypt from 'bcryptjs';
-import { logging } from './modules/logger.js';
+import { logging } from '../logger.js';
 import express from 'express';
 const app = express();
 const SALT_ROUNDS = 10;
@@ -41,7 +41,7 @@ export function registerUser(db, username, password, callback) {
                 logging('ERROR', `Error hashing password: ${err}`);
                 return callback(err);
             }
-            const query = `INSERT INTO users (username, password_hash) VALUES (?, ?)`;
+            const query = `INSERT INTO users (username, passwordHash) VALUES (?, ?)`;
             db.run(query, [username, hash], function (err) {
                 if (err) {
                     logging('ERROR', `Error registering user: ${err}`);
@@ -56,7 +56,7 @@ export function registerUser(db, username, password, callback) {
 
 // Validate username and password on login
 export function validateUser(db, username, password, callback) {
-    const query = `SELECT password_hash FROM users WHERE username = ?`;
+    const query = `SELECT passwordHash FROM users WHERE username = ?`;
     db.get(query, [username], function (err, row) {
         if (err) {
             logging('ERROR', `Error fetching user: ${err}`);
@@ -66,7 +66,7 @@ export function validateUser(db, username, password, callback) {
             logging('WARN', `User ${username} not found.`);
             return callback(null, false);
         }
-        const storedHash = row.password_hash;
+        const storedHash = row.passwordHash;
         bcrypt.compare(password, storedHash, function (err, res) {
             if (err) {
                 logging('ERROR', `Error comparing passwords: ${err}`);

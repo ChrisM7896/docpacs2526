@@ -11,6 +11,9 @@ import connectSqlite3 from 'connect-sqlite3';
 const SQLiteStore = connectSqlite3(session);
 import fs from 'fs';
 import multer from 'multer';
+import formbarRoutes from './modules/auth/formbarAuth.js';
+import jwt from 'jsonwebtoken';
+import { registerUser, validateUser } from './modules/auth/native.js';
 
 app.use(sessionMiddleware);
 
@@ -28,6 +31,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use('/uploads', express.static('./data/uploads'));
 app.use(express.urlencoded({ extended: true }));
+app.use('/', formbarRoutes);
 
 // Multer
 const storage = multer.diskStorage({
@@ -72,21 +76,59 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    console.log('Received username:', username);
-    console.log('Received password:', password);
-    console.log('Expected: user / pass');
+    // First try to validate the existing user
+    validateUser(db, username, password, (err, isValid) => {
+        if (err) {
+            return res.render('login.ejs', {
+                user: null,
+                loggedIn: false,
+                error: 'Error during authentication.'
+            });
+        }
 
-    if (username === 'user' && password === 'pass') {
-        req.session.user = { username };
-        res.redirect('/profile');
-    } else {
-        res.render('login.ejs', {
-            user: null,
-            loggedIn: false,
-            error: 'Invalid credentials'
-        });
-    }
+        if (isValid) {
+            // User exists and password is correct
+            req.session.user = { username };
+            res.redirect('/profile');
+        } else {
+            // User doesn't exist or password is wrong
+            const checkUserQuery = `SELECT username FROM users WHERE username = ?`;
+            db.get(checkUserQuery, [username], function (err, row) {
+                if (err) {
+                    return res.render('login.ejs', {
+                        user: null,
+                        loggedIn: false,
+                        error: 'Error during authentication.'
+                    });
+                }
+
+                if (!row) {
+                    // User doesn't exist, so register them automatically
+                    registerUser(db, username, password, (err) => {
+                        if (err) {
+                            return res.render('login.ejs', {
+                                user: null,
+                                loggedIn: false,
+                                error: 'Error creating new user.'
+                            });
+                        }
+                        // Registration successful, log them in
+                        req.session.user = { username };
+                        res.redirect('/profile');
+                    });
+                } else {
+                    // User exists but password is wrong
+                    res.render('login.ejs', {
+                        user: null,
+                        loggedIn: false,
+                        error: 'Invalid password.'
+                    });
+                }
+            });
+        }
+    });
 });
+
 
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
