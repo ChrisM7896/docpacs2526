@@ -5,7 +5,7 @@ const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
 function usersRoute(app) {
     app.get('/api/users', (req, res) => {
         try {
-            if (req.session.user) {
+            if (req.session.user && req.session.token) {
                 fetch(`${FORMBAR_AUTH_URL}/api/me`, {
                     method: 'GET',
                     headers: {
@@ -20,6 +20,8 @@ function usersRoute(app) {
                     .catch(error => {
                         res.status(500).json({ error: error.message }); // Handle fetch errors
                     });
+            } else if (req.session.user) {
+                res.json({ username: req.session.user, displayName: req.session.displayName, permissions: req.session.permissions}); // Send basic user info
             } else {
                 res.status(401).json({ error: 'Unauthorized' }); // Handle unauthorized access
             }

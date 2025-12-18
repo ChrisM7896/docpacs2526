@@ -5,14 +5,22 @@ const jwt = require('jsonwebtoken');
 const databaseManager = require('../modules/databaseManager');
 
 //retrieve environment variables
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 const FORMBAR_AUTH_URL = process.env.FORMBAR_AUTH_URL;
-const REDIRECT_URL = process.env.REDIRECT_URL;
+const REDIRECT_URL = `${HOST}${PORT}/login/Formbar`;
 
 function loginRoute(app) {
     app.get('/login', (req, res) => {
         if (req.session.user) {
             res.redirect('/');
-        } else if (req.query.token) {
+        } else {
+            res.render('login');
+        }
+    });
+
+    app.get('/login/Formbar', (req, res) => {
+        if (req.query.token) {
             let tokenData = jwt.decode(req.query.token)
             req.session.token = tokenData
             req.session.user = tokenData.email;

@@ -44,6 +44,7 @@ function authenticateUser(username, password, req, res) {
                 console.log(`Authentication successful for user ${username}`);
                 req.session.user = row.username;
                 req.session.displayName = row.display_name;
+                req.session.permissions = row.permissions;
                 res.redirect('/');
             } else {
                 console.log(`Authentication failed for user ${username}`);
