@@ -10,7 +10,6 @@ function hashPassword(password) {
 
 function verifyPassword(password, hashedPassword) {
     const compare = bcrypt.compareSync(password, hashedPassword);
-    console.log(`Password verification result: ${compare}`);
     return compare;
 }
 

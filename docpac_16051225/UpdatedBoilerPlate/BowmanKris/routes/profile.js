@@ -1,6 +1,7 @@
 //import required modules
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 //import custom middleware
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -25,6 +26,13 @@ function profileRoute(app) {
     app.get('/profile', (req, res) => {
         try {
             if (req.session.user && isAuthenticated) {
+                const files = fs.readdirSync(UPLOADS_DIR); // Read all files in the uploads directory
+                const userFile = files.find(file => path.parse(file).name === req.session.user); // Find file matching the user
+    
+                if (userFile) {
+                    req.session.avatarPath = `/uploads/${userFile}`; // Set the avatar path with the correct file name
+                }
+
                 res.render('profile', {
                     user: req.session.user,
                     displayName: req.session.displayName,
@@ -46,8 +54,7 @@ function profileRoute(app) {
             const filePath = `/uploads/${req.file.filename}`;
             req.session.avatarPath = filePath;
 
-            // Respond with the updated avatar path
-            res.json({ success: true, avatarPath: filePath });
+            res.json({ success: true, filePath });
         } catch (error) {
             console.error('Error uploading avatar:', error.message);
             res.status(500).json({ success: false, message: 'Failed to upload avatar' });

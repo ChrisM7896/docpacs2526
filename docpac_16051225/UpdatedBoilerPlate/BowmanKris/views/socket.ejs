@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
 </head>
-<style>
-</style>
 
+<%- include('partials/header.ejs') %>
 <body>
     <h2 id="roomName">
         <!--Room ID here-->
@@ -24,15 +23,15 @@
         <input id="messageInput" name="messageInput" type="text" placeholder="Type your message here...">
         <button id="sendButton" type="button">Send</button>
     </form>
-
-    <a href="/">Back to Home</a>
 </body>
+<%- include('partials/footer.ejs') %>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
     let rooms = ['general', 'room 1', 'room 2']
     let currentRoom = 'general'
     const displayName = "<%= displayName %>";
+    const avatarPath = "<%= avatarPath %>";
     const roomName = document.getElementById('roomName')
     const chatLog = document.getElementById('chatLog');
     const roomListDiv = document.getElementById('roomList');
@@ -46,8 +45,37 @@
 
     // Receive chat messages from server
     socket.on('chatMessage', (data) => {
-        const messageElement = document.createElement('div');
-        messageElement.textContent = `${data.sender}: ${data.message}, ${data.timestamp}`;
+        //create message elements
+        let messageElement = document.createElement('div');
+        let senderName = document.createElement('span');
+        let senderAvatar = document.createElement('img');
+        let messageTimestamp = document.createElement('span');
+        messageElement.textContent = data.message; //set message text
+        senderName.textContent = data.sender; //set message sender name
+        messageTimestamp.textContent = data.timestamp; //set message timestamp
+
+        //set message element properties
+        messageElement.className = "message"
+
+        //set sender name properties
+        senderName.id = "senderName"
+
+        //set message avatar properties
+        senderAvatar.id = "avatar"
+        senderAvatar.src = data.avatar
+        senderAvatar.alt= "no avatar set"
+
+        //set timestamp properties
+        messageTimestamp.id = "timestamp"
+
+        messageElement.prepend(document.createElement('br')) //add line break after sender name
+        messageElement.prepend(senderName); //prepend sender name to message
+        messageElement.prepend(senderAvatar); //prepend avatar to message
+
+        messageElement.appendChild(document.createElement('br'))
+        messageElement.appendChild(messageTimestamp); //append timestamp to message
+
+        //append message to chat log
         chatLog.appendChild(messageElement);
     });
 
@@ -66,12 +94,12 @@
             roomListDiv.appendChild(roomElement);
         });
     });
-    
+
     // Handle button click to send messages
     sendButton.addEventListener('click', () => {
         const message = messageInput.value;
         if (message) {
-            socket.emit('chatMessage', { sender: displayName, message: message });
+            socket.emit('chatMessage', { sender: displayName, message: message, avatar: avatarPath });
             messageInput.value = '';
         }
     });

@@ -26,7 +26,6 @@ function loginRoute(app) {
             req.session.user = tokenData.email;
             req.session.displayName = tokenData.displayName;
             req.session.permission = tokenData.permissions;
-            console.log(`User ${tokenData.displayName} logged in.`)
             res.redirect('/');
         } else {
             res.redirect(`${FORMBAR_AUTH_URL}?redirectURL=${REDIRECT_URL}`);

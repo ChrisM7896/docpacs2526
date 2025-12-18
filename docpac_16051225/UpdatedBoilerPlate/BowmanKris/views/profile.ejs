@@ -6,19 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
 </head>
-<style>
-    #avatar {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-    }
 
-    label[for="usernameDisplay"] {
-        font-size: 0.7em;
-        color: #555;
-    }
-</style>
-
+<%- include('partials/header.ejs') %>
 <body>
     <div id="userInfo">
         <li><img id="avatar" src="<%= avatarPath %>" alt="no avatar set" /></li>
@@ -37,6 +26,7 @@
         <button type="submit" id="uploadButton">Upload Avatar</button>
     </form>
 </body>
+<%- include('partials/footer.ejs') %>
 
 <script>
     const avatarForm = document.getElementById('avatarForm');
@@ -63,7 +53,6 @@
 
             const data = await response.json(); // Parse JSON response
             if (response.ok) {
-                console.log('Server response:', data); // Debugging
 
                 if (data.redirect) {
                     // Redirect to the provided URL

@@ -9,8 +9,6 @@ const db = new sqlite3.Database(`${DATABASE_DIR}`, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
     } else {
-        console.log('Connected to the SQLite database.');
-
         // Create uploads table
         db.run(`CREATE TABLE IF NOT EXISTS uploads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,8 +18,6 @@ const db = new sqlite3.Database(`${DATABASE_DIR}`, (err) => {
         )`, (err) => {
             if (err) {
                 console.error('Error creating uploads table:', err.message);
-            } else {
-                console.log('Uploads table is ready.');
             }
         });
 
@@ -36,8 +32,6 @@ const db = new sqlite3.Database(`${DATABASE_DIR}`, (err) => {
         )`, (err) => {
             if (err) {
                 console.error('Error creating users table:', err.message);
-            } else {
-                console.log('Users table is ready.');
             }
         });
     }

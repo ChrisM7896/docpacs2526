@@ -15,14 +15,10 @@ if (!DATABASE_DIR) {
 const db = new sqlite3.Database(DATABASE_DIR, (err) => {
     if (err) {
         console.error('Could not connect to database:', err.message);
-    } else {
-        console.log('Connected to SQLite database.');
     }
 });
 
 function authenticateUser(username, password, req, res) {
-    console.log(`Authenticating user: ${username}`);
-
     db.get(
         `SELECT * FROM users WHERE username = ?`,
         [username],
@@ -30,24 +26,14 @@ function authenticateUser(username, password, req, res) {
             if (err) {
                 console.error('Error querying database:', err.message);
             }
-            if (!row) {
-                console.log(`User ${username} not found.`);
-                console.log('Authentication failed for user ' + username);
-            }
-
             const hashedPassword = row.password;;
-
-            console.log(`User ${username} found. Verifying password...`);
 
             //compare hashed passwords
             if (verifyPassword(password, hashedPassword)) {
-                console.log(`Authentication successful for user ${username}`);
                 req.session.user = row.username;
                 req.session.displayName = row.display_name;
                 req.session.permissions = row.permissions;
                 res.redirect('/');
-            } else {
-                console.log(`Authentication failed for user ${username}`);
             }
         }
     );
@@ -69,8 +55,6 @@ function saveUserData({ createUsername, createDisplayName, permissions, createPa
         (err) => {
             if (err) {
                 console.error('Error saving user to database:', err.message);
-            } else {
-                console.log(`User ${createUsername} saved to database.`)
             }
         }
     );
