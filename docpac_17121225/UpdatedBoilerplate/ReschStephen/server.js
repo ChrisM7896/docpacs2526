@@ -14,6 +14,9 @@ import multer from 'multer';
 import formbarRoutes from './modules/auth/formbarAuth.js';
 import jwt from 'jsonwebtoken';
 import { registerUser, validateUser } from './modules/auth/native.js';
+import { UserInstanceTracker } from './modules/instanceManager.js';
+
+
 
 app.use(sessionMiddleware);
 
@@ -25,6 +28,8 @@ const db = new sqlite3.Database('./data/database.db', (err) => {
         logging('INFO', 'Connected to SQLite database.');
     }
 });
+
+const userTracker = new UserInstanceTracker();
 
 // Middleware
 app.set('view engine', 'ejs');
@@ -136,16 +141,16 @@ app.get('/profile', (req, res) => {
     }
 
     // Debug what's in the session
-    console.log('Session user:', req.session.user);
+    logging('INFO', 'Session user:', req.session.user);
 
     // Read files from uploads directory
     const uploadsDir = './data/uploads';
     let files = [];
     try {
         files = fs.readdirSync(uploadsDir);
-        console.log('Files found:', files);
+        logging('INFO', 'Files found:', files);
     } catch (err) {
-        console.log('No uploads directory or error reading files:', err.message);
+        logging('ERROR', 'No uploads directory or error reading files:', err.message);
     }
 
     res.render('profile.ejs', {
@@ -161,10 +166,10 @@ app.post('/upload', upload.single('profilePic'), (req, res) => {
             return res.redirect('/profile?error=No file selected');
         }
 
-        console.log('File uploaded:', req.file.filename);
+        logging('INFO', 'File uploaded:', req.file.filename);
         res.redirect('/profile?success=File uploaded successfully');
     } catch (error) {
-        console.error('Upload error:', error);
+        logging('ERROR', 'Upload error:', error);
         res.redirect('/profile?error=Upload failed');
     }
 });
@@ -194,4 +199,4 @@ onJoinRoom(io);
 import onChat from './sockets/onChat.js';
 onChat(io);
 
-export { app, server, io, db };
+export { app, server, io, db, userTracker };

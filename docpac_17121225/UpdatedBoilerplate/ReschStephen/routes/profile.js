@@ -34,7 +34,7 @@ const fileFilter = (req, file, cb) => {
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        logging.warn(`User ${req.user.id} attempted to upload a disallowed file type: ${file.originalname}`);
+        logging('WARN', `User ${req.user.id} attempted to upload a disallowed file type: ${file.originalname}`);
         cb(new Error('Only image files are allowed!'));
     }
 };
@@ -44,7 +44,7 @@ router.post('/upload', isAuthenticated, uploadWithFilter.single('file'), (req, r
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
-    logging.info(`Uploaded file: ${req.file.filename}`);
+    logging('INFO', `Uploaded file: ${req.file.filename}`);
     res.send('File uploaded successfully.');
 });
 module.exports = router;

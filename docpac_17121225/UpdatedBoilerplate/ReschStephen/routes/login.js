@@ -7,7 +7,7 @@ import { isValidUsername } from '../shared/utilities.js';
 import { isValidPassword } from '../shared/utilities.js';
 
 router.get('/', (req, res) => {
-    logging.info('Login page accessed');
+    logging('INFO', 'Login page accessed');
     res.render('login');
 });
 
@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
 
     // Validate input
     if (!isValidUsername(username) || !isValidPassword(password)) {
-        logging.warn(`Invalid login attempt for username: ${username}`);
+        logging('WARN', `Invalid login attempt for username: ${username}`);
         return res.status(400).render('login', { error: 'Invalid username or password format.' });
     }
     else {

@@ -30,7 +30,7 @@ router.get('/', isAuthenticated, async (req, res) => {
         const users = await User.findAll(); // Assuming User is a Sequelize model
         res.json(users);
     } catch (error) {
-        logging.error('Error fetching users:', error);
+        logging('ERROR', 'Error fetching users:', error);
         res.status(500).json({ error: 'An unexpected error occurred while fetching users' });
     }
 });

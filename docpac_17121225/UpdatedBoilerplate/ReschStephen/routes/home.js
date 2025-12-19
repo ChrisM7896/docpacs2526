@@ -4,7 +4,7 @@ const router = express.Router();
 const logging = require('../modules/logger.js');
 
 router.get('/', (req, res) => {
-    logging.info('Home page accessed');
+    logging('INFO', 'Home page accessed');
     res.render('home', { user: req.user });
 });
 module.exports = router;

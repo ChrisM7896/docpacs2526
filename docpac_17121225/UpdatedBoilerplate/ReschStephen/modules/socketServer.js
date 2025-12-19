@@ -44,14 +44,14 @@ function loadSocketEventHandlers(io, socketDir) {
 module.exports.loadSocketEventHandlers = loadSocketEventHandlers;
 
 // Manage basic connection and disconnection logging via the logger
-const logger = require('./logger');
+const logging = require('./logger');
 function setupConnectionLogging(io) {
     io.on('connection', (socket) => {
         const userId = socket.request.session.userId || 'Unknown';
-        logger.info(`User connected: ${userId} (Socket ID: ${socket.id})`);
+        logging('INFO', `User connected: ${userId} (Socket ID: ${socket.id})`);
 
         socket.on('disconnect', () => {
-            logger.info(`User disconnected: ${userId} (Socket ID: ${socket.id})`);
+            logging('INFO', `User disconnected: ${userId} (Socket ID: ${socket.id})`);
         });
     });
 }
