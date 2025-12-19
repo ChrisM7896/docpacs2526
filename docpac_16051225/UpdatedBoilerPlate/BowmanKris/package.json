@@ -1,0 +1,24 @@
+{
+    "name": "updatedboilerplate",
+    "description": "copy for all new projects",
+    "main": "app.js",
+    "author": "kris26658",
+    "license": "The Unlicense",
+    "scripts": {
+        "init-database": "node scripts/initDatabase.js"
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "connect-sqlite3": "^0.9.16",
+        "dotenv": "^17.2.3",
+        "ejs": "^3.1.10",
+        "express": "^5.2.1",
+        "express-session": "^1.18.2",
+        "jsonwebtoken": "^9.0.3",
+        "multer": "^2.0.2",
+        "path": "^0.12.7",
+        "socket.io": "^4.8.1",
+        "socket.io-client": "^4.8.1",
+        "sqlite3": "^5.1.7"
+    }
+}
