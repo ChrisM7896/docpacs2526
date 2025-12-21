@@ -15,6 +15,12 @@ const session = require('express-session');
 const logger = require('./modules/logger');
 const sqlite3 = require('sqlite3').verbose();
 const connect_sqlite3 = require('connect-sqlite3')(session);
+// home route modules
+const homeRoutes = require('./routes/home');
+const loginRoutes = require('./routes/login');
+const profileRoutes = require('./routes/profile');
+const userRoutes = require('./routes/api/users');
+const formbarAuthRoutes = require('./modules/auth/formbarAuth');
 // const { io } = require('socket.io-client');
 const http = require('http');
 // setting up the database
@@ -51,26 +57,17 @@ const sessionMiddleware = session({
     store: sessionStore,
     secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
     saveUninitialized: false
-}));
-app.use(sessionMiddleware({ secret: process.env.SESSION, resave: false, saveUninitialized: false }));
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+});
+app.use(sessionMiddleware({ 
+    secret: process.env.SESSION, 
+        resave: false, 
     saveUninitialized: false,
     cookie: {
         maxAge: 3.5 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === 'production'
     }
-});
+}));    
 app.use(sessionMiddleware);
 
 
@@ -88,64 +85,15 @@ const userRoutes = require('./routes/api/users');
 // routes
 
 // home route
-app.get('/',  (req, res) => {
-    res.render('home', {session: req.session});
-});
+app.use('/', homeRoutes);
 // login route
-app.get('/login', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/');
-    } else {
-        console.log('CLIENT_ID:', process.env.CLIENT_ID);
-        console.log('REDIRECT_URL:', process.env.REDIRECT_URL);
-        
-        // Try HTTPS and redirectURL parameter
-        const authUrl = `https://formbeta.yorktechapps.com/oauth?client_id=${process.env.CLIENT_ID}&redirectURL=${process.env.REDIRECT_URL}&response_type=code`;
-        
-        console.log('Constructed AUTH_URL:', authUrl);
-        
-        res.render('login', {
-            session: req.session,
-            AUTH_URL: authUrl,
-            loginError: false
-        });
-    }
-});
-
-
-
-
-const profileRoutes = require('./routes/profile');
+app.use('/', loginRoutes);
 //profileRoute app.use statement
 app.use('/', profileRoutes);
-// profile route
-app.get('/profile', isAuthenticated, (req, res) => {
-    // Get user's upload count
-    const uploadCountQuery = `SELECT COUNT(*) as count FROM uploads WHERE user_id = ?`;
-    db.get(uploadCountQuery, [req.session.user.id], (err, uploadResult) => {
-        if (err) {
-            console.error('Database error:', err);
-            uploadResult = { count: 0 };
-        }
-        
-        // Get user's uploaded files
-        const uploadsQuery = `SELECT file_name, uploaded_at FROM uploads WHERE user_id = ? ORDER BY uploaded_at DESC`;
-        db.all(uploadsQuery, [req.session.user.id], (err, uploads) => {
-            if (err) {
-                console.error('Database error:', err);
-                uploads = [];
-            }
-            
-            // Pass all the data to the template
-            res.render('profile', {
-                session: req.session,
-                user: req.session.user,        // This fixes the "user is not defined" error
-                uploadCount: uploadResult.count,
-                uploads: uploads
-            });
-        });
-    });
-});
+// api routes
+app.use('/api/users', userRoutes);
+//formbarAuthRoutes
+app.use('/', formbarAuthRoutes);
 // sockets route
 app.get('/sockets', (req, res) => {
     res.render('sockets', {
@@ -200,14 +148,4 @@ server.listen(PORT, () => {
 // Exports
 module.exports = app;
 module.exports.db = db;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 module.exports.sessionStore = sessionStore;
-=======
-module.exports.sessionStore = sessionStore;
->>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
->>>>>>> Stashed changes
-=======
-module.exports.sessionStore = sessionStore;
->>>>>>> 14a2061a109e03fc01c1edd69725c3f69d1cb31c
->>>>>>> Stashed changes
