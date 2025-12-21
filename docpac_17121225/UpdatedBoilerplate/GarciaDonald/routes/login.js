@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const nativeAuth = require('../modules/native');
+const nativeAuth = require('../modules/auth/native.js');
 
 // Show login page
 router.get('/login', (req, res) => {
     if (req.session.user) {
         res.redirect('/');
     } else {
-        const authUrl = `http://formbeta.yorktechapps.com/oauth?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URL}&response_type=code`;
+        // Try redirectURL instead of redirect_uri
+        const authUrl = `http://formbeta.yorktechapps.com/oauth?client_id=${process.env.CLIENT_ID}&redirectURL=${encodeURIComponent(process.env.REDIRECT_URL)}&response_type=code`;
+        
+        console.log('Raw AUTH_URL:', authUrl);
         
         res.render('login', {
             session: req.session,

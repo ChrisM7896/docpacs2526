@@ -41,7 +41,7 @@ const sessionStore = new connect_sqlite3({
 const InstanceManager = require('./modules/instanceManager');
 const UserLayout = require('./modules/userLayout');
 const FormbarClient = require('./modules/formbarClient');
-const Utilities = require('./shared/utilities');
+const utilities = require('./shared/utilities');
 
 // Initializing the new modules
 const instanceManager = new InstanceManager(logger);
@@ -52,36 +52,33 @@ const formbarClient = new FormbarClient(process.env.API_KEY, 'http://formbeta.yo
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
-const sessionMiddleware = session({
+
+// Session middleware - only this one session configuration
+app.use(session({
     store: sessionStore,
     secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
-    saveUninitialized: false
-});
-app.use(sessionMiddleware({ 
-    secret: process.env.SESSION, 
-        resave: false, 
     saveUninitialized: false,
     cookie: {
         maxAge: 3.5 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === 'production'
     }
-}));    
-app.use(sessionMiddleware);
+}));
 
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
-            next();
+        next();
     } else {
         res.redirect(`/login`);
     }
 }
+
 app.set('view engine', 'ejs');
 app.set('views', './views');
-// importing routes
-const userRoutes = require('./routes/api/users');
+
 // routes
 
 // home route
@@ -103,8 +100,7 @@ app.get('/sockets', (req, res) => {
 })
 // auth routes
 // Import and use your OAuth routes
-const formbarAuthRoutes = require('./modules/auth/formbarAuth')
-const nativeAuth = require('./modules/auth/native');
+const nativeAuth = require('./modules/auth/native.js');
 const { title } = require('process');
 // const { AUTH } = require('sqlite3');
 //using the oauth route
@@ -137,7 +133,7 @@ app.post('/auth/local', (req, res) => {
 // Socket.IO Setup 
 const SocketServer = require('./modules/socketServer');
 const server = http.createServer(app);
-const socketServer = new SocketServer(server, sessionMiddleware, logger);
+const socketServer = new SocketServer(server, session, logger);
 const socketIO = socketServer.initialize();
 
 // Start server
