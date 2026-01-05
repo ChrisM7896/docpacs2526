@@ -12,6 +12,7 @@ const sessionMiddleware = require('./middleware/session');
 const isAuthenticated = require('./middleware/isAuthenticated');
 const profileRoutes = require('./routes/profile')
 const apiRoutes = require('./routes/api/users');
+const socketsRoutes = require('./routes/sockets');
 
 // Database setup
 const db = new sqlite3.Database('./data/database.sqlite', (err) => {
@@ -40,6 +41,7 @@ app.use('/', homeRoutes);
 app.use('/', loginRoutes);
 app.use('/', profileRoutes);
 app.use('/api', apiRoutes);
+app.use('/sockets', socketsRoutes);
 
 /*app.get('sendpogs'), isAuthenticated, (req, res) => {
     const data = {

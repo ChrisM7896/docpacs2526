@@ -71,6 +71,17 @@ router.get('/logout', (req, res) => {
     });
 });
 
-// REMOVE the temporary /register route completely
+router.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+    
+    try {
+        const { registerUser } = require('../modules/auth/native');
+        const user = await registerUser(username, password);
+        logger.info('User registered for testing', { username });
+        res.redirect('/login');
+    } catch (error) {
+        res.render('login', { error: error.message });
+    }
+});
 
 module.exports = router;

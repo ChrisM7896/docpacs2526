@@ -3,45 +3,53 @@ const { Server } = require('socket.io');
 const { io: clientIo } = require('socket.io-client');
 const logger = require('./logger');
 
+const socketAuth = require('../middleware/socketAuth');
+
+// Socket handlers
+const onConnect = require('../sockets/onConnect');
+const onJoinRoom = require('../sockets/onJoinRoom');
+const onChat = require('../sockets/onChat');
+
 const AUTH_URL = process.env.AUTH_URL || 'http://localhost:420/oauth';
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
-let io; // Socket.IO server instance
-let authSocket; // Client connection to Formbar
+let io;
+let authSocket;
 
 const initializeSocketServer = (httpServer, sessionMiddleware) => {
-    // Create Socket.IO server
+    // ---- Create Socket.IO server ----
     io = new Server(httpServer);
-    
-    // Use session middleware for Socket.IO
+
+    // ---- Attach session middleware ----
     io.use((socket, next) => {
         sessionMiddleware(socket.request, {}, next);
     });
 
-    // Handle client connections
+    // ---- Authenticate socket ----
+    io.use(socketAuth);
+
+    // ---- Main connection handler (ONLY ONE) ----
     io.on('connection', (socket) => {
-        const user = socket.request.session?.user;
-        logger.info('Socket client connected', { 
-            socketId: socket.id, 
-            user: user || 'anonymous' 
+        const user = socket.user;
+
+        logger.info('Socket client connected', {
+            socketId: socket.id,
+            user: user?.username || 'anonymous'
         });
 
-        socket.on('disconnect', () => {
-            logger.info('Socket client disconnected', { 
-                socketId: socket.id, 
-                user: user || 'anonymous' 
-            });
-        });
+        onConnect(io, socket);
+        onJoinRoom(io, socket);
+        onChat(io, socket);
+        // disconnect is handled inside onConnect
     });
 
-    // Connect to Formbar auth server
+    // ---- Connect to Formbar auth server ----
     authSocket = clientIo(AUTH_URL, {
         extraHeaders: {
             api: API_KEY
         }
     });
 
-    // Formbar socket event handlers
     authSocket.on('connect', () => {
         logger.info('Connected to auth server');
         authSocket.emit('getActiveClass');
@@ -64,7 +72,9 @@ const initializeSocketServer = (httpServer, sessionMiddleware) => {
             totalResponses: classroomData.poll.totalResponses,
             totalResponders: classroomData.poll.totalResponders
         });
-        logger.info('Poll responses', { responses: classroomData.poll.responses });
+        logger.info('Poll responses', {
+            responses: classroomData.poll.responses
+        });
     });
 
     return io;
