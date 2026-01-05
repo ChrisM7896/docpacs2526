@@ -28,8 +28,8 @@ function checkForm() {
     const websiteFeedback = document.getElementById("website").innerText;
 
     if (
-        usernameFeedback === "Must be 3+ letters" ||
-        passwordFeedback === "Password too short" ||
+        usernameFeedback.length <= 3 && usernameFeedback === "Must be 3+ letters" ||
+        passwordFeedback.length <= 6 && passwordFeedback === "Password too short" ||
         emailFeedback === "Invalid email" ||
         websiteFeedback === "Invalid website"
     ) {

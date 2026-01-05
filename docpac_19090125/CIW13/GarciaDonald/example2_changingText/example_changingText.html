@@ -6,31 +6,31 @@
     </head>
 	
 	<body>
-	  <h2>CIW JavaScript Specialist</h2>
-	  <hr>
+	<h2>CIW JavaScript Specialist</h2>
+	<hr>
 
-	  <p><a href="#" id="loadText">Click here to watch the text below change with AJAX!</a></p>
-	  <div id="text">
+	<p><a href="#" id="loadText">Click here to watch the text below change with AJAX!</a></p>
+	<div id="text">
 		Here is the old text.
-	  </div>
+	</div>
 
-	  <script>
+	<script>
 		function replaceText() {
-		  const http = new XMLHttpRequest();
-		  http.open("GET", "example.txt", true);
-		  http.onreadystatechange = function () {
+		const http = new XMLHttpRequest();
+		http.open("GET", "example.txt", true);
+		http.onreadystatechange = function () {
 			if (http.readyState === 4 && http.status === 200) {
-			  document.getElementById('text').innerHTML = http.responseText;
+				document.getElementById('text').innerHTML = http.responseText;
 			}
-		  };
-		  http.send();
+		};
+		http.send();
 		}
 
 		document.getElementById('loadText').addEventListener('click', function (e) {
-		  e.preventDefault();
-		  replaceText();
+			e.preventDefault();
+			replaceText();
 		});
-	  </script>
-	  
+	</script>
+	
 	</body>
 </html>
