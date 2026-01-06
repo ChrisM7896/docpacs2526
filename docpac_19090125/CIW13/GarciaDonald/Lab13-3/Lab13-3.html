@@ -42,7 +42,10 @@
 
 					console.log("Fetching for query:", query);
 
-					fetch("https://www.ucertify.com/utils/livesearch.php?q=" + encodeURIComponent(query))
+					// Use the local PHP endpoint included in this folder so the live search returns results.
+					// Note: this must be served from a PHP-enabled web server (e.g. http://localhost/) —
+					// opening the file via file:// will not run the PHP script.
+					fetch("livesearch.php?q=" + encodeURIComponent(query))
 						.then(response => {
 							console.log("Fetch status:", response.status);
 							if (!response.ok) {
