@@ -47,5 +47,21 @@ function loadScript(xmlScripts, index) {
 
 // Add AJAX data loader function
 
-
+function loadData(index) {
+  fetch('https://s3.amazonaws.com/jigyaasa_content_static/1d0-735/Optional-Lab-13-1/picture.xml')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Could not load XML file');
+      }
+      return response.text();
+    })
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, 'application/xml');
+      const pictures = xml.getElementsByTagName('PICTURE');
+      loadScript(pictures, index);
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
+  });
 }
