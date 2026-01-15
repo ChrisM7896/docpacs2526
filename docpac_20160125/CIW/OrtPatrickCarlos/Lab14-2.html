@@ -28,6 +28,7 @@
 		const table = document.getElementById('locationTable');
 		const tbody = document.getElementById('locationData');
 
+
 		btn.addEventListener('click', () => {
 		  if (!('geolocation' in navigator)) {
 			alert('Geolocation is not supported by your browser.');
@@ -45,7 +46,8 @@
 			  const data = [
 				['Latitude', formatValue(coords.latitude)],
 				['Longitude', formatValue(coords.longitude)],
-				['Accuracy (meters)', formatValue(coords.accuracy)]
+				['Accuracy (meters)', formatValue(coords.accuracy)],
+				['Timestamp', new Date(position.timestamp).toLocaleString()]
 			  ];
 
 			  tbody.innerHTML = '';
