@@ -45,7 +45,8 @@
 			  const data = [
 				['Latitude', formatValue(coords.latitude)],
 				['Longitude', formatValue(coords.longitude)],
-				['Accuracy (meters)', formatValue(coords.accuracy)]
+				['Accuracy (meters)', formatValue(coords.accuracy)],
+				['Timestamp', new Date(position.timestamp).toLocaleString()]
 			  ];
 
 			  tbody.innerHTML = '';
