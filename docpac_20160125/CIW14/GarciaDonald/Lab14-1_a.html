@@ -30,18 +30,18 @@
 			}
 		});
 
-		  accessButton.addEventListener("click", () => {
+		accessButton.addEventListener("click", () => {
 			const storedName = localStorage.getItem("first_name");
 			if (storedName) {
-			  alert("Hi, " + storedName);
+				alert("Hi, " + storedName);
 			} else {
-			  alert("No name is saved yet.");
+				alert("No name is saved yet.");
 			}
-		  });
+		});
 		} else {
-		  alert("Sorry, your browser does not support local storage.");
+			alert("Sorry, your browser does not support local storage.");
 		}
-	  </script>
-	  
+	</script>
+	
 	</body>
 </html>                  
