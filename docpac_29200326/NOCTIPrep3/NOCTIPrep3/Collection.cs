@@ -16,7 +16,7 @@ internal class Collection
     {
         foreach (string[] purchase in purchaseData)
         {
-            string newLine = purchase[0] + purchase[1] + purchase[2] + purchase[3] + purchase[4];
+            string newLine = string.Join(",", purchase);
             csv.AppendNewLine(newLine);
         }
         File.AppendAllText("./purchases.csv", csv.ToString());
