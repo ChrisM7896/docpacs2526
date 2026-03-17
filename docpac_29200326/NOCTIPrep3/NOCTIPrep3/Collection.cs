@@ -19,7 +19,7 @@ internal class Collection
             string newLine = string.Join(",", purchase);
             csv.AppendNewLine(newLine);
         }
-        File.AppendAllText("./purchases.csv", csv.ToString());
+        File.WriteAllText("./purchases.csv", csv.ToString());
         Console.WriteLine($"Stored {purchaseData.Count} purchase(s).");
     }
 
@@ -31,13 +31,17 @@ internal class Collection
         // Prepare a new list for all the purchases.
         var purchasesData = new List<string[]>();
 
-        // Get customer purchase amount. If invalid input, default to 0 (exits).
-        Console.Write("How many customer purchases will be entered? ");
-        var input = Console.ReadLine();
-        if (!int.TryParse(input, out int purchases) || purchases <= 0)
+        // Get customer purchase amount. Keep prompting until valid.
+        int purchases = -1;
+        while (purchases <= 0)
         {
-            Console.WriteLine("Ensure the number of customer purchases is an integer greater than 0.");
-            purchases = 0;
+            Console.Write("How many customer purchases will be entered? ");
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out purchases) || purchases <= 0)
+            {
+                Console.WriteLine("Ensure the number of customer purchases is an integer greater than 0.");
+                purchases = -1;
+            }
         }
 
         // For each purchase, collect necessary information.
@@ -50,21 +54,41 @@ internal class Collection
             Console.Write("Item name? ");
             string itemName = Console.ReadLine() ?? string.Empty;
 
-            // Ensure both item quantity and unit price are both numbers.
-            Console.Write("Item quantity? ");
-            string quantityInput = Console.ReadLine();
-            if (!int.TryParse(quantityInput, out int quantity) || quantity < 0)
+            // Ensure item quantity is a valid number.
+            int quantity = -1;
+            while (quantity < 0)
             {
-                Console.WriteLine("Invalid quantity entered. Setting quantity to 0.");
-                quantity = 0;
+                Console.Write("Item quantity? ");
+                string quantityInput = Console.ReadLine();
+                if (!int.TryParse(quantityInput, out quantity) || quantity < 0)
+                {
+                    Console.WriteLine("Invalid quantity entered. Please enter a non-negative number.");
+                    quantity = -1;
+                }
             }
 
-            Console.Write("Unit price? ");
-            string unitPriceInput = Console.ReadLine();
-            if (!float.TryParse(unitPriceInput, out float unitPrice) || unitPrice < 0f)
+            float unitPrice = -1f;
+            while (unitPrice < 0f)
             {
-                Console.WriteLine("Invalid unit price entered. Setting price to 0.00.");
-                unitPrice = 0f;
+                Console.Write("Unit price? ");
+                string unitPriceInput = Console.ReadLine();
+                if (!float.TryParse(unitPriceInput, out unitPrice) || unitPrice < 0f)
+                {
+                    Console.WriteLine("Invalid unit price entered. Please enter a non-negative number.");
+                    unitPrice = -1f;
+                }
+            }
+
+            int orderNumber = -1;
+            while (orderNumber < 0)
+            {
+                Console.Write("Order number? ");
+                string orderNumberInput = Console.ReadLine();
+                if (!int.TryParse(orderNumberInput, out orderNumber) || orderNumber < 0)
+                {
+                    Console.WriteLine("Invalid order number entered. Please enter a non-negative number.");
+                    orderNumber = -1;
+                }
             }
 
             // Add purchase to list.
